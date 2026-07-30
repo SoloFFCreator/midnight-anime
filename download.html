@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Download Midnight Anime APK for Android | Official App</title>
+  <meta name="description" content="Download the official Midnight Anime Android APK. Stream anime in Sub, Dub, or Hindi for free in HD quality." />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #09080e;
+      --bg-card: rgba(255, 255, 255, 0.03);
+      --bg-card-hover: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #8b5cf6;
+      --accent-glow: rgba(139, 92, 246, 0.35);
+      --accent-hover: #7c3aed;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Ambient Glow Backgrounds */
+    .glow-1 {
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.18) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(9, 8, 14, 0.8);
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .logo img {
+      width: 28px;
+      height: 28px;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      max-width: 780px;
+      margin: 2rem auto 4rem auto;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(139, 92, 246, 0.12);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #c4b5fd;
+      margin-bottom: 1.5rem;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.25rem;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 50%, #d8b4fe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      line-height: 1.6;
+    }
+
+    /* Download Box */
+    .download-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      max-width: 580px;
+      margin: 0 auto;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 1.1rem 2rem;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 8px 25px var(--accent-glow);
+    }
+
+    .btn-download:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(139, 92, 246, 0.5);
+    }
+
+    .btn-download svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .app-meta {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .app-meta div {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* Audio Tags */
+    .tags {
+      display: flex;
+      justify-content: center;
+      gap: 0.6rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* Steps Section */
+    .section-title {
+      text-align: center;
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 5rem 0 2.5rem 0;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .step-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      position: relative;
+    }
+
+    .step-num {
+      width: 36px;
+      height: 36px;
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      color: #c4b5fd;
+      font-weight: 800;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .step-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .step-card p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      transition: background 0.2s ease;
+    }
+
+    .feature-card:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .feature-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .feature-card p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 1.5rem;
+      margin-top: 6rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+      margin: 0 0.75rem;
+    }
+
+    footer a:hover {
+      color: #fff;
+    }
+
+    @media (max-width: 640px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      .app-meta {
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      .download-card {
+        padding: 1.75rem 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-1"></div>
+
+  <!-- Header Navigation -->
+  <header>
+    <div class="nav-container">
+      <a href="https://dipamalla.com.np" class="logo">
+        <img src="https://dipamalla.com.np/logo.svg" alt="Midnight Anime Logo" onerror="this.style.display='none'" />
+        Midnight<span>Anime</span>
+      </a>
+      <div class="nav-links">
+        <a href="https://dipamalla.com.np">Main Website</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="badge-pill">
+        <span class="badge-dot"></span>
+        v1.0.0 Latest Release · Android Only
+      </div>
+
+      <h1>Anime doesn't sleep.<br><span>Neither do we.</span></h1>
+      
+      <p class="subtitle">
+        Stream your favorite anime in Sub, Dub, or Hindi. Free, no subscription required, and built for smooth performance on Android.
+      </p>
+
+      <!-- Download Action Card -->
+      <div class="download-card">
+        <a href="https://github.com/SoloFFCreator/midnight-anime/releases/download/Midnight-Anime/midnight-anime.apk" class="btn-download">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+          </svg>
+          Download Android APK
+        </a>
+
+        <div class="app-meta">
+          <div>
+            <strong style="color:#fff;">OS:</strong> Android 5.0+
+          </div>
+          <div>
+            <strong style="color:#fff;">Cost:</strong> $0 Free
+          </div>
+          <div>
+            <strong style="color:#fff;">Safety:</strong> Verified Clean
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Tags -->
+      <div class="tags">
+        <span class="tag">Subtitled</span>
+        <span class="tag">English Dub</span>
+        <span class="tag">Hindi Dub</span>
+        <span class="tag">HD 1080p</span>
+        <span class="tag">Zero Ads</span>
+      </div>
+    </section>
+
+    <!-- How to Install -->
+    <h2 class="section-title">How to Install the APK</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Download File</h3>
+        <p>Click the download button above to grab the <code>midnight-anime.apk</code> package.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>Allow Unknown Sources</h3>
+        <p>If prompted by Android, enable <em>"Install from Unknown Sources"</em> in your browser settings.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>Install & Open</h3>
+        <p>Tap the downloaded file in your notification panel or File Manager and hit <strong>Install</strong>.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <h3>Start Streaming</h3>
+        <p>Launch Midnight Anime and enjoy unrestricted late-night streaming!</p>
+      </div>
+    </div>
+
+    <!-- Features Overview -->
+    <h2 class="section-title">Built for Late-Night Bingeing</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>🎧 Sub, Dub & Hindi Audio</h3>
+        <p>Switch tracks effortlessly inside the video player without downloading separate video files.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🔄 Continue Watching Sync</h3>
+        <p>Never lose your spot. Your watchlist and episode progress sync across all your devices.</p>
+      </div>
+      <div class="feature-card">
+        <h3>⚡ Ultra-Fast Streaming</h3>
+        <p>Optimized player engine designed to eliminate buffering, even on slower mobile networks.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div style="margin-bottom: 1rem;">
+      <a href="https://dipamalla.com.np">Home</a>
+      <a href="https://dipamalla.com.np/privacy-policy.html">Privacy Policy</a>
+      <a href="https://dipamalla.com.np/terms-of-service.html">Terms of Service</a>
+    </div>
+    <p>© 2026 Midnight Anime. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
