@@ -77,5 +77,98 @@ async function verifyEmail() {
         );
 
     }
+  async function recoverEmail() {
+
+    try {
+
+        const info = await checkActionCode(auth, oobCode);
+
+        await applyActionCode(auth, oobCode);
+
+        stopLoading();
+
+        setState(
+            "Email Restored",
+            `Your email has been restored successfully.`
+        );
+
+        content.innerHTML = `
+            <div class="success">
+                Email recovery completed.
+            </div>
+
+            <a class="home" href="/">
+                Continue
+            </a>
+        `;
+
+    } catch (e) {
+
+        console.error(e);
+
+        showError(
+            "This email recovery link is invalid or has expired."
+        );
+
+    }
+
+}
+
+async function verifyBeforeUpdateEmail() {
+
+    try {
+
+        await applyActionCode(auth, oobCode);
+
+        stopLoading();
+
+        setState(
+            "Email Verified",
+            "Your new email address has been verified successfully."
+        );
+
+        content.innerHTML = `
+            <div class="success">
+                Verification completed.
+            </div>
+
+            <a class="home" href="/">
+                Continue
+            </a>
+        `;
+
+    } catch (e) {
+
+        console.error(e);
+
+        showError(
+            "Verification link has expired or is invalid."
+        );
+
+    }
+
+}
+
+switch (mode) {
+
+    case "verifyEmail":
+        verifyEmail();
+        break;
+
+    case "resetPassword":
+        resetPassword();
+        break;
+
+    case "recoverEmail":
+        recoverEmail();
+        break;
+
+    case "verifyBeforeUpdateEmail":
+        verifyBeforeUpdateEmail();
+        break;
+
+    default:
+        showError("Unknown authentication action.");
+}
 
 }
