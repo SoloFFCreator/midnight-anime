@@ -10,10 +10,6 @@
   ],
   "rewrites": [
     {
-      "source": "/__/auth/:path*",
-      "destination": "https://mid-night-anime.firebaseapp.com/__/auth/:path*"
-    },
-    {
       "source": "/home",
       "destination": "/home/index.html"
     }
