@@ -1,1 +1,2945 @@
-<!doctype html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SoloMarket Dashboard</title><link rel="stylesheet" href="../css/style.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><header><a class="logo" href="../index.html">SoloMarket</a><nav><a href="../index.html">Marketplace</a><a href="#products">Products</a><a href="#orders">Orders</a></nav><button class="secondary" id="logout">Log out</button></header><main class="section"><label>CREATOR DASHBOARD</label><h1>Welcome, creator.</h1><div class="sellbox"><div><h2>Launch your first <i>product.</i></h2><p>Add a digital product to your storefront. Product creation UI is ready for the next connection pass.</p><button class="primary big" id="add">＋ Add product</button></div><div class="sellstats"><b>0<small>products</small></b><b>$0<small>revenue</small></b><b>0<small>orders</small></b></div></div><h2 id="products">Your products</h2><div class="grid"><div class="product"><div class="art">＋</div><div class="info"><b>Add your first product</b></div></div></div></main><script src="../js/config.js"></script><script>const c=window.SOLO_CONFIG;const sb=(window.supabase&&c.key&&!c.key.startsWith("YOUR_"))?window.supabase.createClient(c.url,c.key):null;document.querySelector("#logout").onclick=async()=>{if(sb)await sb.auth.signOut();location.href="../index.html"};document.querySelector("#add").onclick=()=>alert("Product creation will be connected to Supabase Storage in the next pass.");</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07080c">
+
+<title>SoloMarket — Seller Dashboard</title>
+
+<style>
+:root{
+    --bg:#07080c;
+    --panel:#101218;
+    --panel-hover:#151820;
+    --text:#f5f6f8;
+    --muted:#858b98;
+    --muted2:#626875;
+    --border:rgba(255,255,255,.09);
+    --border2:rgba(255,255,255,.15);
+    --accent:#8067ff;
+    --green:#45d6a2;
+    --red:#ff667d;
+    --yellow:#f0bb68;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    background:
+        radial-gradient(
+            circle at 80% 0%,
+            rgba(128,103,255,.12),
+            transparent 30%
+        ),
+        var(--bg);
+    color:var(--text);
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+button{
+    font:inherit;
+    cursor:pointer;
+}
+
+a{
+    color:inherit;
+    text-decoration:none;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar{
+    position:fixed;
+    inset:0 auto 0 0;
+    width:250px;
+    padding:24px 15px;
+
+    background:rgba(9,10,14,.94);
+    backdrop-filter:blur(20px);
+
+    border-right:1px solid var(--border);
+
+    z-index:100;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    padding:0 10px 30px;
+
+    font-size:20px;
+    font-weight:850;
+    letter-spacing:-.05em;
+}
+
+.logo-mark{
+    width:35px;
+    height:35px;
+
+    display:grid;
+    place-items:center;
+
+    border-radius:10px;
+
+    background:white;
+    color:#08090d;
+}
+
+.logo-muted{
+    opacity:.4;
+}
+
+.seller-label{
+    padding:0 12px 9px;
+
+    color:#565c68;
+
+    font-size:10px;
+    font-weight:800;
+
+    letter-spacing:.14em;
+}
+
+.nav{
+    display:grid;
+    gap:4px;
+}
+
+.nav button{
+    width:100%;
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    padding:12px;
+
+    border:1px solid transparent;
+    border-radius:11px;
+
+    background:transparent;
+
+    color:#777d8a;
+
+    text-align:left;
+
+    transition:.2s;
+}
+
+.nav button:hover,
+.nav button.active{
+    color:#fff;
+    background:#171920;
+    border-color:var(--border);
+}
+
+.nav-icon{
+    width:22px;
+    text-align:center;
+}
+
+.sidebar-bottom{
+    position:absolute;
+
+    left:15px;
+    right:15px;
+    bottom:18px;
+}
+
+.store-btn{
+    display:block;
+
+    width:100%;
+
+    padding:12px;
+
+    border:1px solid var(--border);
+    border-radius:11px;
+
+    background:transparent;
+
+    color:#a2a7b2;
+
+    text-align:center;
+
+    transition:.2s;
+}
+
+.store-btn:hover{
+    background:#171920;
+    color:white;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+    margin-left:250px;
+
+    min-height:100vh;
+
+    padding:30px 4vw;
+
+    max-width:1550px;
+}
+
+.topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:20px;
+
+    margin-bottom:35px;
+}
+
+.eyebrow{
+    color:#6e7481;
+
+    font-size:10px;
+    font-weight:800;
+
+    letter-spacing:.16em;
+}
+
+.topbar h1{
+    margin-top:9px;
+
+    font-size:34px;
+
+    letter-spacing:-.06em;
+}
+
+.top-actions{
+    display:flex;
+    align-items:center;
+
+    gap:10px;
+}
+
+.icon-button,
+.avatar{
+    border:1px solid var(--border);
+
+    background:#101218;
+
+    color:#bbbfc8;
+
+    border-radius:11px;
+}
+
+.icon-button{
+    width:42px;
+    height:42px;
+}
+
+.avatar{
+    width:42px;
+    height:42px;
+
+    display:grid;
+    place-items:center;
+
+    font-weight:800;
+}
+
+/* =========================
+   AUTH MESSAGE
+========================= */
+
+.auth-message{
+    display:none;
+
+    margin-bottom:16px;
+
+    padding:16px 18px;
+
+    border:1px solid var(--border);
+
+    border-radius:14px;
+
+    background:var(--panel);
+
+    color:#999fac;
+
+    font-size:12px;
+
+    line-height:1.6;
+}
+
+.auth-message.error{
+    border-color:rgba(255,102,125,.25);
+    color:#ff9aaa;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.stats{
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:14px;
+}
+
+.stat-card{
+    padding:22px;
+
+    border:1px solid var(--border);
+
+    border-radius:18px;
+
+    background:var(--panel);
+
+    transition:.25s;
+}
+
+.stat-card:hover{
+    transform:translateY(-3px);
+
+    border-color:var(--border2);
+}
+
+.stat-top{
+    display:flex;
+
+    justify-content:space-between;
+
+    color:#737986;
+
+    font-size:11px;
+}
+
+.stat-icon{
+    width:32px;
+    height:32px;
+
+    display:grid;
+    place-items:center;
+
+    border-radius:9px;
+
+    background:#191c24;
+}
+
+.stat-number{
+    margin-top:17px;
+
+    font-size:30px;
+    font-weight:800;
+
+    letter-spacing:-.05em;
+}
+
+.stat-change{
+    margin-top:8px;
+
+    color:var(--green);
+
+    font-size:11px;
+}
+
+.stat-change.neutral{
+    color:#777d88;
+}
+
+/* =========================
+   PANELS
+========================= */
+
+.dashboard-grid{
+    display:grid;
+
+    grid-template-columns:
+        1.6fr 1fr;
+
+    gap:16px;
+
+    margin-top:16px;
+}
+
+.panel{
+    border:1px solid var(--border);
+
+    border-radius:18px;
+
+    background:var(--panel);
+
+    overflow:hidden;
+}
+
+.panel-header{
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:20px 21px;
+
+    border-bottom:1px solid var(--border);
+}
+
+.panel-header h2{
+    font-size:15px;
+}
+
+.panel-header span{
+    color:#707682;
+
+    font-size:11px;
+}
+
+.panel-body{
+    padding:20px;
+}
+
+/* =========================
+   CHART
+========================= */
+
+.chart{
+    height:270px;
+
+    display:flex;
+
+    align-items:end;
+
+    gap:10px;
+
+    padding:20px 5px 5px;
+}
+
+.bar-wrap{
+    height:100%;
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:end;
+
+    gap:8px;
+}
+
+.bar{
+    width:100%;
+
+    min-height:4px;
+
+    border-radius:7px 7px 3px 3px;
+
+    background:
+        linear-gradient(
+            to top,
+            #5140c9,
+            #9a87ff
+        );
+
+    transition:.3s;
+}
+
+.bar:hover{
+    filter:brightness(1.2);
+}
+
+.bar-label{
+    text-align:center;
+
+    color:#5e6470;
+
+    font-size:9px;
+}
+
+/* =========================
+   QUICK ACTIONS
+========================= */
+
+.actions{
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:10px;
+}
+
+.action{
+    padding:18px;
+
+    border:1px solid var(--border);
+
+    border-radius:13px;
+
+    background:#0d0f14;
+
+    color:#d6d9df;
+
+    text-align:left;
+
+    transition:.25s;
+}
+
+.action:hover{
+    background:#171920;
+
+    transform:translateY(-2px);
+}
+
+.action-icon{
+    font-size:20px;
+}
+
+.action strong{
+    display:block;
+
+    margin-top:13px;
+
+    font-size:12px;
+}
+
+.action small{
+    display:block;
+
+    margin-top:5px;
+
+    color:#666c77;
+
+    font-size:10px;
+}
+
+/* =========================
+   PRODUCTS
+========================= */
+
+.product-list{
+    display:grid;
+
+    gap:10px;
+}
+
+.product-row{
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:11px;
+
+    border:1px solid transparent;
+
+    border-radius:12px;
+
+    transition:.2s;
+}
+
+.product-row:hover{
+    background:#15171d;
+
+    border-color:var(--border);
+}
+
+.product-thumb{
+    width:48px;
+    height:48px;
+
+    flex:none;
+
+    display:grid;
+    place-items:center;
+
+    border-radius:11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #25203c,
+            #7962ff
+        );
+
+    font-weight:900;
+}
+
+.product-details{
+    flex:1;
+
+    min-width:0;
+}
+
+.product-details strong{
+    display:block;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+
+    font-size:13px;
+}
+
+.product-details small{
+    display:block;
+
+    margin-top:5px;
+
+    color:#666c78;
+
+    font-size:10px;
+}
+
+.product-price{
+    font-weight:750;
+}
+
+/* =========================
+   STORE STATUS
+========================= */
+
+.store-status{
+    padding:18px;
+
+    border:1px solid rgba(69,214,162,.15);
+
+    border-radius:13px;
+
+    background:rgba(69,214,162,.04);
+}
+
+.store-status-head{
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+}
+
+.live-dot{
+    width:9px;
+    height:9px;
+
+    border-radius:50%;
+
+    background:#45d6a2;
+
+    box-shadow:
+        0 0 15px #45d6a2;
+}
+
+.store-status p{
+    margin-top:12px;
+
+    color:#747a86;
+
+    line-height:1.6;
+
+    font-size:11px;
+}
+
+/* =========================
+   ORDERS
+========================= */
+
+.orders{
+    margin-top:16px;
+}
+
+.table-wrap{
+    overflow:auto;
+}
+
+table{
+    width:100%;
+
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:15px 20px;
+
+    text-align:left;
+
+    white-space:nowrap;
+
+    border-bottom:1px solid var(--border);
+}
+
+th{
+    color:#656b77;
+
+    font-size:9px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.12em;
+}
+
+td{
+    color:#b5b9c2;
+
+    font-size:12px;
+}
+
+.status{
+    display:inline-flex;
+
+    padding:5px 9px;
+
+    border-radius:7px;
+
+    background:#171b20;
+
+    font-size:10px;
+}
+
+.status.completed{
+    color:var(--green);
+}
+
+.status.pending{
+    color:var(--yellow);
+}
+
+.status.cancelled{
+    color:var(--red);
+}
+
+/* =========================
+   EMPTY / LOADING
+========================= */
+
+.empty{
+    padding:45px 20px;
+
+    text-align:center;
+
+    color:#666c77;
+
+    font-size:12px;
+}
+
+.loading{
+    color:#777d88;
+}
+
+.error{
+    color:var(--red);
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+    position:fixed;
+
+    right:22px;
+    bottom:22px;
+
+    z-index:999;
+
+    padding:14px 18px;
+
+    border:1px solid var(--border2);
+
+    border-radius:11px;
+
+    background:#171920;
+
+    color:white;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.5);
+
+    font-size:12px;
+
+    transform:translateY(20px);
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:.3s;
+}
+
+.toast.show{
+    opacity:1;
+
+    transform:translateY(0);
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:1050px){
+
+    .stats{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .dashboard-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:750px){
+
+    .sidebar{
+        top:auto;
+        bottom:0;
+
+        width:100%;
+        height:68px;
+
+        padding:6px;
+
+        border-top:1px solid var(--border);
+        border-right:0;
+    }
+
+    .logo,
+    .seller-label,
+    .sidebar-bottom{
+        display:none;
+    }
+
+    .nav{
+        height:100%;
+
+        display:grid;
+
+        grid-template-columns:
+            repeat(5,1fr);
+    }
+
+    .nav button{
+        justify-content:center;
+
+        flex-direction:column;
+
+        gap:3px;
+
+        padding:5px;
+
+        font-size:9px;
+    }
+
+    .nav-icon{
+        font-size:17px;
+    }
+
+    .main{
+        margin-left:0;
+
+        padding:
+            22px
+            17px
+            100px;
+    }
+
+    .topbar h1{
+        font-size:29px;
+    }
+}
+
+@media(max-width:480px){
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .actions{
+        grid-template-columns:1fr;
+    }
+
+    .top-actions .icon-button{
+        display:none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =====================================
+     SIDEBAR
+===================================== -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <span class="logo-mark">
+            S
+        </span>
+
+        <span>
+            solo<span class="logo-muted">market</span>
+        </span>
+
+    </div>
+
+    <div class="seller-label">
+        SELLER CENTER
+    </div>
+
+    <nav class="nav">
+
+        <button
+            class="active"
+            data-section="overview">
+
+            <span class="nav-icon">
+                ▦
+            </span>
+
+            Overview
+
+        </button>
+
+        <button
+            data-section="products">
+
+            <span class="nav-icon">
+                ◇
+            </span>
+
+            Products
+
+        </button>
+
+        <button
+            data-section="orders">
+
+            <span class="nav-icon">
+                ▤
+            </span>
+
+            Orders
+
+        </button>
+
+        <button
+            data-section="analytics">
+
+            <span class="nav-icon">
+                ⌁
+            </span>
+
+            Analytics
+
+        </button>
+
+        <button
+            data-section="settings">
+
+            <span class="nav-icon">
+                ⚙
+            </span>
+
+            Settings
+
+        </button>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+        <a
+            href="../index.html"
+            class="store-btn">
+
+            ← Back to store
+
+        </a>
+
+    </div>
+
+</aside>
+
+
+<!-- =====================================
+     MAIN
+===================================== -->
+
+<main class="main">
+
+    <header class="topbar">
+
+        <div>
+
+            <span class="eyebrow">
+                SELLER CENTER
+            </span>
+
+            <h1 id="greeting">
+                Seller Dashboard
+            </h1>
+
+        </div>
+
+        <div class="top-actions">
+
+            <button
+                class="icon-button"
+                id="refreshButton"
+                title="Refresh">
+
+                ↻
+
+            </button>
+
+            <button
+                class="avatar"
+                id="avatarButton">
+
+                ?
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- AUTH MESSAGE -->
+
+    <div
+        class="auth-message"
+        id="authMessage">
+    </div>
+
+
+    <!-- =====================================
+         STATS
+    ===================================== -->
+
+    <section class="stats">
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <span>
+                    TOTAL REVENUE
+                </span>
+
+                <span class="stat-icon">
+                    $
+                </span>
+
+            </div>
+
+            <div
+                class="stat-number"
+                id="revenue">
+
+                …
+
+            </div>
+
+            <div
+                class="stat-change neutral"
+                id="revenueNote">
+
+                From completed orders
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <span>
+                    SALES
+                </span>
+
+                <span class="stat-icon">
+                    ↗
+                </span>
+
+            </div>
+
+            <div
+                class="stat-number"
+                id="sales">
+
+                …
+
+            </div>
+
+            <div
+                class="stat-change neutral"
+                id="salesNote">
+
+                Units sold
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <span>
+                    PRODUCTS
+                </span>
+
+                <span class="stat-icon">
+                    ◇
+                </span>
+
+            </div>
+
+            <div
+                class="stat-number"
+                id="productCount">
+
+                …
+
+            </div>
+
+            <div
+                class="stat-change neutral"
+                id="draftCount">
+
+                Published products
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <span>
+                    CUSTOMERS
+                </span>
+
+                <span class="stat-icon">
+                    ♙
+                </span>
+
+            </div>
+
+            <div
+                class="stat-number"
+                id="customerCount">
+
+                …
+
+            </div>
+
+            <div class="stat-change neutral">
+
+                Unique buyers
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         CHART + ACTIONS
+    ===================================== -->
+
+    <section class="dashboard-grid">
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h2>
+                    Revenue overview
+                </h2>
+
+                <span>
+                    Last 7 days
+                </span>
+
+            </div>
+
+            <div class="panel-body">
+
+                <div
+                    class="chart"
+                    id="chart">
+
+                    <div class="empty loading">
+                        Loading revenue…
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h2>
+                    Quick actions
+                </h2>
+
+                <span>
+                    Manage store
+                </span>
+
+            </div>
+
+            <div class="panel-body">
+
+                <div class="actions">
+
+                    <button
+                        class="action"
+                        id="addProduct">
+
+                        <div class="action-icon">
+                            ＋
+                        </div>
+
+                        <strong>
+                            Add product
+                        </strong>
+
+                        <small>
+                            Create a new digital product
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="action"
+                        id="viewStore">
+
+                        <div class="action-icon">
+                            ↗
+                        </div>
+
+                        <strong>
+                            View store
+                        </strong>
+
+                        <small>
+                            Open your public storefront
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="action"
+                        id="analyticsButton">
+
+                        <div class="action-icon">
+                            ⌁
+                        </div>
+
+                        <strong>
+                            Analytics
+                        </strong>
+
+                        <small>
+                            Review your sales data
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="action"
+                        id="settingsButton">
+
+                        <div class="action-icon">
+                            ⚙
+                        </div>
+
+                        <strong>
+                            Settings
+                        </strong>
+
+                        <small>
+                            Configure your seller profile
+                        </small>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         PRODUCTS + STORE STATUS
+    ===================================== -->
+
+    <section class="dashboard-grid">
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h2>
+                    Your products
+                </h2>
+
+                <span id="productSummary">
+                    Live database
+                </span>
+
+            </div>
+
+            <div class="panel-body">
+
+                <div
+                    class="product-list"
+                    id="productList">
+
+                    <div class="empty loading">
+                        Loading products…
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h2>
+                    Store status
+                </h2>
+
+                <span>
+                    Live
+                </span>
+
+            </div>
+
+            <div class="panel-body">
+
+                <div
+                    class="store-status"
+                    id="storeStatus">
+
+                    <div class="store-status-head">
+
+                        <span class="live-dot">
+                        </span>
+
+                        <strong>
+                            Loading seller profile…
+                        </strong>
+
+                    </div>
+
+                    <p>
+                        Fetching your real profile
+                        and product data.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         ORDERS
+    ===================================== -->
+
+    <section class="panel orders">
+
+        <div class="panel-header">
+
+            <h2>
+                Recent orders
+            </h2>
+
+            <span id="orderSummary">
+                Live database
+            </span>
+
+        </div>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Order
+                        </th>
+
+                        <th>
+                            Product
+                        </th>
+
+                        <th>
+                            Customer
+                        </th>
+
+                        <th>
+                            Total
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="ordersTable">
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="empty loading">
+
+                            Loading orders…
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- TOAST -->
+
+<div
+    class="toast"
+    id="toast">
+</div>
+
+
+<!-- =====================================
+     SUPABASE
+===================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+
+/*
+========================================================
+SOLOMARKET — REAL SUPABASE DASHBOARD
+========================================================
+*/
+
+
+const SUPABASE_URL =
+    "https://xfnnjhpzzktmmcqsauve.supabase.co";
+
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_6XO98ZUUZ-E3AKtaXfUN1g_hJv6EOwO";
+
+
+const db =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+/* =====================================
+   GLOBAL DATA
+===================================== */
+
+let currentUser = null;
+
+let sellerProducts = [];
+
+let sellerOrders = [];
+
+
+/* =====================================
+   HELPERS
+===================================== */
+
+function $(id){
+
+    return document.getElementById(id);
+
+}
+
+
+function escapeHtml(value){
+
+    return String(value ?? "")
+        .replace(/[&<>"']/g, character => {
+
+            const map = {
+
+                "&":"&amp;",
+                "<":"&lt;",
+                ">":"&gt;",
+                '"':"&quot;",
+                "'":"&#39;"
+
+            };
+
+            return map[character];
+
+        });
+
+}
+
+
+function money(
+    value,
+    currency="USD"
+){
+
+    return new Intl.NumberFormat(
+        undefined,
+        {
+            style:"currency",
+            currency:currency || "USD"
+        }
+    ).format(
+        Number(value || 0)
+    );
+
+}
+
+
+function toast(message){
+
+    const element =
+        $("toast");
+
+    element.textContent =
+        message;
+
+    element.classList.add("show");
+
+    clearTimeout(
+        window.__toastTimer
+    );
+
+    window.__toastTimer =
+        setTimeout(
+            () => {
+
+                element.classList.remove(
+                    "show"
+                );
+
+            },
+            2500
+        );
+
+}
+
+
+function showAuthMessage(
+    message,
+    error=false
+){
+
+    const box =
+        $("authMessage");
+
+    box.style.display =
+        "block";
+
+    box.classList.toggle(
+        "error",
+        error
+    );
+
+    box.textContent =
+        message;
+
+}
+
+
+/* =====================================
+   STATUS CLASS
+===================================== */
+
+function getStatusClass(
+    status
+){
+
+    const value =
+        String(
+            status || ""
+        ).toLowerCase();
+
+
+    if(
+        value.includes("cancel") ||
+        value.includes("refund")
+    ){
+
+        return "cancelled";
+
+    }
+
+
+    if(
+        value.includes("pending")
+    ){
+
+        return "pending";
+
+    }
+
+
+    return "completed";
+
+}
+
+
+/* =====================================
+   LOAD DASHBOARD
+===================================== */
+
+async function loadDashboard(){
+
+    $("revenue").textContent =
+        "…";
+
+    $("sales").textContent =
+        "…";
+
+    $("productCount").textContent =
+        "…";
+
+    $("customerCount").textContent =
+        "…";
+
+
+    try{
+
+        /*
+        -----------------------------------------
+        GET AUTHENTICATED USER
+        -----------------------------------------
+        */
+
+        const {
+            data:{
+                user
+            },
+            error:authError
+        } =
+            await db.auth.getUser();
+
+
+        if(authError){
+
+            throw authError;
+
+        }
+
+
+        if(!user){
+
+            showAuthMessage(
+                "You are not signed in. Please sign in to access your seller dashboard.",
+                true
+            );
+
+
+            $("productList").innerHTML =
+                `
+                <div class="empty">
+                    Sign in to load your products.
+                </div>
+                `;
+
+
+            $("ordersTable").innerHTML =
+                `
+                <tr>
+                    <td
+                        colspan="6"
+                        class="empty">
+
+                        Sign in to load your orders.
+
+                    </td>
+                </tr>
+                `;
+
+
+            $("storeStatus").innerHTML =
+                `
+                <div class="store-status-head">
+
+                    <span
+                        class="live-dot"
+                        style="
+                            background:#ff667d;
+                            box-shadow:0 0 15px #ff667d;
+                        ">
+                    </span>
+
+                    <strong>
+                        Authentication required
+                    </strong>
+
+                </div>
+
+                <p>
+                    Log in before accessing
+                    seller data.
+                </p>
+                `;
+
+
+            return;
+
+        }
+
+
+        currentUser =
+            user;
+
+
+        $("avatarButton")
+            .textContent =
+            (
+                user.email || "?"
+            )[0]
+            .toUpperCase();
+
+
+        /*
+        -----------------------------------------
+        LOAD REAL DATABASE DATA
+        -----------------------------------------
+        */
+
+        const [
+
+            profileResult,
+
+            productsResult,
+
+            orderItemsResult
+
+        ] = await Promise.all([
+
+
+            db
+                .from("profiles")
+                .select(
+                    `
+                    id,
+                    username,
+                    display_name,
+                    avatar_url,
+                    bio,
+                    role
+                    `
+                )
+                .eq(
+                    "id",
+                    user.id
+                )
+                .maybeSingle(),
+
+
+            db
+                .from("products")
+                .select(
+                    `
+                    id,
+                    title,
+                    slug,
+                    description,
+                    thumbnail_url,
+                    price,
+                    currency,
+                    status,
+                    featured,
+                    download_count,
+                    created_at,
+                    updated_at
+                    `
+                )
+                .eq(
+                    "seller_id",
+                    user.id
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending:false
+                    }
+                ),
+
+
+            db
+                .from("order_items")
+                .select(
+                    `
+                    id,
+                    order_id,
+                    product_id,
+                    seller_id,
+                    unit_price,
+                    quantity,
+                    created_at,
+                    orders(
+                        id,
+                        buyer_id,
+                        status,
+                        total,
+                        currency,
+                        created_at
+                    )
+                    `
+                )
+                .eq(
+                    "seller_id",
+                    user.id
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending:false
+                    }
+                )
+                .limit(100)
+
+        ]);
+
+
+        /*
+        -----------------------------------------
+        ERROR HANDLING
+        -----------------------------------------
+        */
+
+        if(profileResult.error){
+
+            throw profileResult.error;
+
+        }
+
+
+        if(productsResult.error){
+
+            throw productsResult.error;
+
+        }
+
+
+        if(orderItemsResult.error){
+
+            throw orderItemsResult.error;
+
+        }
+
+
+        const profile =
+            profileResult.data;
+
+
+        sellerProducts =
+            productsResult.data || [];
+
+
+        const orderItems =
+            orderItemsResult.data || [];
+
+
+        /*
+        -----------------------------------------
+        GROUP ORDER ITEMS
+        -----------------------------------------
+        */
+
+        const orderMap =
+            new Map();
+
+
+        for(
+            const item of orderItems
+        ){
+
+            const order =
+                item.orders;
+
+
+            if(!order){
+
+                continue;
+
+            }
+
+
+            let existing =
+                orderMap.get(
+                    order.id
+                );
+
+
+            if(!existing){
+
+                existing = {
+
+                    ...order,
+
+                    items:[],
+
+                    sellerTotal:0,
+
+                    quantity:0
+
+                };
+
+
+                orderMap.set(
+                    order.id,
+                    existing
+                );
+
+            }
+
+
+            existing.items.push(
+                item
+            );
+
+
+            existing.sellerTotal +=
+
+                Number(
+                    item.unit_price || 0
+                )
+
+                *
+
+                Number(
+                    item.quantity || 0
+                );
+
+
+            existing.quantity +=
+
+                Number(
+                    item.quantity || 0
+                );
+
+        }
+
+
+        sellerOrders =
+            Array.from(
+                orderMap.values()
+            )
+            .sort(
+                (a,b) =>
+                    new Date(
+                        b.created_at
+                    )
+                    -
+                    new Date(
+                        a.created_at
+                    )
+            );
+
+
+        /*
+        -----------------------------------------
+        CALCULATE REAL METRICS
+        -----------------------------------------
+        */
+
+        const validOrders =
+            sellerOrders.filter(
+                order => {
+
+                    const status =
+                        String(
+                            order.status || ""
+                        ).toLowerCase();
+
+
+                    return (
+                        status !== "cancelled" &&
+                        status !== "refunded"
+                    );
+
+                }
+            );
+
+
+        const revenue =
+            validOrders.reduce(
+                (total,order) =>
+
+                    total +
+                    order.sellerTotal,
+
+                0
+            );
+
+
+        const sales =
+            validOrders.reduce(
+                (total,order) =>
+
+                    total +
+                    order.quantity,
+
+                0
+            );
+
+
+        const customers =
+            new Set(
+
+                validOrders
+
+                    .map(
+                        order =>
+                            order.buyer_id
+                    )
+
+                    .filter(Boolean)
+
+            ).size;
+
+
+        /*
+        -----------------------------------------
+        UPDATE STATS
+        -----------------------------------------
+        */
+
+        $("revenue")
+            .textContent =
+            money(
+                revenue,
+                sellerOrders[0]?.currency ||
+                "USD"
+            );
+
+
+        $("sales")
+            .textContent =
+            sales.toLocaleString();
+
+
+        $("productCount")
+            .textContent =
+            sellerProducts.length
+                .toLocaleString();
+
+
+        $("customerCount")
+            .textContent =
+            customers.toLocaleString();
+
+
+        const drafts =
+            sellerProducts.filter(
+                product =>
+                    String(
+                        product.status
+                    ).toLowerCase()
+                    === "draft"
+            ).length;
+
+
+        $("draftCount")
+            .textContent =
+
+            drafts
+
+                ?
+
+                `${drafts} draft${
+                    drafts === 1
+                    ? ""
+                    : "s"
+                }`
+
+                :
+
+                "All products listed";
+
+
+        $("revenueNote")
+            .textContent =
+            "Calculated from order items";
+
+
+        $("salesNote")
+            .textContent =
+            "From completed/non-cancelled orders";
+
+
+        /*
+        -----------------------------------------
+        PROFILE
+        -----------------------------------------
+        */
+
+        const displayName =
+
+            profile?.display_name ||
+
+            profile?.username ||
+
+            user.email?.split("@")[0] ||
+
+            "Seller";
+
+
+        $("greeting")
+            .textContent =
+            `Good to see you, ${displayName}.`;
+
+
+        $("storeStatus").innerHTML =
+
+            `
+            <div class="store-status-head">
+
+                <span class="live-dot">
+                </span>
+
+                <strong>
+                    ${escapeHtml(
+                        displayName
+                    )}
+                </strong>
+
+            </div>
+
+            <p>
+
+                ${
+                    sellerProducts.length
+                }
+
+                product${
+                    sellerProducts.length === 1
+                    ? ""
+                    : "s"
+                }
+
+                in your database.
+
+                ${
+                    profile?.bio
+                    ?
+                    escapeHtml(
+                        profile.bio
+                    )
+                    :
+                    "Your seller profile is connected to Supabase."
+                }
+
+            </p>
+            `;
+
+
+        /*
+        -----------------------------------------
+        RENDER EVERYTHING
+        -----------------------------------------
+        */
+
+        renderProducts();
+
+        renderOrders();
+
+        renderChart(
+            validOrders
+        );
+
+
+        $("productSummary")
+            .textContent =
+            `${sellerProducts.length} from database`;
+
+
+        $("orderSummary")
+            .textContent =
+            `${sellerOrders.length} seller orders`;
+
+
+        $("authMessage")
+            .style.display =
+            "none";
+
+
+    }catch(error){
+
+        console.error(
+            "Dashboard error:",
+            error
+        );
+
+
+        showAuthMessage(
+            "Could not load dashboard data: " +
+            (
+                error.message ||
+                "Unknown database error"
+            ),
+            true
+        );
+
+
+        $("productList").innerHTML =
+
+            `
+            <div class="empty error">
+
+                ${escapeHtml(
+                    error.message ||
+                    "Database error"
+                )}
+
+            </div>
+            `;
+
+
+        $("ordersTable").innerHTML =
+
+            `
+            <tr>
+
+                <td
+                    colspan="6"
+                    class="empty error">
+
+                    ${escapeHtml(
+                        error.message ||
+                        "Database error"
+                    )}
+
+                </td>
+
+            </tr>
+            `;
+
+    }
+
+}
+
+
+/* =====================================
+   PRODUCTS
+===================================== */
+
+function renderProducts(){
+
+    const container =
+        $("productList");
+
+
+    if(
+        !sellerProducts.length
+    ){
+
+        container.innerHTML =
+
+            `
+            <div class="empty">
+
+                You have no products yet.
+
+            </div>
+            `;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+
+        sellerProducts
+            .slice(0,8)
+            .map(
+                product => {
+
+                    const status =
+                        String(
+                            product.status ||
+                            "unknown"
+                        );
+
+
+                    const icon =
+                        product.featured
+                        ?
+                        "✦"
+                        :
+                        "◇";
+
+
+                    return `
+
+                    <div
+                        class="product-row">
+
+                        <div
+                            class="product-thumb">
+
+                            ${icon}
+
+                        </div>
+
+
+                        <div
+                            class="product-details">
+
+                            <strong>
+
+                                ${escapeHtml(
+                                    product.title
+                                )}
+
+                            </strong>
+
+                            <small>
+
+                                ${escapeHtml(
+                                    status
+                                )}
+
+                                ·
+
+                                ${Number(
+                                    product.download_count ||
+                                    0
+                                ).toLocaleString()}
+
+                                downloads
+
+                            </small>
+
+                        </div>
+
+
+                        <div
+                            class="product-price">
+
+                            ${money(
+                                product.price,
+                                product.currency
+                            )}
+
+                        </div>
+
+                    </div>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+/* =====================================
+   ORDERS
+===================================== */
+
+function renderOrders(){
+
+    const table =
+        $("ordersTable");
+
+
+    if(
+        !sellerOrders.length
+    ){
+
+        table.innerHTML =
+
+            `
+            <tr>
+
+                <td
+                    colspan="6"
+                    class="empty">
+
+                    No orders for your
+                    products yet.
+
+                </td>
+
+            </tr>
+            `;
+
+        return;
+
+    }
+
+
+    table.innerHTML =
+
+        sellerOrders
+            .slice(0,12)
+            .map(
+                order => {
+
+                    const names =
+
+                        order.items
+
+                            .map(
+                                item =>
+
+                                    sellerProducts
+                                        .find(
+                                            product =>
+                                                product.id ===
+                                                item.product_id
+                                        )
+                                        ?.title
+                            )
+
+                            .filter(Boolean);
+
+
+                    const productName =
+                        names[0] ||
+                        "Digital product";
+
+
+                    const extra =
+                        names.length > 1
+                        ?
+                        ` +${names.length - 1}`
+                        :
+                        "";
+
+
+                    return `
+
+                    <tr>
+
+                        <td>
+
+                            #${escapeHtml(
+                                String(
+                                    order.id
+                                ).slice(0,8)
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            ${escapeHtml(
+                                productName
+                            )}
+
+                            ${extra}
+
+                        </td>
+
+
+                        <td>
+
+                            ${escapeHtml(
+                                String(
+                                    order.buyer_id ||
+                                    ""
+                                ).slice(0,8)
+                            )}
+                            …
+
+                        </td>
+
+
+                        <td>
+
+                            ${money(
+                                order.sellerTotal,
+                                order.currency
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="status ${
+                                    getStatusClass(
+                                        order.status
+                                    )
+                                }">
+
+                                ${escapeHtml(
+                                    order.status ||
+                                    "unknown"
+                                )}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            ${new Date(
+                                order.created_at
+                            ).toLocaleDateString()}
+
+                        </td>
+
+                    </tr>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+/* =====================================
+   REVENUE CHART
+===================================== */
+
+function renderChart(
+    orders
+){
+
+    const days = [];
+
+
+    for(
+        let i=6;
+        i>=0;
+        i--
+    ){
+
+        const date =
+            new Date();
+
+
+        date.setHours(
+            0,0,0,0
+        );
+
+
+        date.setDate(
+            date.getDate() - i
+        );
+
+
+        days.push(
+            date
+        );
+
+    }
+
+
+    const totals =
+
+        days.map(
+            day =>
+
+                orders
+
+                    .filter(
+                        order => {
+
+                            const date =
+                                new Date(
+                                    order.created_at
+                                );
+
+
+                            date.setHours(
+                                0,0,0,0
+                            );
+
+
+                            return (
+                                date.getTime()
+                                ===
+                                day.getTime()
+                            );
+
+                        }
+                    )
+
+                    .reduce(
+                        (
+                            total,
+                            order
+                        ) =>
+
+                            total +
+                            order.sellerTotal,
+
+                        0
+                    )
+
+        );
+
+
+    const max =
+        Math.max(
+            ...totals,
+            1
+        );
+
+
+    $("chart").innerHTML =
+
+        days
+
+            .map(
+                (day,index) => {
+
+                    const height =
+
+                        Math.max(
+                            3,
+                            (
+                                totals[index]
+                                /
+                                max
+                            ) * 100
+                        );
+
+
+                    return `
+
+                    <div
+                        class="bar-wrap">
+
+                        <div
+                            class="bar"
+                            title="${money(
+                                totals[index]
+                            )}"
+                            style="
+                                height:${height}%;
+                            ">
+
+                        </div>
+
+                        <span
+                            class="bar-label">
+
+                            ${day.toLocaleDateString(
+                                undefined,
+                                {
+                                    weekday:"short"
+                                }
+                            )}
+
+                        </span>
+
+                    </div>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+/* =====================================
+   NAVIGATION
+===================================== */
+
+document
+    .querySelectorAll(
+        ".nav button"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    document
+                        .querySelectorAll(
+                            ".nav button"
+                        )
+                        .forEach(
+                            item =>
+                                item.classList
+                                    .remove(
+                                        "active"
+                                    )
+                        );
+
+
+                    button.classList.add(
+                        "active"
+                    );
+
+
+                    const section =
+                        button.dataset.section;
+
+
+                    if(
+                        section ===
+                        "products"
+                    ){
+
+                        location.href =
+                            "./products.html";
+
+                    }
+
+
+                    if(
+                        section ===
+                        "orders"
+                    ){
+
+                        location.href =
+                            "./orders.html";
+
+                    }
+
+
+                    if(
+                        section ===
+                        "analytics"
+                    ){
+
+                        location.href =
+                            "./analytics.html";
+
+                    }
+
+
+                    if(
+                        section ===
+                        "settings"
+                    ){
+
+                        location.href =
+                            "./settings.html";
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+/* =====================================
+   BUTTONS
+===================================== */
+
+$("refreshButton")
+    .addEventListener(
+        "click",
+        () => {
+
+            toast(
+                "Refreshing live data…"
+            );
+
+            loadDashboard();
+
+        }
+    );
+
+
+$("addProduct")
+    .addEventListener(
+        "click",
+        () => {
+
+            location.href =
+                "./products.html";
+
+        }
+    );
+
+
+$("viewStore")
+    .addEventListener(
+        "click",
+        () => {
+
+            location.href =
+                "../index.html#shop";
+
+        }
+    );
+
+
+$("analyticsButton")
+    .addEventListener(
+        "click",
+        () => {
+
+            location.href =
+                "./analytics.html";
+
+        }
+    );
+
+
+$("settingsButton")
+    .addEventListener(
+        "click",
+        () => {
+
+            location.href =
+                "./settings.html";
+
+        }
+    );
+
+
+/* =====================================
+   LOGOUT
+===================================== */
+
+$("avatarButton")
+    .addEventListener(
+        "click",
+        async () => {
+
+            const {
+                error
+            } =
+                await db.auth.signOut();
+
+
+            if(error){
+
+                toast(
+                    error.message
+                );
+
+                return;
+
+            }
+
+
+            location.href =
+                "../index.html";
+
+        }
+    );
+
+
+/* =====================================
+   AUTH STATE
+===================================== */
+
+db.auth.onAuthStateChange(
+    (
+        event
+    ) => {
+
+        if(
+            event === "SIGNED_IN" ||
+            event === "SIGNED_OUT"
+        ){
+
+            loadDashboard();
+
+        }
+
+    }
+);
+
+
+/* =====================================
+   START
+===================================== */
+
+loadDashboard();
+
+</script>
+
+</body>
+</html>
