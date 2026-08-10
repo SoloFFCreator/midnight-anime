@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SoloMarket — Admin</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#08090b;color:#f4f4f1;font:14px Arial,sans-serif}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.025;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:4px 4px}
+.sidebar{position:fixed;inset:0 auto 0 0;width:245px;background:#0d0f13;border-right:1px solid #ffffff10;padding:25px 16px;z-index:3}
+.logo{font:bold 21px Arial;padding:0 12px 28px}.logo span{opacity:.4}.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;color:#85868e;text-align:left;padding:13px 12px;border-radius:10px;cursor:pointer}.nav button.active,.nav button:hover{background:#181a20;color:#fff}
+.main{margin-left:245px;padding:30px 4vw;max-width:1450px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:35px}.top h1{font-size:32px;margin:0}.badge{font-size:11px;padding:7px 10px;border-radius:20px;background:#17382d;color:#66dfb3}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat{padding:22px;border:1px solid #ffffff10;background:#101216;border-radius:17px}.stat small{color:#777;display:block;margin-bottom:12px}.stat b{font-size:28px}.up{color:#61d8ab;font-size:11px;margin-left:8px}
+.panel{margin-top:18px;border:1px solid #ffffff10;background:#101216;border-radius:18px;padding:22px}.panel h2{font-size:17px;margin:0 0 20px}.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:left;padding:14px 8px;border-bottom:1px solid #ffffff08;color:#bfc0c5}.table th{font-size:11px;color:#777;text-transform:uppercase;letter-spacing:.1em}.pill{padding:5px 8px;border-radius:7px;background:#1a1d22;font-size:11px}.green{color:#64dcae}.red{color:#f07888}
+.page{display:none}.page.active{display:block}.search{background:#0b0c0f;border:1px solid #ffffff12;color:#fff;border-radius:10px;padding:11px 13px}
+button.primary{border:0;background:#f4f4f0;color:#08090b;border-radius:10px;padding:11px 15px;font-weight:bold;cursor:pointer}
+.row{display:flex;gap:10px;align-items:center}.empty{color:#777;text-align:center;padding:35px}
+@media(max-width:800px){.sidebar{position:static;width:auto;height:auto;border-right:0;border-bottom:1px solid #ffffff10}.nav{display:flex;overflow:auto}.main{margin:0;padding:20px}.cards{grid-template-columns:repeat(2,1fr)}}@media(max-width:480px){.cards{grid-template-columns:1fr}.top{gap:10px;align-items:start;flex-direction:column}.table{font-size:12px}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+<div class="logo">S<span>olo</span>Market</div>
+<div class="nav">
+<button class="active" data-page="overview">▦ Overview</button>
+<button data-page="users">♙ Users</button>
+<button data-page="products">◇ Products</button>
+<button data-page="orders">▤ Orders</button>
+</div>
+</aside>
+<main class="main">
+<section id="overview" class="page active">
+<div class="top"><div><div style="color:#777;font-size:11px;letter-spacing:.15em">ADMIN CONTROL CENTER</div><h1>Dashboard</h1></div><span class="badge">● System online</span></div>
+<div class="cards">
+<div class="stat"><small>Total users</small><b id="usersCount">—</b><span class="up">live</span></div>
+<div class="stat"><small>Products</small><b id="productsCount">—</b><span class="up">live</span></div>
+<div class="stat"><small>Orders</small><b id="ordersCount">—</b></div>
+<div class="stat"><small>Revenue</small><b id="revenue">$—</b></div>
+</div>
+<div class="panel"><h2>Recent orders</h2><table class="table"><thead><tr><th>Order</th><th>Buyer</th><th>Total</th><th>Status</th></tr></thead><tbody id="recent"></tbody></table></div>
+</section>
+
+<section id="users" class="page"><div class="top"><h1>Users</h1><input class="search" id="userSearch" placeholder="Search users"></div><div class="panel"><table class="table"><thead><tr><th>User</th><th>Username</th><th>Role</th><th>Joined</th></tr></thead><tbody id="usersTable"></tbody></table></div></section>
+
+<section id="products" class="page"><div class="top"><h1>Products</h1><input class="search" id="productSearch" placeholder="Search products"></div><div class="panel"><table class="table"><thead><tr><th>Product</th><th>Price</th><th>Status</th><th>Featured</th></tr></thead><tbody id="productsTable"></tbody></table></div></section>
+
+<section id="orders" class="page"><div class="top"><h1>Orders</h1><button class="primary" id="refresh">Refresh</button></div><div class="panel"><table class="table"><thead><tr><th>ID</th><th>Buyer</th><th>Total</th><th>Currency</th><th>Status</th><th>Date</th></tr></thead><tbody id="ordersTable"></tbody></table></div></section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const CONFIG={url:"https://xfnnjhpzzktmmcqsauve.supabase.co",key:"YOUR_SUPABASE_PUBLISHABLE_KEY"};
+const sb=window.supabase&&CONFIG.key&&!CONFIG.key.startsWith("YOUR_")?supabase.createClient(CONFIG.url,CONFIG.key):null;
+const pages=document.querySelectorAll(".page"),nav=document.querySelectorAll(".nav button");
+nav.forEach(b=>b.onclick=()=>{nav.forEach(x=>x.classList.remove("active"));b.classList.add("active");pages.forEach(p=>p.classList.toggle("active",p.id===b.dataset.page))});
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+async function load(){
+ if(!sb){document.querySelectorAll("tbody").forEach(x=>x.innerHTML='<tr><td colspan="6" class="empty">Add the Supabase publishable key in this file to load live data.</td></tr>');return}
+ const [u,p,o]=await Promise.all([
+  sb.from("profiles").select("id,username,display_name,role,created_at").order("created_at",{ascending:false}),
+  sb.from("products").select("id,title,price,currency,status,featured,created_at").order("created_at",{ascending:false}),
+  sb.from("orders").select("id,buyer_id,total,currency,status,created_at").order("created_at",{ascending:false})
+ ]);
+ const users=u.data||[], products=p.data||[], orders=o.data||[];
+ usersCount.textContent=users.length;productsCount.textContent=products.length;ordersCount.textContent=orders.length;
+ revenue.textContent="$"+orders.reduce((n,x)=>n+Number(x.total||0),0).toFixed(2);
+ usersTable.innerHTML=users.map(x=>`<tr><td>${esc(x.display_name||"Unnamed")}</td><td>${esc(x.username||"—")}</td><td><span class="pill">${esc(x.role)}</span></td><td>${new Date(x.created_at).toLocaleDateString()}</td></tr>`).join("")||'<tr><td colspan="4" class="empty">No users yet.</td></tr>';
+ productsTable.innerHTML=products.map(x=>`<tr><td>${esc(x.title)}</td><td>${esc(x.currency)} ${esc(x.price)}</td><td><span class="pill">${esc(x.status)}</span></td><td>${x.featured?"★":"—"}</td></tr>`).join("")||'<tr><td colspan="4" class="empty">No products yet.</td></tr>';
+ ordersTable.innerHTML=orders.map(x=>`<tr><td>${esc(x.id.slice(0,8))}…</td><td>${esc(x.buyer_id.slice(0,8))}…</td><td>${esc(x.total)}</td><td>${esc(x.currency)}</td><td><span class="pill">${esc(x.status)}</span></td><td>${new Date(x.created_at).toLocaleDateString()}</td></tr>`).join("")||'<tr><td colspan="6" class="empty">No orders yet.</td></tr>';
+ recent.innerHTML=orders.slice(0,6).map(x=>`<tr><td>${esc(x.id.slice(0,8))}…</td><td>${esc(x.buyer_id.slice(0,8))}…</td><td>${esc(x.currency)} ${esc(x.total)}</td><td><span class="pill">${esc(x.status)}</span></td></tr>`).join("")||'<tr><td colspan="4" class="empty">No orders yet.</td></tr>';
+}
+refresh.onclick=load;load();
+</script>
+</body>
+</html>
