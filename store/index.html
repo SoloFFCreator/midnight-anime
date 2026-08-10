@@ -1,1 +1,2151 @@
-<!doctype html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Solo Market</title><link rel="stylesheet" href="css/style.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><header><a class="logo" href="index.html">S<span>olo</span>Market</a><nav><a href="#shop">Shop</a><a href="#categories">Categories</a><a href="#sell">Sell</a></nav><div id="account"><button id="login">Log in</button><button class="primary" id="sell">Start selling</button></div></header><main><section class="hero"><div><label>✦ THE CREATOR MARKETPLACE</label><h1>Digital products.<br><i>Infinite possibilities.</i></h1><p>Discover exceptional digital products from independent creators, or build your own storefront and start selling.</p><div class="actions"><a class="primary big" href="#shop">Explore products →</a><button class="secondary big" id="heroSell">Open your store</button></div><div class="stats"><b>10K+ <small>Products</small></b><b>5K+ <small>Creators</small></b><b>120+ <small>Categories</small></b></div></div><div class="hero-art"><div class="orbit"></div><div class="hero-card"><small>FEATURED PRODUCT</small><strong>CREATE<br>WITHOUT<br>LIMITS.</strong><footer><span>Creator Kit</span><b>$24</b></footer></div></div></section><section id="shop" class="section"><div class="section-title"><div><label>CURATED MARKETPLACE</label><h2>Explore <i>what's next.</i></h2></div><input id="search" placeholder="⌕ Search products..."></div><div id="filters"></div><div id="products" class="grid"></div></section><section id="categories" class="section"><label>BROWSE BY TYPE</label><h2>Find your <i>thing.</i></h2><div id="cats" class="catgrid"></div></section><section class="section sellbox" id="sell"><div><label>FOR CREATORS</label><h2>Your next product<br>could be <i>here.</i></h2><p>Launch a storefront, upload digital products and manage sales from one place.</p><button class="primary big" id="sell2">Start selling free →</button></div><div class="sellstats"><b>0%<small>setup fee</small></b><b>24/7<small>storefront</small></b><b>∞<small>creative freedom</small></b></div></section></main><footer>SoloMarket <span>Built for digital creators.</span><span>© 2026</span></footer><div id="modal" class="modal"><div class="modalbox"><button id="close">×</button><label>SOLOMARKET ACCOUNT</label><h2>Welcome back.</h2><form id="auth"><input id="email" type="email" placeholder="Email" required><input id="password" type="password" placeholder="Password" minlength="6" required><button class="primary big">Continue →</button></form><p id="status"></p><small>New users are automatically registered. Existing users can sign in.</small></div></div><script src="js/config.js"></script><script src="js/app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#08090d">
+<meta name="description" content="Solo Market — Discover and sell digital products.">
+<title>Solo Market — Digital Marketplace</title>
+
+<style>
+/* =========================================================
+   SOLO MARKET
+   SELF-CONTAINED CSS
+   ========================================================= */
+
+:root{
+    --bg:#07080c;
+    --bg2:#0c0e14;
+    --panel:#11131a;
+    --panel2:#161922;
+    --text:#f5f7fb;
+    --muted:#8b91a1;
+    --muted2:#646a78;
+    --border:rgba(255,255,255,.09);
+    --border2:rgba(255,255,255,.15);
+    --primary:#ffffff;
+    --accent:#8067ff;
+    --accent2:#5b8cff;
+    --success:#45d6a2;
+    --danger:#ff667d;
+    --radius:20px;
+    --shadow:0 25px 80px rgba(0,0,0,.45);
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 10% 10%,rgba(128,103,255,.14),transparent 28%),
+        radial-gradient(circle at 90% 35%,rgba(91,140,255,.10),transparent 25%),
+        var(--bg);
+    color:var(--text);
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    overflow-x:hidden;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.035;
+    background-image:
+        radial-gradient(#fff 1px,transparent 1px);
+    background-size:4px 4px;
+    z-index:100;
+}
+
+a{
+    color:inherit;
+    text-decoration:none;
+}
+
+button,
+input,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+/* ---------- scrollbar ---------- */
+
+::-webkit-scrollbar{
+    width:8px;
+}
+
+::-webkit-scrollbar-track{
+    background:#08090d;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#292d38;
+    border-radius:10px;
+}
+
+/* ---------- navigation ---------- */
+
+.navbar{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:76px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 5vw;
+    border-bottom:1px solid var(--border);
+    background:rgba(7,8,12,.78);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    z-index:50;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:20px;
+    font-weight:800;
+    letter-spacing:-.04em;
+}
+
+.logo-mark{
+    width:34px;
+    height:34px;
+    display:grid;
+    place-items:center;
+    border-radius:10px;
+    background:#fff;
+    color:#08090d;
+    font-weight:900;
+}
+
+.logo-muted{
+    opacity:.4;
+}
+
+.nav-links{
+    display:flex;
+    align-items:center;
+    gap:30px;
+}
+
+.nav-links a{
+    color:#999fac;
+    font-size:14px;
+    transition:.2s;
+}
+
+.nav-links a:hover{
+    color:#fff;
+}
+
+.nav-actions{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.icon-btn,
+.ghost-btn,
+.primary-btn{
+    border-radius:11px;
+    padding:11px 16px;
+    transition:.25s ease;
+}
+
+.icon-btn,
+.ghost-btn{
+    border:1px solid var(--border);
+    background:transparent;
+    color:#c7cad3;
+}
+
+.primary-btn{
+    border:0;
+    background:#f4f5f2;
+    color:#090a0e;
+    font-weight:750;
+}
+
+.primary-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 35px rgba(255,255,255,.13);
+}
+
+.mobile-menu{
+    display:none;
+}
+
+/* ---------- hero ---------- */
+
+.hero{
+    width:min(1200px,92%);
+    min-height:850px;
+    margin:auto;
+    padding-top:130px;
+    display:grid;
+    grid-template-columns:1fr .9fr;
+    align-items:center;
+    gap:50px;
+}
+
+.eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    color:#9096a5;
+    font-size:11px;
+    letter-spacing:.16em;
+    font-weight:800;
+}
+
+.eyebrow-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--success);
+    box-shadow:0 0 15px var(--success);
+}
+
+.hero h1{
+    margin:25px 0 24px;
+    font-size:clamp(55px,7vw,94px);
+    line-height:.91;
+    letter-spacing:-.075em;
+    font-weight:850;
+}
+
+.gradient-text{
+    background:linear-gradient(
+        100deg,
+        #fff 0%,
+        #9d8cff 45%,
+        #5e91ff 100%
+    );
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+.hero-description{
+    max-width:570px;
+    color:var(--muted);
+    font-size:18px;
+    line-height:1.75;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:12px;
+    margin-top:34px;
+}
+
+.hero-btn{
+    padding:15px 21px;
+    border-radius:13px;
+}
+
+.secondary-btn{
+    border:1px solid var(--border2);
+    background:transparent;
+    color:#e5e7ec;
+}
+
+.hero-stats{
+    display:flex;
+    gap:45px;
+    margin-top:55px;
+}
+
+.stat{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.stat strong{
+    font-size:22px;
+}
+
+.stat span{
+    color:var(--muted2);
+    font-size:11px;
+}
+
+/* ---------- hero visual ---------- */
+
+.hero-visual{
+    height:520px;
+    position:relative;
+    display:grid;
+    place-items:center;
+}
+
+.hero-glow{
+    position:absolute;
+    width:350px;
+    height:350px;
+    border-radius:50%;
+    background:#7962ff;
+    opacity:.14;
+    filter:blur(80px);
+}
+
+.orbit{
+    position:absolute;
+    width:390px;
+    height:390px;
+    border:1px solid rgba(128,103,255,.18);
+    border-radius:50%;
+    animation:spin 18s linear infinite;
+}
+
+.orbit::before,
+.orbit::after{
+    content:"";
+    position:absolute;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#8c76ff;
+    box-shadow:0 0 20px #8c76ff;
+}
+
+.orbit::before{
+    top:35px;
+    left:70px;
+}
+
+.orbit::after{
+    bottom:55px;
+    right:40px;
+}
+
+@keyframes spin{
+    from{transform:rotate(0)}
+    to{transform:rotate(360deg)}
+}
+
+.feature-card{
+    position:relative;
+    width:335px;
+    height:425px;
+    padding:20px;
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:27px;
+    background:
+        linear-gradient(
+            145deg,
+            #1a1c25,
+            #0b0d12
+        );
+    box-shadow:30px 40px 90px rgba(0,0,0,.6);
+    transform:rotate(4deg);
+    z-index:2;
+    transition:.5s ease;
+}
+
+.feature-card:hover{
+    transform:rotate(0) translateY(-8px);
+}
+
+.feature-label{
+    color:#777d8b;
+    font-size:10px;
+    letter-spacing:.14em;
+}
+
+.feature-art{
+    height:275px;
+    margin-top:15px;
+    border-radius:18px;
+    padding:25px;
+    display:flex;
+    align-items:end;
+    position:relative;
+    overflow:hidden;
+    background:
+        radial-gradient(
+            circle at 80% 20%,
+            #947dff,
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #191326,
+            #0c0e14
+        );
+}
+
+.feature-art::after{
+    content:"";
+    position:absolute;
+    width:250px;
+    height:250px;
+    border:1px solid rgba(255,255,255,.2);
+    border-radius:50%;
+    right:-90px;
+    bottom:-90px;
+}
+
+.feature-art strong{
+    font-size:35px;
+    line-height:.91;
+    letter-spacing:-.06em;
+    z-index:1;
+}
+
+.feature-info{
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+    margin-top:16px;
+}
+
+.feature-info small{
+    color:#777d8a;
+}
+
+.feature-info b{
+    display:block;
+    margin-top:4px;
+}
+
+.feature-price{
+    font-size:18px;
+}
+
+.floating-revenue{
+    position:absolute;
+    bottom:50px;
+    left:-10px;
+    z-index:4;
+    padding:17px;
+    border:1px solid var(--border2);
+    border-radius:15px;
+    background:rgba(18,20,27,.9);
+    backdrop-filter:blur(16px);
+    box-shadow:var(--shadow);
+}
+
+.floating-revenue strong{
+    display:block;
+    font-size:20px;
+}
+
+.floating-revenue small{
+    color:#777d8a;
+}
+
+.floating-revenue span{
+    display:block;
+    margin-top:5px;
+    color:var(--success);
+    font-size:11px;
+}
+
+/* ---------- sections ---------- */
+
+.section{
+    width:min(1200px,92%);
+    margin:auto;
+    padding:110px 0;
+}
+
+.section-heading{
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+    gap:30px;
+}
+
+.section-title{
+    margin-top:12px;
+    font-size:52px;
+    line-height:1;
+    letter-spacing:-.065em;
+}
+
+.section-title span{
+    color:#777d89;
+}
+
+.view-all{
+    color:#999eaa;
+    font-size:13px;
+}
+
+.view-all:hover{
+    color:#fff;
+}
+
+/* ---------- search ---------- */
+
+.shop-toolbar{
+    margin-top:28px;
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+}
+
+.search-box{
+    flex:1;
+    max-width:430px;
+    position:relative;
+}
+
+.search-box input{
+    width:100%;
+    padding:14px 17px;
+    padding-left:42px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    outline:none;
+    background:#101218;
+    color:#fff;
+}
+
+.search-icon{
+    position:absolute;
+    left:15px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#6d7380;
+}
+
+.category-select{
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#101218;
+    color:#bbbfc8;
+    padding:0 15px;
+    outline:none;
+}
+
+/* ---------- filters ---------- */
+
+.filters{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:20px;
+}
+
+.filter{
+    border:1px solid var(--border);
+    background:transparent;
+    color:#8d929e;
+    padding:9px 14px;
+    border-radius:10px;
+    font-size:12px;
+    transition:.2s;
+}
+
+.filter:hover,
+.filter.active{
+    background:#f3f4f0;
+    color:#08090d;
+}
+
+/* ---------- products ---------- */
+
+.product-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin-top:25px;
+}
+
+.product-card{
+    padding:9px;
+    border:1px solid var(--border);
+    border-radius:19px;
+    background:#101218;
+    cursor:pointer;
+    transition:.3s ease;
+}
+
+.product-card:hover{
+    transform:translateY(-7px);
+    border-color:var(--border2);
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+
+.product-image{
+    height:190px;
+    border-radius:13px;
+    display:grid;
+    place-items:center;
+    overflow:hidden;
+    position:relative;
+}
+
+.product-image span{
+    font-size:38px;
+    font-weight:900;
+}
+
+.product-image.one{
+    background:linear-gradient(135deg,#20253a,#7962ff);
+}
+
+.product-image.two{
+    background:linear-gradient(135deg,#152d28,#22c99c);
+}
+
+.product-image.three{
+    background:linear-gradient(135deg,#2b1924,#e56b93);
+}
+
+.product-image.four{
+    background:linear-gradient(135deg,#19213a,#5b8cff);
+}
+
+.product-image.five{
+    background:linear-gradient(135deg,#31271a,#dba15b);
+}
+
+.product-image.six{
+    background:linear-gradient(135deg,#211a32,#9c78ff);
+}
+
+.product-info{
+    padding:14px 5px 6px;
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.product-name{
+    font-size:14px;
+    font-weight:700;
+}
+
+.product-category{
+    display:block;
+    margin-top:5px;
+    color:#727784;
+    font-size:11px;
+}
+
+.product-price{
+    font-weight:800;
+}
+
+/* ---------- categories ---------- */
+
+.category-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:13px;
+    margin-top:25px;
+}
+
+.category-card{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:23px;
+    border:1px solid var(--border);
+    border-radius:17px;
+    background:#0f1116;
+    transition:.25s;
+}
+
+.category-card:hover{
+    transform:translateY(-4px);
+    background:#151820;
+}
+
+.category-icon{
+    width:48px;
+    height:48px;
+    display:grid;
+    place-items:center;
+    border-radius:14px;
+    background:#1a1d25;
+    font-size:22px;
+}
+
+.category-content{
+    flex:1;
+}
+
+.category-content strong{
+    display:block;
+}
+
+.category-content small{
+    display:block;
+    color:#6e7481;
+    margin-top:5px;
+}
+
+/* ---------- creator CTA ---------- */
+
+.creator-box{
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    justify-content:space-between;
+    gap:50px;
+    padding:65px;
+    border:1px solid var(--border);
+    border-radius:30px;
+    background:
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(128,103,255,.18),
+            transparent 38%
+        ),
+        #101218;
+}
+
+.creator-box h2{
+    margin:14px 0;
+    font-size:55px;
+    line-height:.95;
+    letter-spacing:-.065em;
+}
+
+.creator-box p{
+    max-width:540px;
+    color:#858b98;
+    line-height:1.7;
+}
+
+.creator-stats{
+    display:flex;
+    align-items:end;
+    gap:35px;
+}
+
+.creator-stats strong{
+    font-size:30px;
+}
+
+.creator-stats span{
+    display:block;
+    color:#707682;
+    font-size:11px;
+    margin-top:5px;
+}
+
+/* ---------- footer ---------- */
+
+.footer{
+    width:92%;
+    max-width:1200px;
+    margin:auto;
+    padding:35px 0;
+    border-top:1px solid var(--border);
+    display:flex;
+    justify-content:space-between;
+    color:#656b77;
+    font-size:12px;
+}
+
+/* ---------- modal ---------- */
+
+.modal{
+    position:fixed;
+    inset:0;
+    display:none;
+    place-items:center;
+    padding:20px;
+    background:rgba(0,0,0,.78);
+    backdrop-filter:blur(15px);
+    z-index:100;
+}
+
+.modal.open{
+    display:grid;
+}
+
+.modal-card{
+    position:relative;
+    width:min(470px,100%);
+    padding:38px;
+    border:1px solid var(--border2);
+    border-radius:24px;
+    background:#11131a;
+    box-shadow:0 40px 120px rgba(0,0,0,.7);
+    animation:modalIn .35s ease;
+}
+
+@keyframes modalIn{
+    from{
+        opacity:0;
+        transform:translateY(20px) scale(.97);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+
+.modal-close{
+    position:absolute;
+    top:13px;
+    right:17px;
+    border:0;
+    background:none;
+    color:#858b97;
+    font-size:28px;
+}
+
+.modal-card h2{
+    margin:14px 0 10px;
+    font-size:38px;
+    letter-spacing:-.06em;
+}
+
+.modal-card p{
+    color:#818793;
+    line-height:1.6;
+}
+
+.form{
+    display:grid;
+    gap:10px;
+    margin-top:24px;
+}
+
+.form input{
+    width:100%;
+    padding:14px;
+    border-radius:11px;
+    border:1px solid var(--border);
+    background:#090a0e;
+    color:#fff;
+    outline:none;
+}
+
+.form input:focus{
+    border-color:#7862ff;
+}
+
+.form button{
+    margin-top:5px;
+}
+
+.modal-status{
+    margin-top:12px;
+    color:#999;
+    font-size:12px;
+}
+
+/* ---------- toast ---------- */
+
+.toast{
+    position:fixed;
+    right:25px;
+    bottom:25px;
+    z-index:150;
+    padding:14px 17px;
+    border:1px solid var(--border2);
+    border-radius:12px;
+    background:#151820;
+    box-shadow:var(--shadow);
+    transform:translateY(100px);
+    opacity:0;
+    transition:.35s;
+}
+
+.toast.show{
+    transform:none;
+    opacity:1;
+}
+
+/* ---------- reveal ---------- */
+
+.reveal{
+    opacity:0;
+    transform:translateY(25px);
+    transition:.8s ease;
+}
+
+.reveal.visible{
+    opacity:1;
+    transform:none;
+}
+
+/* ---------- mobile ---------- */
+
+@media(max-width:900px){
+
+    .nav-links{
+        display:none;
+    }
+
+    .mobile-menu{
+        display:block;
+    }
+
+    .hero{
+        grid-template-columns:1fr;
+        padding-top:120px;
+    }
+
+    .hero-visual{
+        height:430px;
+    }
+
+    .product-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .category-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .creator-box{
+        flex-direction:column;
+    }
+
+    .creator-stats{
+        align-items:start;
+    }
+}
+
+@media(max-width:600px){
+
+    .navbar{
+        padding:0 18px;
+    }
+
+    .nav-actions .ghost-btn{
+        display:none;
+    }
+
+    .hero{
+        width:90%;
+        padding-top:110px;
+    }
+
+    .hero h1{
+        font-size:56px;
+    }
+
+    .hero-description{
+        font-size:16px;
+    }
+
+    .hero-buttons{
+        flex-direction:column;
+    }
+
+    .hero-stats{
+        gap:22px;
+    }
+
+    .hero-visual{
+        height:380px;
+    }
+
+    .orbit{
+        width:300px;
+        height:300px;
+    }
+
+    .feature-card{
+        width:280px;
+        height:355px;
+    }
+
+    .feature-art{
+        height:220px;
+    }
+
+    .section{
+        padding:75px 0;
+    }
+
+    .section-heading{
+        flex-direction:column;
+        align-items:start;
+    }
+
+    .section-title{
+        font-size:43px;
+    }
+
+    .shop-toolbar{
+        flex-direction:column;
+    }
+
+    .search-box{
+        max-width:none;
+    }
+
+    .category-select{
+        height:45px;
+    }
+
+    .product-grid{
+        grid-template-columns:1fr;
+    }
+
+    .category-grid{
+        grid-template-columns:1fr;
+    }
+
+    .creator-box{
+        padding:35px;
+    }
+
+    .creator-box h2{
+        font-size:43px;
+    }
+
+    .creator-stats{
+        flex-wrap:wrap;
+    }
+
+    .footer{
+        flex-direction:column;
+        gap:12px;
+    }
+
+    .floating-revenue{
+        left:0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     NAVIGATION
+     ========================================================= -->
+
+<header class="navbar">
+
+    <a href="#" class="logo">
+        <span class="logo-mark">S</span>
+        <span>solo<span class="logo-muted">market</span></span>
+    </a>
+
+    <nav class="nav-links">
+        <a href="#shop">Shop</a>
+        <a href="#categories">Categories</a>
+        <a href="#creators">Sell</a>
+    </nav>
+
+    <div class="nav-actions">
+
+        <button class="icon-btn" id="themeButton">
+            ◐
+        </button>
+
+        <button class="ghost-btn" id="loginButton">
+            Log in
+        </button>
+
+        <button class="primary-btn" id="sellButton">
+            Start selling ↗
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================================
+     HERO
+     ========================================================= -->
+
+<main>
+
+<section class="hero">
+
+    <div class="reveal">
+
+        <span class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            THE MARKETPLACE FOR DIGITAL CREATORS
+        </span>
+
+        <h1>
+            Build.
+            Sell.
+            <br>
+            <span class="gradient-text">
+                Keep creating.
+            </span>
+        </h1>
+
+        <p class="hero-description">
+            Discover premium digital products from independent
+            creators — or launch your own store and turn your ideas
+            into income.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="#shop"
+               class="primary-btn hero-btn">
+                Explore products →
+            </a>
+
+            <button
+                class="secondary-btn hero-btn"
+                id="heroSellButton">
+                Open your store
+            </button>
+
+        </div>
+
+        <div class="hero-stats">
+
+            <div class="stat">
+                <strong>10K+</strong>
+                <span>PRODUCTS</span>
+            </div>
+
+            <div class="stat">
+                <strong>5K+</strong>
+                <span>CREATORS</span>
+            </div>
+
+            <div class="stat">
+                <strong>120+</strong>
+                <span>CATEGORIES</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="hero-visual reveal">
+
+        <div class="hero-glow"></div>
+        <div class="orbit"></div>
+
+        <div class="feature-card">
+
+            <span class="feature-label">
+                FEATURED PRODUCT
+            </span>
+
+            <div class="feature-art">
+                <strong>
+                    CREATE<br>
+                    WITHOUT<br>
+                    LIMITS.
+                </strong>
+            </div>
+
+            <div class="feature-info">
+
+                <div>
+                    <small>Digital Creator Kit</small>
+                    <b>Creator Launch Pack</b>
+                </div>
+
+                <span class="feature-price">
+                    $24
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="floating-revenue">
+            <strong>+$8,420</strong>
+            <small>creator revenue</small>
+            <span>↗ 24.8% this month</span>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     SHOP
+     ========================================================= -->
+
+<section class="section" id="shop">
+
+    <div class="section-heading reveal">
+
+        <div>
+            <span class="eyebrow">
+                CURATED MARKETPLACE
+            </span>
+
+            <h2 class="section-title">
+                Explore <span>what's next.</span>
+            </h2>
+        </div>
+
+        <a href="#" class="view-all">
+            View all products →
+        </a>
+
+    </div>
+
+
+    <div class="shop-toolbar reveal">
+
+        <div class="search-box">
+
+            <span class="search-icon">
+                ⌕
+            </span>
+
+            <input
+                type="search"
+                id="searchInput"
+                placeholder="Search products..."
+            >
+
+        </div>
+
+        <select
+            class="category-select"
+            id="categorySelect">
+
+            <option value="all">
+                All categories
+            </option>
+
+            <option value="templates">
+                Templates
+            </option>
+
+            <option value="graphics">
+                Graphics
+            </option>
+
+            <option value="software">
+                Software
+            </option>
+
+            <option value="ai">
+                AI & Prompts
+            </option>
+
+            <option value="audio">
+                Audio
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="filters reveal">
+
+        <button class="filter active"
+                data-category="all">
+            All
+        </button>
+
+        <button class="filter"
+                data-category="templates">
+            Templates
+        </button>
+
+        <button class="filter"
+                data-category="graphics">
+            Graphics
+        </button>
+
+        <button class="filter"
+                data-category="software">
+            Software
+        </button>
+
+        <button class="filter"
+                data-category="ai">
+            AI
+        </button>
+
+        <button class="filter"
+                data-category="audio">
+            Audio
+        </button>
+
+    </div>
+
+
+    <div class="product-grid" id="productGrid"></div>
+
+</section>
+
+
+<!-- =========================================================
+     CATEGORIES
+     ========================================================= -->
+
+<section class="section" id="categories">
+
+    <div class="reveal">
+
+        <span class="eyebrow">
+            BROWSE BY TYPE
+        </span>
+
+        <h2 class="section-title">
+            Find your <span>thing.</span>
+        </h2>
+
+    </div>
+
+
+    <div class="category-grid">
+
+        <div class="category-card reveal">
+
+            <div class="category-icon">
+                ⌘
+            </div>
+
+            <div class="category-content">
+
+                <strong>Templates</strong>
+
+                <small>
+                    Notion, Figma, Canva & more
+                </small>
+
+            </div>
+
+            <span>→</span>
+
+        </div>
+
+
+        <div class="category-card reveal">
+
+            <div class="category-icon">
+                ◈
+            </div>
+
+            <div class="category-content">
+
+                <strong>Graphics</strong>
+
+                <small>
+                    Icons, illustrations & assets
+                </small>
+
+            </div>
+
+            <span>→</span>
+
+        </div>
+
+
+        <div class="category-card reveal">
+
+            <div class="category-icon">
+                ✦
+            </div>
+
+            <div class="category-content">
+
+                <strong>AI & Prompts</strong>
+
+                <small>
+                    Prompts, workflows & tools
+                </small>
+
+            </div>
+
+            <span>→</span>
+
+        </div>
+
+
+        <div class="category-card reveal">
+
+            <div class="category-icon">
+                ♫
+            </div>
+
+            <div class="category-content">
+
+                <strong>Audio</strong>
+
+                <small>
+                    Music, sounds & effects
+                </small>
+
+            </div>
+
+            <span>→</span>
+
+        </div>
+
+
+        <div class="category-card reveal">
+
+            <div class="category-icon">
+                ▶
+            </div>
+
+            <div class="category-content">
+
+                <strong>Video</strong>
+
+                <small>
+                    Presets, footage & motion
+                </small>
+
+            </div>
+
+            <span>→</span>
+
+        </div>
+
+
+        <div class="category-card reveal">
+
+            <div class="category-icon">
+                ⚙
+            </div>
+
+            <div class="category-content">
+
+                <strong>Software</strong>
+
+                <small>
+                    Apps, plugins & source code
+                </small>
+
+            </div>
+
+            <span>→</span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     CREATOR CTA
+     ========================================================= -->
+
+<section class="section" id="creators">
+
+    <div class="creator-box reveal">
+
+        <div>
+
+            <span class="eyebrow">
+                FOR CREATORS
+            </span>
+
+            <h2>
+                Your next product
+                <br>
+                could be <span>here.</span>
+            </h2>
+
+            <p>
+                Create your storefront, upload your digital products,
+                set your prices and start building your business.
+            </p>
+
+            <button
+                class="primary-btn hero-btn"
+                id="creatorButton">
+                Start selling free →
+            </button>
+
+        </div>
+
+
+        <div class="creator-stats">
+
+            <div>
+                <strong>0%</strong>
+                <span>SETUP FEE</span>
+            </div>
+
+            <div>
+                <strong>24/7</strong>
+                <span>STOREFRONT</span>
+            </div>
+
+            <div>
+                <strong>∞</strong>
+                <span>CREATIVE FREEDOM</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+
+<footer class="footer">
+
+    <div class="logo">
+        <span class="logo-mark">S</span>
+        <span>solo<span class="logo-muted">market</span></span>
+    </div>
+
+    <span>
+        Built for digital creators.
+    </span>
+
+    <span>
+        © 2026 Solo Market
+    </span>
+
+</footer>
+
+
+<!-- =========================================================
+     AUTH MODAL
+     ========================================================= -->
+
+<div class="modal" id="authModal">
+
+    <div class="modal-card">
+
+        <button
+            class="modal-close"
+            id="closeModal">
+            ×
+        </button>
+
+        <span class="eyebrow">
+            SOLO MARKET ACCOUNT
+        </span>
+
+        <h2>
+            Enter the marketplace.
+        </h2>
+
+        <p>
+            Sign in or create an account to buy and sell
+            digital products.
+        </p>
+
+        <form class="form" id="authForm">
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Email address"
+                required
+            >
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Password"
+                minlength="6"
+                required
+            >
+
+            <button
+                class="primary-btn"
+                type="submit">
+                Continue →
+            </button>
+
+        </form>
+
+        <div
+            class="modal-status"
+            id="authStatus">
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="toast" id="toast">
+    Added to your experience.
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+/* =========================================================
+   PRODUCT DATA
+   Replace this demo data with Supabase products later.
+   ========================================================= */
+
+const products = [
+
+    {
+        id:1,
+        name:"Creator Launch Pack",
+        category:"templates",
+        price:"$24",
+        icon:"✦",
+        art:"one"
+    },
+
+    {
+        id:2,
+        name:"Aurora UI Kit",
+        category:"graphics",
+        price:"$18",
+        icon:"◈",
+        art:"two"
+    },
+
+    {
+        id:3,
+        name:"AI Creator Prompts",
+        category:"ai",
+        price:"$12",
+        icon:"✧",
+        art:"three"
+    },
+
+    {
+        id:4,
+        name:"Sonic Texture Pack",
+        category:"audio",
+        price:"$15",
+        icon:"♫",
+        art:"four"
+    },
+
+    {
+        id:5,
+        name:"Notion OS Pro",
+        category:"templates",
+        price:"$29",
+        icon:"⌘",
+        art:"five"
+    },
+
+    {
+        id:6,
+        name:"Brand Identity Kit",
+        category:"graphics",
+        price:"$32",
+        icon:"◇",
+        art:"six"
+    },
+
+    {
+        id:7,
+        name:"Developer Icon Set",
+        category:"graphics",
+        price:"$9",
+        icon:"⌁",
+        art:"one"
+    },
+
+    {
+        id:8,
+        name:"Motion Presets",
+        category:"software",
+        price:"$21",
+        icon:"↯",
+        art:"four"
+    }
+
+];
+
+
+/* =========================================================
+   PRODUCT RENDERING
+   ========================================================= */
+
+const productGrid =
+    document.getElementById("productGrid");
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const categorySelect =
+    document.getElementById("categorySelect");
+
+function renderProducts(){
+
+    const search =
+        searchInput.value.toLowerCase().trim();
+
+    const category =
+        categorySelect.value;
+
+    const filtered =
+        products.filter(product => {
+
+            const matchesSearch =
+                product.name
+                .toLowerCase()
+                .includes(search);
+
+            const matchesCategory =
+                category === "all" ||
+                product.category === category;
+
+            return matchesSearch &&
+                   matchesCategory;
+
+        });
+
+
+    productGrid.innerHTML =
+        filtered.map(product => `
+
+            <article
+                class="product-card"
+                data-id="${product.id}">
+
+                <div
+                    class="product-image ${product.art}">
+
+                    <span>
+                        ${product.icon}
+                    </span>
+
+                </div>
+
+                <div class="product-info">
+
+                    <div>
+
+                        <div class="product-name">
+                            ${product.name}
+                        </div>
+
+                        <span class="product-category">
+                            ${product.category}
+                            · Instant download
+                        </span>
+
+                    </div>
+
+                    <div class="product-price">
+                        ${product.price}
+                    </div>
+
+                </div>
+
+            </article>
+
+        `).join("");
+
+
+    if(!filtered.length){
+
+        productGrid.innerHTML = `
+            <div style="
+                grid-column:1/-1;
+                text-align:center;
+                padding:70px;
+                color:#777;
+            ">
+                No products found.
+            </div>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+searchInput.addEventListener(
+    "input",
+    renderProducts
+);
+
+categorySelect.addEventListener(
+    "change",
+    renderProducts
+);
+
+
+/* =========================================================
+   FILTER BUTTONS
+   ========================================================= */
+
+document
+.querySelectorAll(".filter")
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            document
+            .querySelectorAll(".filter")
+            .forEach(btn =>
+                btn.classList.remove("active")
+            );
+
+            button.classList.add("active");
+
+            categorySelect.value =
+                button.dataset.category;
+
+            renderProducts();
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+const modal =
+    document.getElementById("authModal");
+
+function openModal(){
+
+    modal.classList.add("open");
+
+}
+
+function closeModal(){
+
+    modal.classList.remove("open");
+
+}
+
+document
+.getElementById("loginButton")
+.addEventListener("click",openModal);
+
+document
+.getElementById("sellButton")
+.addEventListener("click",openModal);
+
+document
+.getElementById("heroSellButton")
+.addEventListener("click",openModal);
+
+document
+.getElementById("creatorButton")
+.addEventListener("click",openModal);
+
+document
+.getElementById("closeModal")
+.addEventListener("click",closeModal);
+
+modal.addEventListener(
+    "click",
+    event => {
+
+        if(event.target === modal){
+            closeModal();
+        }
+
+    }
+);
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+const toast =
+    document.getElementById("toast");
+
+function showToast(message){
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    setTimeout(
+        () => toast.classList.remove("show"),
+        2500
+    );
+
+}
+
+
+/* =========================================================
+   PRODUCT CLICK
+   ========================================================= */
+
+productGrid.addEventListener(
+    "click",
+    event => {
+
+        const card =
+            event.target.closest(".product-card");
+
+        if(!card) return;
+
+        const product =
+            products.find(
+                p => p.id == card.dataset.id
+            );
+
+        if(product){
+
+            showToast(
+                `${product.name} selected`
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   THEME BUTTON
+   ========================================================= */
+
+document
+.getElementById("themeButton")
+.addEventListener(
+    "click",
+    () => {
+
+        showToast(
+            "Theme controls are ready for the next build."
+        );
+
+    }
+);
+
+
+/* =========================================================
+   AUTH
+   =========================================================
+
+   IMPORTANT:
+   Put your Supabase publishable key here when connecting
+   the real authentication system.
+
+   NEVER put a service_role/secret key in frontend code.
+
+   ========================================================= */
+
+const SUPABASE_URL =
+    "https://xfnnjhpzzktmmcqsauve.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "YOUR_SUPABASE_PUBLISHABLE_KEY";
+
+
+let supabaseClient = null;
+
+
+/*
+   Load Supabase dynamically so the page remains
+   a standalone HTML file.
+*/
+
+const supabaseScript =
+    document.createElement("script");
+
+supabaseScript.src =
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+
+supabaseScript.onload = () => {
+
+    if(
+        window.supabase &&
+        SUPABASE_PUBLISHABLE_KEY !==
+        "YOUR_SUPABASE_PUBLISHABLE_KEY"
+    ){
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_PUBLISHABLE_KEY
+            );
+
+    }
+
+};
+
+
+/*
+   Don't duplicate the CDN if the page is already
+   using the library.
+*/
+
+if(!window.supabase){
+
+    document.head.appendChild(
+        supabaseScript
+    );
+
+}
+
+
+/* =========================================================
+   AUTH SUBMIT
+   ========================================================= */
+
+document
+.getElementById("authForm")
+.addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+        const email =
+            document.getElementById("email").value;
+
+        const password =
+            document.getElementById("password").value;
+
+        const status =
+            document.getElementById("authStatus");
+
+
+        if(!supabaseClient){
+
+            status.textContent =
+                "Add your Supabase publishable key to enable authentication.";
+
+            return;
+
+        }
+
+
+        status.textContent =
+            "Signing in...";
+
+
+        const result =
+            await supabaseClient.auth
+            .signInWithPassword({
+                email,
+                password
+            });
+
+
+        if(result.error){
+
+            /*
+               If login fails, try registration.
+            */
+
+            const signup =
+                await supabaseClient.auth
+                .signUp({
+                    email,
+                    password
+                });
+
+
+            if(signup.error){
+
+                status.textContent =
+                    signup.error.message;
+
+            }else{
+
+                status.textContent =
+                    "Account created. Check your email to confirm it.";
+
+            }
+
+            return;
+
+        }
+
+
+        status.textContent =
+            "Login successful.";
+
+        showToast(
+            "Welcome back!"
+        );
+
+        setTimeout(
+            closeModal,
+            700
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SCROLL REVEAL
+   ========================================================= */
+
+const observer =
+    new IntersectionObserver(
+        entries => {
+
+            entries.forEach(
+                entry => {
+
+                    if(entry.isIntersecting){
+
+                        entry.target
+                        .classList
+                        .add("visible");
+
+                    }
+
+                }
+            );
+
+        },
+        {
+            threshold:.12
+        }
+    );
+
+
+document
+.querySelectorAll(".reveal")
+.forEach(
+    element =>
+        observer.observe(element)
+);
+
+
+/* =========================================================
+   INITIALIZE
+   ========================================================= */
+
+renderProducts();
+
+</script>
+
+</body>
+</html>
