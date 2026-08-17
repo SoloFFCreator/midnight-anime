@@ -10,21 +10,22 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "axios": "^1.7.7",
+    "firebase": "^10.13.2",
+    "framer-motion": "^11.11.1",
+    "hls.js": "^1.7.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2",
-    "framer-motion": "^11.11.1",
-    "zustand": "^4.5.5",
-    "firebase": "^10.13.2",
-    "axios": "^1.7.7"
+    "zustand": "^4.5.5"
   },
   "devDependencies": {
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
-    "vite": "^5.4.8",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.13"
+    "tailwindcss": "^3.4.13",
+    "vite": "^5.4.8"
   }
 }

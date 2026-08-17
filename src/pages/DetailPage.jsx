@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { AniListApi, TT, totEps } from '../api/anilist'
 import { TmdbApi } from '../api/tmdb'
+import { MetadataApi } from '../api/metadata'
+import ExternalIds from '../components/ui/ExternalIds'
 import { useAuthStore } from '../store/authStore'
 import { useWatchlistStore } from '../store/watchlistStore'
 import { isMovie } from '../utils/models'
@@ -14,6 +16,7 @@ export default function DetailPage() {
   const [logoUrl, setLogoUrl] = useState(null)
   const [backdropUrl, setBackdropUrl] = useState(null)
   const [episodeImages, setEpisodeImages] = useState({})
+  const [metadata, setMetadata] = useState(null)
   const [descExpanded, setDescExpanded] = useState(false)
 
   const { user } = useAuthStore()
@@ -26,9 +29,11 @@ export default function DetailPage() {
     setLogoUrl(null)
     setBackdropUrl(null)
     setEpisodeImages({})
+    setMetadata(null)
 
     AniListApi.fetchDetail(Number(id)).then((data) => {
       setAnime(data)
+      MetadataApi.fetch(data).then(setMetadata)
       TmdbApi.fetchLogo(data).then((url) => url && setLogoUrl(url))
       TmdbApi.fetchBackdrop(data).then((url) => url && setBackdropUrl(url))
       TmdbApi.fetchEpisodeImages(data).then((images) => images && setEpisodeImages(images))
@@ -88,6 +93,8 @@ export default function DetailPage() {
             </span>
           ))}
         </div>
+
+        <ExternalIds metadata={metadata} />
 
         <p className={`mt-3 text-[13px] leading-relaxed text-t2 ${descExpanded ? '' : 'line-clamp-4'}`}>
           {(anime.description || '').replace(/<[^>]+>/g, '')}
