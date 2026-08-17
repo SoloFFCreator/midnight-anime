@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
-import { APK_DOWNLOAD_URL } from '../utils/openApp'
+import { Link, useNavigate } from 'react-router-dom'
+import { ANDROID_PACKAGE, APK_DOWNLOAD_URL, openMidnightAnimeApp } from '../utils/openApp'
 
 export default function DownloadPage() {
+  const navigate = useNavigate()
+
   return (
     <div className="min-h-screen bg-[#050507] text-[#f5f0e8] font-body px-5 sm:px-8 py-10">
       <div className="max-w-md mx-auto">
@@ -41,8 +43,16 @@ export default function DownloadPage() {
           Download APK (v5)
         </motion.a>
 
+        <button
+          type="button"
+          onClick={() => openMidnightAnimeApp(navigate)}
+          className="w-full rounded-2xl border border-white/[0.12] py-3 text-[13px] font-bold text-white/75 transition-colors hover:border-or/50 hover:text-white mb-3"
+        >
+          Try opening the installed app
+        </button>
+
         <p className="text-white/30 text-[11px] text-center mb-10">
-          Android 8.0+ required · Direct download from GitHub Releases
+          Android 8.0+ required · If the app is installed, Open App launches {ANDROID_PACKAGE}; otherwise download the APK above.
         </p>
 
         <div className="bg-[#1c1420] border border-white/[0.07] rounded-2xl p-6">
