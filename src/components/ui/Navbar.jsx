@@ -18,7 +18,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-40 bg-bg/85 backdrop-blur-xl border-b border-white/[0.06]">
       <div className="flex items-center justify-between px-4 h-14">
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/app" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-black/30 border border-white/10 flex items-center justify-center overflow-hidden">
             <img src="https://dipamalla.com.np/logo.svg" alt="" className="h-7 w-7 object-contain" />
           </div>

@@ -3,10 +3,6 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/api/hindi-stream",
-      "destination": "https://nuvioapi-erbmmxkc.manus.space/api/stream"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

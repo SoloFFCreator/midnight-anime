@@ -6,6 +6,8 @@ import AnimatedBackground from './components/ui/AnimatedBackground'
 import Navbar from './components/ui/Navbar'
 import BottomNav from './components/ui/BottomNav'
 
+import LandingPage from './pages/LandingPage'
+import DownloadPage from './pages/DownloadPage'
 import HomePage from './pages/HomePage'
 import DetailPage from './pages/DetailPage'
 import WatchPage from './pages/WatchPage'
@@ -15,6 +17,7 @@ import WatchlistPage from './pages/WatchlistPage'
 import SettingsPage from './pages/SettingsPage'
 import AuthPage from './pages/AuthPage'
 import RecommendationPage from './pages/RecommendationPage'
+import LegalPage from './pages/LegalPage'
 
 import { useAuthStore } from './store/authStore'
 import { useWatchlistStore } from './store/watchlistStore'
@@ -53,16 +56,22 @@ export default function App() {
   }, [user])
 
   const isFullScreenRoute = location.pathname.startsWith('/recommend/')
+  const isPublicRoute = ['/', '/download', '/privacy', '/terms'].includes(location.pathname)
+  const showAppChrome = !isPublicRoute && !isFullScreenRoute
 
   return (
     <div className="min-h-screen relative">
-      <AnimatedBackground variant={location.pathname === '/' ? 'hero' : 'default'} />
+      {!isPublicRoute && <AnimatedBackground variant={location.pathname === '/app' ? 'hero' : 'default'} />}
 
-      {!isFullScreenRoute && <Navbar />}
+      {showAppChrome && <Navbar />}
 
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<AnimatedPage><HomePage /></AnimatedPage>} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/app" element={<AnimatedPage><HomePage /></AnimatedPage>} />
+          <Route path="/download" element={<DownloadPage />} />
+          <Route path="/privacy" element={<LegalPage kind="privacy" />} />
+          <Route path="/terms" element={<LegalPage kind="terms" />} />
           <Route path="/anime/:id" element={<AnimatedPage><DetailPage /></AnimatedPage>} />
           <Route path="/watch/:id/:episode" element={<AnimatedPage><WatchPage /></AnimatedPage>} />
           <Route path="/search" element={<AnimatedPage><SearchPage /></AnimatedPage>} />
@@ -75,8 +84,8 @@ export default function App() {
         </Routes>
       </AnimatePresence>
 
-      {!isFullScreenRoute && <div className="h-16" />}
-      {!isFullScreenRoute && <BottomNav />}
+      {showAppChrome && <div className="h-16" />}
+      {showAppChrome && <BottomNav />}
     </div>
   )
 }

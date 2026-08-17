@@ -24,7 +24,7 @@ export default function RecommendationPage() {
 
   function handleClose() {
     dismissRecommendations()
-    navigate('/', { replace: true })
+    navigate('/app', { replace: true })
   }
 
   function handlePick(rec) {
