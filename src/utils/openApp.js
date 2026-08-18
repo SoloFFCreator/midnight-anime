@@ -1,23 +1,30 @@
 export const ANDROID_PACKAGE = 'com.midnight.anime'
 export const APK_DOWNLOAD_URL = 'https://github.com/SoloFFCreator/midnight-anime/releases/download/Midnight-Anime/MidnightAnime-v5.apk'
 
-const ANDROID_INTENT = `intent://launch/#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=${ANDROID_PACKAGE};end`
-
 function isAndroidBrowser() {
   return typeof navigator !== 'undefined' && /Android/i.test(navigator.userAgent)
 }
 
+export function openWebApp(navigate) {
+  navigate('/app')
+}
+
 export function openMidnightAnimeApp(navigate) {
   if (typeof window === 'undefined' || !isAndroidBrowser()) {
-    navigate('/download')
+    navigate('/app')
     return
   }
 
   let appOpened = false
   let fallbackTimer
+  let secondaryIntentTimer
+  const fallbackUrl = new URL('/download', window.location.origin).toString()
+  const primaryIntent = `intent://launch/#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=${ANDROID_PACKAGE};S.browser_fallback_url=${encodeURIComponent(fallbackUrl)};end`
+  const packageIntent = `android-app://${ANDROID_PACKAGE}`
 
   const cleanup = () => {
     window.clearTimeout(fallbackTimer)
+    window.clearTimeout(secondaryIntentTimer)
     document.removeEventListener('visibilitychange', handleVisibility)
     window.removeEventListener('pagehide', handlePageHide)
     window.removeEventListener('blur', handleBlur)
@@ -34,25 +41,26 @@ export function openMidnightAnimeApp(navigate) {
 
   const handlePageHide = () => markAppOpened()
   const handleBlur = () => {
-    // Android browsers usually blur the page while handing the intent to the app.
     window.setTimeout(() => {
       if (document.hidden) markAppOpened()
-    }, 100)
+    }, 120)
   }
 
   document.addEventListener('visibilitychange', handleVisibility)
   window.addEventListener('pagehide', handlePageHide, { once: true })
   window.addEventListener('blur', handleBlur, { once: true })
 
-  // Android will launch the installed package when its launcher activity is available.
-  window.location.href = ANDROID_INTENT
+  window.location.href = primaryIntent
 
-  // Browsers do not expose a reliable “package installed” API. If the intent did not
-  // hide the page, send the user to the APK download page after a short grace period.
+  // Some Android browsers ignore launcher intents but understand android-app://.
+  secondaryIntentTimer = window.setTimeout(() => {
+    if (!appOpened && !document.hidden) window.location.href = packageIntent
+  }, 650)
+
   fallbackTimer = window.setTimeout(() => {
     if (!appOpened && !document.hidden) {
       cleanup()
       navigate('/download', { state: { fromAppIntent: true } })
     }
-  }, 1800)
+  }, 2400)
 }
