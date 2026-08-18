@@ -27,7 +27,7 @@ export default function LegalPage({ kind = 'privacy' }) {
     <main className="min-h-screen bg-[#050507] px-5 py-10 text-[#f5f0e8] sm:px-8">
       <div className="mx-auto max-w-2xl">
         <Link to="/" className="mb-12 inline-flex items-center gap-2.5">
-          <img src="https://dipamalla.com.np/logo.svg" alt="Midnight Anime" className="h-8 w-8 rounded-lg" />
+          <img src="/midnight-anime-logo.png" alt="Midnight Anime" className="h-8 w-8 rounded-lg" />
           <span className="font-display text-[15px] font-extrabold">Midnight<span className="text-or">Anime</span></span>
         </Link>
         <p className="mb-3 font-mono text-[11px] font-bold uppercase tracking-wider text-or">Midnight Anime</p>

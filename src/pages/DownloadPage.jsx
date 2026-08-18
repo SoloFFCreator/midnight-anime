@@ -9,7 +9,7 @@ export default function DownloadPage() {
     <div className="min-h-screen bg-[#050507] text-[#f5f0e8] font-body px-5 sm:px-8 py-10">
       <div className="max-w-md mx-auto">
         <Link to="/" className="inline-flex items-center gap-2 mb-10">
-          <img src="https://dipamalla.com.np/logo.svg" alt="Midnight Anime" className="w-8 h-8 rounded-lg" />
+          <img src="/midnight-anime-logo.png" alt="Midnight Anime" className="w-8 h-8 rounded-lg" />
           <span className="font-display font-extrabold text-[15px]">
             Midnight<span className="text-or">Anime</span>
           </span>

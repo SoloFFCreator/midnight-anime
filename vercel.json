@@ -3,6 +3,14 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/share/series/:id",
+      "destination": "/api/share-preview?kind=series&id=:id"
+    },
+    {
+      "source": "/share/episode/:id/:episode",
+      "destination": "/api/share-preview?kind=episode&id=:id&episode=:episode"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

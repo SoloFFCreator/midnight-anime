@@ -14,7 +14,7 @@ export default function LandingPage() {
       <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-[#050507]/70 border-b border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <img src="https://dipamalla.com.np/logo.svg" alt="Midnight Anime" className="w-8 h-8 rounded-lg" />
+            <img src="/midnight-anime-logo.png" alt="Midnight Anime" className="w-8 h-8 rounded-lg" />
             <span className="font-display font-extrabold text-[15px] tracking-tight">
               Midnight<span className="text-or">Anime</span>
             </span>
@@ -188,7 +188,7 @@ export default function LandingPage() {
       <footer className="border-t border-white/[0.06] py-12 px-5 sm:px-8">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2.5">
-            <img src="https://dipamalla.com.np/logo.svg" alt="Midnight Anime" className="w-7 h-7 rounded-lg" />
+            <img src="/midnight-anime-logo.png" alt="Midnight Anime" className="w-7 h-7 rounded-lg" />
             <span className="font-display font-bold text-[14px]">Midnight<span className="text-or">Anime</span></span>
           </div>
           <div className="flex items-center gap-6 text-[13px] text-white/50">

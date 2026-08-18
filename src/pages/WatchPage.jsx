@@ -10,6 +10,8 @@ import { useWatchlistStore } from '../store/watchlistStore'
 import { usePlayerStore } from '../store/playerStore'
 import { useAuthStore } from '../store/authStore'
 import { buildStreamUrl, isMovie } from '../utils/models'
+import ShareButton from '../components/ui/ShareButton'
+import { buildEpisodeSharePath } from '../utils/share'
 
 export default function WatchPage() {
   const { id, episode } = useParams()
@@ -133,6 +135,9 @@ export default function WatchPage() {
   const rKey = `${animeId}_ep${ep}`
   const ratings = episodeRatings[rKey] || { likes: 0, dislikes: 0 }
   const userRating = userRatings[rKey]
+  const episodeTitle = anime.streamingEpisodes?.[ep - 1]?.title || `Episode ${ep}`
+  const shareTitle = `${TT(anime)} — ${episodeTitle} | Midnight Anime`
+  const shareText = `Watch ${TT(anime)} — ${episodeTitle} on Midnight Anime.`
 
   return (
     <div className="pb-10">
@@ -158,6 +163,14 @@ export default function WatchPage() {
           {isMovie(anime) ? 'Movie' : `Episode ${ep}`}
         </p>
         <ExternalIds metadata={metadata} compact />
+        <div className="mt-2 flex justify-end">
+          <ShareButton
+            compact
+            title={shareTitle}
+            text={shareText}
+            path={buildEpisodeSharePath(animeId, ep)}
+          />
+        </div>
       </div>
 
       {audioTrack === 'HIN' && hindiStreams.length > 0 && (

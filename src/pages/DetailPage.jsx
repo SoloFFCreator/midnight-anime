@@ -8,6 +8,8 @@ import ExternalIds from '../components/ui/ExternalIds'
 import { useAuthStore } from '../store/authStore'
 import { useWatchlistStore } from '../store/watchlistStore'
 import { isMovie } from '../utils/models'
+import ShareButton from '../components/ui/ShareButton'
+import { buildSeriesSharePath } from '../utils/share'
 
 export default function DetailPage() {
   const { id } = useParams()
@@ -53,6 +55,8 @@ export default function DetailPage() {
   const bgUrl = backdropUrl || anime.bannerImage || anime.coverImage?.extraLarge
   const resumeEp = progress?.ep || 1
   const hasProgress = progress && (progress.ep > 1 || progress.time > 30)
+  const shareTitle = `${TT(anime)} | Midnight Anime`
+  const shareText = stripHtml(anime.description) || `Watch ${TT(anime)} on Midnight Anime.`
 
   return (
     <div className="pb-10">
@@ -123,6 +127,12 @@ export default function DetailPage() {
               <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
             </svg>
           </motion.button>
+          <ShareButton
+            compact
+            title={shareTitle}
+            text={shareText}
+            path={buildSeriesSharePath(anime.id)}
+          />
         </div>
       </div>
 
@@ -191,6 +201,10 @@ function EpisodeRow({ ep, anime, thumbOverride, onClick }) {
 }
 
 /** Builds season strip from AniList relations — same logic as web/Android. */
+function stripHtml(value) {
+  return (value || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()
+}
+
 function buildSeasons(media) {
   const edges = media.relations?.edges || []
   const related = []

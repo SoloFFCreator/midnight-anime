@@ -18,6 +18,7 @@ import SettingsPage from './pages/SettingsPage'
 import AuthPage from './pages/AuthPage'
 import RecommendationPage from './pages/RecommendationPage'
 import LegalPage from './pages/LegalPage'
+import ShareRedirectPage from './pages/ShareRedirectPage'
 
 import { useAuthStore } from './store/authStore'
 import { useWatchlistStore } from './store/watchlistStore'
@@ -72,6 +73,8 @@ export default function App() {
           <Route path="/download" element={<DownloadPage />} />
           <Route path="/privacy" element={<LegalPage kind="privacy" />} />
           <Route path="/terms" element={<LegalPage kind="terms" />} />
+          <Route path="/share/series/:id" element={<ShareRedirectPage kind="series" />} />
+          <Route path="/share/episode/:id/:episode" element={<ShareRedirectPage kind="episode" />} />
           <Route path="/anime/:id" element={<AnimatedPage><DetailPage /></AnimatedPage>} />
           <Route path="/watch/:id/:episode" element={<AnimatedPage><WatchPage /></AnimatedPage>} />
           <Route path="/search" element={<AnimatedPage><SearchPage /></AnimatedPage>} />

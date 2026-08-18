@@ -20,7 +20,7 @@ export default function Navbar() {
       <div className="flex items-center justify-between px-4 h-14">
         <Link to="/app" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-black/30 border border-white/10 flex items-center justify-center overflow-hidden">
-            <img src="https://dipamalla.com.np/logo.svg" alt="" className="h-7 w-7 object-contain" />
+            <img src="/midnight-anime-logo.png" alt="" className="h-7 w-7 object-contain" />
           </div>
           <span className="font-display font-extrabold text-[15px]">Midnight<span className="text-or">Anime</span></span>
         </Link>
