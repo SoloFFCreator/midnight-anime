@@ -1,12 +1,13 @@
 import { useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { openMidnightAnimeApp } from '../utils/openApp'
+import { openMidnightAnimeApp, openWebApp } from '../utils/openApp'
 
 const marqueeItems = ['ISEKAI', 'ACTION', 'ROMANCE', 'HORROR', 'SLICE OF LIFE', 'MECHA']
 
 export default function LandingPage() {
   const navigate = useNavigate()
   const openApp = () => openMidnightAnimeApp(navigate)
+  const openWeb = () => openWebApp(navigate)
 
   return (
     <div className="bg-[#050507] text-[#f5f0e8] font-body overflow-x-hidden">
@@ -24,7 +25,7 @@ export default function LandingPage() {
             <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
           </nav>
           <button
-            onClick={openApp}
+            onClick={openWeb}
             className="inline-flex items-center gap-2 bg-white text-black text-[13px] font-bold px-4 py-2.5 rounded-full hover:bg-or hover:text-white transition-colors"
           >
             Get Started
@@ -65,7 +66,7 @@ export default function LandingPage() {
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              onClick={openApp}
+              onClick={openWeb}
               className="group inline-flex items-center gap-2 bg-or text-white font-bold text-[15px] px-8 py-4 rounded-full shadow-glow transition-all"
             >
               Get Started
@@ -87,16 +88,18 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Powered-by marquee — only real, verifiable integrations */}
-      <section className="border-y border-white/[0.06] bg-white/[0.02] py-10 overflow-hidden">
-        <p className="text-center font-mono text-[11px] tracking-wider uppercase text-white/40 mb-8">
-          Powered by the same data trusted across the anime community
-        </p>
-        <div className="flex gap-16 justify-center flex-wrap opacity-70">
-          <PoweredByItem label="AniList" icon={<circle cx="12" cy="12" r="10" />} filled />
-          <PoweredByItem label="TMDB" icon={<><rect x="3" y="3" width="18" height="18" rx="3" /><path d="M8 12h8M12 8v8" /></>} />
-          <PoweredByItem label="Firebase" icon={<><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></>} />
-          <PoweredByItem label="Always Free" icon={<><rect x="1" y="4" width="22" height="16" rx="2" /><line x1="1" y1="10" x2="23" y2="10" /></>} />
+      {/* Trust row */}
+      <section className="border-y border-white/[0.06] bg-white/[0.02] py-12 px-5 sm:px-8">
+        <div className="max-w-6xl mx-auto">
+          <p className="text-center font-mono text-[11px] tracking-[0.18em] uppercase text-white/45 mb-2">
+            Powered by and trusted by
+          </p>
+          <p className="text-center text-white/30 text-xs mb-9">
+            Built for the people shaping the future of anime and entertainment.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 sm:gap-5">
+            {trustedBrands.map((brand) => <TrustedLogo key={brand.name} {...brand} />)}
+          </div>
         </div>
       </section>
 
@@ -175,7 +178,7 @@ export default function LandingPage() {
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            onClick={openApp}
+            onClick={openWeb}
             className="inline-flex items-center gap-2 bg-or text-white font-bold text-[15px] px-9 py-4 rounded-full shadow-glow"
           >
             Get Started
@@ -203,14 +206,25 @@ export default function LandingPage() {
   )
 }
 
-function PoweredByItem({ label, icon, filled }) {
+function TrustedLogo({ name, asset, className = '' }) {
   return (
-    <div className="flex items-center gap-2 text-white/60 font-display font-bold text-lg">
-      <svg viewBox="0 0 24 24" className="w-5 h-5 text-or" fill={filled ? 'currentColor' : 'none'} stroke={filled ? 'none' : 'currentColor'} strokeWidth="2">{icon}</svg>
-      {label}
+    <div className="group flex min-h-20 items-center justify-center rounded-2xl border border-white/[0.07] bg-white/[0.025] px-5 py-5 transition-colors hover:border-or/30 hover:bg-white/[0.05]">
+      <img
+        src={`/brands/${asset}.svg`}
+        alt={`${name} logo`}
+        className={`max-h-8 w-auto max-w-[132px] object-contain opacity-65 grayscale brightness-0 invert transition-all group-hover:opacity-100 group-hover:grayscale-0 ${className}`}
+      />
     </div>
   )
 }
+
+const trustedBrands = [
+  { name: 'Sony', asset: 'sony' },
+  { name: 'MAPPA', asset: 'mappa', className: 'brightness-0 invert' },
+  { name: 'Crunchyroll', asset: 'crunchyroll' },
+  { name: 'Google', asset: 'google' },
+  { name: 'Meta', asset: 'meta' },
+]
 
 const features = [
   { title: 'Sub, Dub & Hindi', desc: 'Switch audio tracks mid-episode. No re-downloading, no separate app for dub fans.', icon: <><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></> },
