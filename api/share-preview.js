@@ -10,7 +10,6 @@ const DETAIL_QUERY = `
     Media(id:$id,type:ANIME){
       id
       title{romaji english native}
-      description(asHtml:false)
       episodes
       format
       streamingEpisodes{title thumbnail}
@@ -53,14 +52,11 @@ export default async function handler(req, res) {
       ? (anilistEpisode?.thumbnail || anime.bannerImage || anime.coverImage?.extraLarge)
       : (anime.bannerImage || anime.coverImage?.extraLarge)
     const image = tmdb.image || anilistImage
-    const description = cleanDescription(
-      (kind === 'episode' && tmdb.episodeDescription) || anime.description,
-    ) || `Watch ${title}${kind === 'episode' ? ` — ${episodeTitle}` : ''} on Midnight Anime.`
     const pageTitle = kind === 'episode' ? `${title} — ${episodeTitle} | Midnight Anime` : `${title} | Midnight Anime`
     const origin = getOrigin(req)
     const target = kind === 'episode' ? `/watch/${id}/${episode}` : `/anime/${id}`
     const canonical = `${origin}${kind === 'episode' ? `/share/episode/${id}/${episode}` : `/share/series/${id}`}`
-    const html = renderPreview({ pageTitle, description, image, canonical, target, origin, tmdbId: tmdb.tmdbId })
+    const html = renderPreview({ pageTitle, image, canonical, target, origin, tmdbId: tmdb.tmdbId })
 
     res.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=3600')
     res.setHeader('Content-Type', 'text/html; charset=utf-8')
@@ -100,7 +96,6 @@ async function resolveTmdbArtwork(anime, { kind, season, episode }) {
     tmdbId: media.id,
     image: episodeImage || seriesImage,
     episodeTitle: episodeData?.name || null,
-    episodeDescription: episodeData?.overview || null,
   }
 }
 
@@ -156,7 +151,7 @@ async function tmdbFetch(path, params = {}) {
   }
 }
 
-function renderPreview({ pageTitle, description, image, canonical, target, origin, tmdbId }) {
+function renderPreview({ pageTitle, image, canonical, target, origin, tmdbId }) {
   const logo = `${origin}${LOGO_PATH}`
   const previewImage = image || logo
   return `<!doctype html>
@@ -165,27 +160,23 @@ function renderPreview({ pageTitle, description, image, canonical, target, origi
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${escapeHtml(pageTitle)}</title>
-  <meta name="description" content="${escapeHtml(description)}" />
   <meta name="theme-color" content="#ff7411" />
   <link rel="canonical" href="${escapeHtml(canonical)}" />
   <link rel="icon" href="${escapeHtml(logo)}" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Midnight Anime" />
   <meta property="og:title" content="${escapeHtml(pageTitle)}" />
-  <meta property="og:description" content="${escapeHtml(description)}" />
   <meta property="og:image" content="${escapeHtml(previewImage)}" />
   <meta property="og:image:alt" content="${escapeHtml(pageTitle)} artwork" />
   <meta property="og:url" content="${escapeHtml(canonical)}" />
   ${tmdbId ? `<meta name="tmdb:id" content="${escapeHtml(tmdbId)}" />` : ''}
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${escapeHtml(pageTitle)}" />
-  <meta name="twitter:description" content="${escapeHtml(description)}" />
   <meta name="twitter:image" content="${escapeHtml(previewImage)}" />
 </head>
 <body style="background:#050507;color:#fff;font-family:Arial,sans-serif;text-align:center;padding:48px 20px">
   <img src="${escapeHtml(logo)}" alt="Midnight Anime" width="72" height="72" style="border-radius:18px" />
   <h1>${escapeHtml(pageTitle)}</h1>
-  <p>${escapeHtml(description)}</p>
   <p><a href="${escapeHtml(target)}" style="color:#ff7411">Open in Midnight Anime</a></p>
   <script>window.setTimeout(function(){ window.location.replace(${JSON.stringify(target)}) }, 120)</script>
 </body>
@@ -196,10 +187,6 @@ function getOrigin(req) {
   const forwardedProto = req.headers?.['x-forwarded-proto'] || 'https'
   const host = req.headers?.host || 'midnight-anime.vercel.app'
   return `${forwardedProto}://${host}`
-}
-
-function cleanDescription(value) {
-  return String(value || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().slice(0, 240)
 }
 
 function escapeHtml(value) {
