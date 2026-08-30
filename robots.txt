@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://mid-night-anime.web.app/sitemap.xml
