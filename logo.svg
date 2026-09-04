@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="110" fill="#f47521"/>
+
+  <!-- Moon shape (white) -->
+  <path d="M256 80C167.6 80 96 151.6 96 240c0 53.2 26.1 100.3 66.1 129.3 2.6 1.8 1.8 5.7-1.2 6.5-8.3 2.3-15.5 3.8-21.1 3.8-3.3 0-4.5 4.2-1.8 6C161.5 401.8 196.1 412 233 412c8.3 0 16.6-.6 24.6-1.5 4.5-.6 7.1-5.4 4.7-9.3C250.5 385.7 245 367.5 245 348c0-83.3 67.5-151 151-151 12.5 0 24.6 1.5 36.2 4.2 4.7 1.2 9-2.6 8-7.2C424.1 120.1 344.5 80 256 80Z" fill="white"/>
+
+  <!-- Star/circle accent -->
+  <circle cx="363" cy="240" r="76" fill="white" opacity="0.9"/>
+  <circle cx="363" cy="240" r="38" fill="#f47521"/>
+  <circle cx="363" cy="210" r="14" fill="white"/>
+
+  <!-- Midnight Anime text -->
+  <text x="256" y="470" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif"
+        font-size="52" font-weight="900" fill="white" letter-spacing="-1">
+    Midnight Anime
+  </text>
+</svg>

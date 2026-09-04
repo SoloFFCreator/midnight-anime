@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authenticating... | Midnight Anime</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #0f0f13;
+      color: #ffffff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .auth-card {
+      background: #1a1a24;
+      border: 1px solid #2a2a38;
+      padding: 2.5rem;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      text-align: center;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #2a2a38;
+      border-top: 4px solid #7c4dff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    h2 {
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+    p {
+      color: #a0a0b0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 15px 0 10px 0;
+      border-radius: 6px;
+      border: 1px solid #333;
+      background: #252538;
+      color: #fff;
+      font-size: 1rem;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #7c4dff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      margin-top: 5px;
+      transition: background 0.2s ease;
+    }
+    button:hover {
+      background: #651fff;
+    }
+    .status-msg {
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+    .error { color: #ff5252; }
+    .success { color: #00e676; }
+  </style>
+</head>
+<body>
+
+  <div class="auth-card">
+    <div id="loading-spinner" class="spinner"></div>
+    <h2 id="handler-title">Processing Authentication...</h2>
+    <div id="handler-body">
+      <p>Please wait while we complete your request.</p>
+    </div>
+    <div id="status-message" class="status-msg"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import {
+      getAuth,
+      getRedirectResult,
+      verifyPasswordResetCode,
+      confirmPasswordReset,
+      applyActionCode
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    // 1. Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyClcy2YXqryJAkg_wy1W4RLqkYMIsEg2Rk",
+      authDomain: "dipamalla.com.np",
+      databaseURL: "https://mid-night-anime-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "mid-night-anime",
+      storageBucket: "mid-night-anime.firebasestorage.app",
+      messagingSenderId: "655330045563",
+      appId: "1:655330045563:web:3d99e3be8ad7cb2734bcde",
+      measurementId: "G-XT3XC7RL7L"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // UI Elements
+    const spinner = document.getElementById('loading-spinner');
+    const titleEl = document.getElementById('handler-title');
+    const bodyEl = document.getElementById('handler-body');
+    const statusEl = document.getElementById('status-message');
+
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get('mode');
+    const oobCode = params.get('oobCode');
+
+    async function handleAuthFlow() {
+      try {
+        // --- CASE 1: Google OAuth Redirect Result ---
+        const result = await getRedirectResult(auth);
+        if (result && result.user) {
+          spinner.style.display = 'none';
+          titleEl.innerText = "Signed In!";
+          bodyEl.innerHTML = `<p>Welcome back, <strong>${result.user.displayName || result.user.email}</strong>.</p>`;
+          setTimeout(() => { window.location.href = '/'; }, 1500);
+          return;
+        }
+
+        // --- CASE 2: Password Reset Link ---
+        if (mode === 'resetPassword' && oobCode) {
+          const email = await verifyPasswordResetCode(auth, oobCode);
+          spinner.style.display = 'none';
+          titleEl.innerText = "Reset Password";
+          bodyEl.innerHTML = `
+            <p>Enter a new password for <strong>${email}</strong>:</p>
+            <input type="password" id="new-password" placeholder="New Password (min 6 characters)" minlength="6" required />
+            <button id="save-pwd-btn">Update Password</button>
+          `;
+
+          document.getElementById('save-pwd-btn').addEventListener('click', async () => {
+            const pwd = document.getElementById('new-password').value;
+            if (!pwd || pwd.length < 6) {
+              statusEl.className = "status-msg error";
+              statusEl.innerText = "Password must be at least 6 characters.";
+              return;
+            }
+
+            try {
+              spinner.style.display = 'block';
+              await confirmPasswordReset(auth, oobCode, pwd);
+              spinner.style.display = 'none';
+              titleEl.innerText = "Password Changed!";
+              bodyEl.innerText = "Your password has been successfully updated.";
+              setTimeout(() => { window.location.href = '/'; }, 2000);
+            } catch (err) {
+              spinner.style.display = 'none';
+              statusEl.className = "status-msg error";
+              statusEl.innerText = err.message;
+            }
+          });
+          return;
+        }
+
+        // --- CASE 3: Email Verification Link ---
+        if (mode === 'verifyEmail' && oobCode) {
+          await applyActionCode(auth, oobCode);
+          spinner.style.display = 'none';
+          titleEl.innerText = "Email Verified!";
+          bodyEl.innerText = "Your email address has been successfully confirmed.";
+          setTimeout(() => { window.location.href = '/'; }, 2000);
+          return;
+        }
+
+        // --- CASE 4: No action or default landing ---
+        spinner.style.display = 'none';
+        titleEl.innerText = "Authentication Handler";
+        bodyEl.innerHTML = "<p>No active authentication action requested.</p>";
+
+      } catch (error) {
+        spinner.style.display = 'none';
+        titleEl.innerText = "Action Failed";
+        bodyEl.innerText = "";
+        statusEl.className = "status-msg error";
+        statusEl.innerText = error.message || "This link has expired or has already been used.";
+      }
+    }
+
+    handleAuthFlow();
+  </script>
+</body>
+</html>

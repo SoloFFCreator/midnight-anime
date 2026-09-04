@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.midnight.anime",
+      "sha256_cert_fingerprints": [
+        "21:1D:6A:A9:00:53:20:03:3D:68:A9:47:F1:1B:90:4B:1E:CC:9F:FA:18:13:99:39:A8:BB:77:39:D9:DB:B7:A0"
+      ]
+    }
+  }
+]
