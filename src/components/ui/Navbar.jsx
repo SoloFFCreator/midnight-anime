@@ -26,6 +26,7 @@ export default function Navbar() {
         </Link>
 
         <div className="flex items-center gap-3">
+          <Link to="/news" className="hidden rounded-full px-2 py-1.5 text-[12px] font-bold text-white/55 transition-colors hover:text-or sm:block">Updates</Link>
           <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate('/search')} className="w-9 h-9 rounded-full bg-bg2 flex items-center justify-center">
             <svg viewBox="0 0 24 24" className="w-4 h-4 stroke-white/80 fill-none" strokeWidth="2"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
           </motion.button>

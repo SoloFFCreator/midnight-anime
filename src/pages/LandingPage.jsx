@@ -23,6 +23,9 @@ export default function LandingPage() {
           <nav className="hidden md:flex items-center gap-8 text-[13.5px] font-medium text-white/50">
             <a href="#features" className="hover:text-white transition-colors">Features</a>
             <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
+            <Link to="/news" className="hover:text-white transition-colors">Updates</Link>
+            <Link to="/wiki" className="hover:text-white transition-colors">Wiki</Link>
+            <Link to="/about" className="hover:text-white transition-colors">About</Link>
           </nav>
           <button
             onClick={openWeb}
@@ -88,18 +91,15 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Trust row */}
+      {/* Product note */}
       <section className="border-y border-white/[0.06] bg-white/[0.02] py-12 px-5 sm:px-8">
         <div className="max-w-6xl mx-auto">
           <p className="text-center font-mono text-[11px] tracking-[0.18em] uppercase text-white/45 mb-2">
-            Powered by and trusted by
+            Built for late-night discovery
           </p>
-          <p className="text-center text-white/30 text-xs mb-9">
-            Built for the people shaping the future of anime and entertainment.
+          <p className="text-center text-white/30 text-xs max-w-xl mx-auto">
+            Midnight Anime brings discovery, title context, watchlist tools, and supported playback paths into one focused place.
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 sm:gap-5">
-            {trustedBrands.map((brand) => <TrustedLogo key={brand.name} {...brand} />)}
-          </div>
         </div>
       </section>
 
@@ -195,6 +195,9 @@ export default function LandingPage() {
             <span className="font-display font-bold text-[14px]">Midnight<span className="text-or">Anime</span></span>
           </div>
           <div className="flex items-center gap-6 text-[13px] text-white/50">
+            <Link to="/news" className="hover:text-white transition-colors">Updates</Link>
+            <Link to="/wiki" className="hover:text-white transition-colors">Wiki</Link>
+            <Link to="/about" className="hover:text-white transition-colors">About</Link>
             <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
             <button onClick={openApp} className="hover:text-white transition-colors">Open App</button>
@@ -205,26 +208,6 @@ export default function LandingPage() {
     </div>
   )
 }
-
-function TrustedLogo({ name, asset, className = '' }) {
-  return (
-    <div className="group flex min-h-20 items-center justify-center rounded-2xl border border-white/[0.07] bg-white/[0.025] px-5 py-5 transition-colors hover:border-or/30 hover:bg-white/[0.05]">
-      <img
-        src={`/brands/${asset}.svg`}
-        alt={`${name} logo`}
-        className={`max-h-8 w-auto max-w-[132px] object-contain opacity-65 grayscale brightness-0 invert transition-all group-hover:opacity-100 group-hover:grayscale-0 ${className}`}
-      />
-    </div>
-  )
-}
-
-const trustedBrands = [
-  { name: 'Sony', asset: 'sony' },
-  { name: 'MAPPA', asset: 'mappa', className: 'brightness-0 invert' },
-  { name: 'Crunchyroll', asset: 'crunchyroll' },
-  { name: 'Google', asset: 'google' },
-  { name: 'Meta', asset: 'meta' },
-]
 
 const features = [
   { title: 'Sub, Dub & Hindi', desc: 'Switch audio tracks mid-episode. No re-downloading, no separate app for dub fans.', icon: <><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></> },

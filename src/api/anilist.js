@@ -68,6 +68,19 @@ const Q_GENRE = `
   }
 `
 
+const Q_NEWS = `
+  query {
+    trending: Page(page:1,perPage:8){media(type:ANIME,sort:TRENDING_DESC,status_not:NOT_YET_RELEASED,isAdult:false){
+      id title{romaji english} coverImage{large extraLarge} bannerImage description(asHtml:false)
+      genres format status season seasonYear averageScore nextAiringEpisode{episode}
+    }}
+    updates: Page(page:1,perPage:8){media(type:ANIME,sort:START_DATE_DESC,status_not:NOT_YET_RELEASED,isAdult:false){
+      id title{romaji english} coverImage{large extraLarge} bannerImage description(asHtml:false)
+      genres format status season seasonYear averageScore nextAiringEpisode{episode}
+    }}
+  }
+`
+
 async function query(queryStr, variables = {}) {
   const res = await fetch(ANILIST_URL, {
     method: 'POST',
@@ -112,6 +125,17 @@ export const AniListApi = {
     const data = await query(Q_GENRE, { genre, page })
     const media = (data.Page?.media || []).filter((a) => !isAdult(a))
     return { results: media, hasNext: !!data.Page?.pageInfo?.hasNextPage }
+  },
+
+  async fetchNews() {
+    const data = await query(Q_NEWS)
+    const combined = [...(data.trending?.media || []), ...(data.updates?.media || [])]
+    const seen = new Set()
+    return combined.filter((anime) => {
+      if (seen.has(anime.id) || isAdult(anime)) return false
+      seen.add(anime.id)
+      return true
+    })
   },
 }
 
