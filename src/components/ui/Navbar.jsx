@@ -33,7 +33,7 @@ export default function Navbar() {
 
           {user ? (
             <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate('/settings')}>
-              <img src={avatarUrl} alt="Profile" className="w-9 h-9 rounded-full object-cover border-2 border-or/40" />
+              {choice?.image ? <img src={choice.image} alt={`${choice.name} profile`} className="w-9 h-9 rounded-full object-cover border-2 border-or/40" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = avatarDataUri({ ...choice, image: null }) }} /> : <img src={avatarUrl} alt="Profile" className="w-9 h-9 rounded-full object-cover border-2 border-or/40" />}
             </motion.button>
           ) : (
             <button

@@ -24,7 +24,8 @@ export default function SettingsPage() {
           className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0"
           style={{ background: choice ? choice.color : '#222230' }}
         >
-          {choice ? <span className="text-2xl">{choice.emoji}</span>
+          {choice?.image ? <img src={choice.image} alt={`${choice.name} character avatar`} className="w-full h-full rounded-full object-cover" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.style.display = 'none' }} />
+            : choice ? <span className="text-2xl">{choice.emoji}</span>
             : profile?.photoURL ? <img src={profile.photoURL} className="w-full h-full rounded-full object-cover" alt="" />
             : <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-t3 fill-none" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>}
         </button>
@@ -155,7 +156,8 @@ function AvatarPickerSheet({ current, onChoose, onClose }) {
         transition={{ type: 'spring', damping: 28, stiffness: 300 }}
         className="relative w-full sm:w-[380px] bg-[#16161e] rounded-t-2xl sm:rounded-2xl p-4 pb-8"
       >
-        <p className="text-white font-bold text-[15px] mb-3">Choose Avatar</p>
+        <p className="text-white font-bold text-[15px] mb-1">Choose Avatar</p>
+        <p className="text-t3 text-[11px] mb-3">Character artwork from AniList</p>
         <div className="grid grid-cols-3 gap-2.5">
           {AVATAR_CHOICES.map((a) => (
             <motion.button
@@ -164,7 +166,9 @@ function AvatarPickerSheet({ current, onChoose, onClose }) {
               className="flex flex-col items-center gap-1.5 py-3 rounded-xl"
               style={{ background: current === a.id ? `${a.color}22` : 'transparent', border: `2px solid ${current === a.id ? a.color : 'transparent'}` }}
             >
-              <div className="w-12 h-12 rounded-full flex items-center justify-center text-[22px]" style={{ background: a.color }}>{a.emoji}</div>
+              <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center text-[22px]" style={{ background: a.color }}>
+                {a.image ? <img src={a.image} alt={`${a.name} character avatar`} className="w-full h-full object-cover" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.style.display = 'none' }} /> : a.emoji}
+              </div>
               <span className={`text-[10.5px] font-semibold ${current === a.id ? 'text-or' : 'text-t2'}`}>{a.name}</span>
             </motion.button>
           ))}
