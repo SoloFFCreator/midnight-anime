@@ -1,13 +1,12 @@
 import { create } from 'zustand'
 
 /**
- * Player UI state — audio track, server choice, episode progress tracking
+ * Player UI state — audio track and episode progress tracking
  * for the "series finished" auto-detector. Not persisted directly here;
  * watchlistStore.saveProgress() handles Firebase writes.
  */
 export const usePlayerStore = create((setState, getState) => ({
   audioTrack: 'SUB',    // 'SUB' | 'DUB' | 'HIN'
-  server: 'VIDNEST',    // 'VIDNEST' | 'MEGAPLAY'
   autoPlayNext: true,
   hindiLoading: false,
   hindiUnavailable: false,
@@ -20,7 +19,6 @@ export const usePlayerStore = create((setState, getState) => ({
   setAudioTrack(track) {
     setState({ audioTrack: track })
   },
-  setServer(server) { setState({ server }) },
   setAutoPlayNext(v) { setState({ autoPlayNext: v }) },
 
   setHindiState(partial) { setState(partial) },

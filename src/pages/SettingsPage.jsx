@@ -8,7 +8,7 @@ import { AVATAR_CHOICES } from '../utils/models'
 export default function SettingsPage() {
   const navigate = useNavigate()
   const { user, profile, avatarChoiceId, setAvatarChoice, sendPasswordReset, sendVerificationEmail, signOut, infoMessage, error } = useAuthStore()
-  const { autoPlayNext, setAutoPlayNext, server, setServer } = usePlayerStore()
+  const { autoPlayNext, setAutoPlayNext } = usePlayerStore()
   const [showAvatarPicker, setShowAvatarPicker] = useState(false)
 
   const choice = AVATAR_CHOICES.find((a) => a.id === avatarChoiceId)
@@ -62,11 +62,6 @@ export default function SettingsPage() {
         </Section>
       )}
 
-      <Section title="Video Server">
-        <Row icon="server" label="VidNest / AnimePahe" subtitle="Default server" selected={server === 'VIDNEST'} onClick={() => setServer('VIDNEST')} />
-        <Row icon="server" label="megaplay.buzz" subtitle="Alternate source" selected={server === 'MEGAPLAY'} onClick={() => setServer('MEGAPLAY')} />
-      </Section>
-
       <Section title="Playback">
         <Row
           icon="play"
@@ -108,7 +103,6 @@ function Section({ title, children }) {
 const ICONS = {
   lock: 'M4 11h16v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-9zM7 11V7a5 5 0 0 1 10 0v4',
   mail: 'M22 6l-10 7L2 6M2 4h20v16H2z',
-  server: 'M2 3h20v6H2zM2 15h20v6H2zM6 6h.01M6 18h.01',
   play: 'M5 3l14 9-14 9V3z',
   bookmark: 'M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z',
   logout: 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9',

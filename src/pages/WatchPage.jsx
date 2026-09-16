@@ -28,9 +28,9 @@ export default function WatchPage() {
   const { user } = useAuthStore()
   const { saveProgress, subscribeToRatings, episodeRatings, rateEpisode, userRatings, loadUserRating } = useWatchlistStore()
   const {
-    audioTrack, server, autoPlayNext, hindiLoading, hindiUnavailable,
+    audioTrack, autoPlayNext, hindiLoading, hindiUnavailable,
     seriesFinishShown, showRecommendations,
-    setAudioTrack, setServer, setAutoPlayNext, setHindiState, resetForNewEpisode,
+    setAudioTrack, setAutoPlayNext, setHindiState, resetForNewEpisode,
     startProgressTracking, stopProgressTracking, triggerRecommendations,
   } = usePlayerStore()
 
@@ -130,7 +130,7 @@ export default function WatchPage() {
     )
   }
 
-  const streamUrl = buildStreamUrl(anime, ep, audioTrack, server)
+  const streamUrl = buildStreamUrl(anime, ep, audioTrack)
   const hindiSource = hindiStreams[hindiSourceIndex]
   const rKey = `${animeId}_ep${ep}`
   const ratings = episodeRatings[rKey] || { likes: 0, dislikes: 0 }
@@ -225,17 +225,6 @@ export default function WatchPage() {
           Auto-play
           <input type="checkbox" checked={autoPlayNext} onChange={(event) => setAutoPlayNext(event.target.checked)} className="accent-or w-4 h-4" />
         </label>
-      </div>
-
-      <div className="px-4 py-2">
-        <p className="text-[11px] font-bold text-t3 mb-1.5">Video Server</p>
-        <div className="flex gap-2">
-          {[{ id: 'VIDNEST', label: 'VidNest / AnimePahe' }, { id: 'MEGAPLAY', label: 'megaplay.buzz' }].map((item) => (
-            <button key={item.id} onClick={() => setServer(item.id)} className={`px-3 py-2 rounded-lg text-[12px] font-bold ${server === item.id ? 'bg-or/15 text-or' : 'bg-bg2 text-t2'}`}>
-              {item.label}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="flex items-center gap-2.5 px-4 py-3">

@@ -36,20 +36,17 @@ export const ALL_GENRES = [
 export function isMovie(anime) { return anime?.format === 'MOVIE' }
 
 /** Video/audio stream URL builder — mirrors web app's loadPlayer() logic. */
-export function buildStreamUrl(anime, episode, audioTrack, server) {
+export function buildStreamUrl(anime, episode, audioTrack) {
   if (!anime) return ''
   const al = anime.id
   const lang = audioTrack === 'DUB' ? 'dub' : 'sub'
 
   if (isMovie(anime)) {
-    if (server === 'VIDNEST') return `https://vidnest.fun/animepahe/${al}/1/${lang}`
     const tmdbLink = (anime.externalLinks || []).find((l) => /themoviedb/i.test(l.site))
     const tmdbId = tmdbLink?.url?.match(/\/(?:movie|tv)\/(\d+)/)?.[1]
     if (tmdbId) return `https://megaplay.buzz/stream/movie/${tmdbId}`
     return `https://megaplay.buzz/stream/ani/${al}/1/${lang}`
   }
 
-  return server === 'VIDNEST'
-    ? `https://vidnest.fun/animepahe/${al}/${episode}/${lang}`
-    : `https://megaplay.buzz/stream/ani/${al}/${episode}/${lang}`
+  return `https://megaplay.buzz/stream/ani/${al}/${episode}/${lang}`
 }
