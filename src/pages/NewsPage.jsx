@@ -37,6 +37,22 @@ function Skeleton() {
   return <div className="overflow-hidden rounded-3xl border border-white/[0.06] bg-white/[0.03]"><div className="aspect-[16/9] animate-pulse bg-white/[0.08]" /><div className="space-y-3 p-5"><div className="h-5 w-3/4 animate-pulse rounded bg-white/[0.08]" /><div className="h-3 w-full animate-pulse rounded bg-white/[0.06]" /><div className="h-3 w-2/3 animate-pulse rounded bg-white/[0.06]" /></div></div>
 }
 
+function SpotlightBanner({ anime }) {
+  const title = TT(anime)
+  const image = anime.bannerImage || largeCover(anime)
+  return <Link to={`/anime/${anime.id}`} className="group relative block min-h-[260px] overflow-hidden rounded-[2rem] border border-white/10 bg-[#17121d] focus:outline-none focus:ring-2 focus:ring-or/70 sm:min-h-[340px]">
+    {image && <img src={image} alt={`${title} banner artwork`} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" onError={(event) => { event.currentTarget.src = largeCover(anime) || '/midnight-anime-logo.svg' }} />}
+    <div className="absolute inset-0 bg-gradient-to-r from-[#09070d] via-[#09070d]/75 to-transparent" />
+    <div className="absolute inset-0 bg-gradient-to-t from-[#09070d] via-transparent to-transparent" />
+    <div className="relative flex min-h-[260px] max-w-xl flex-col justify-end p-6 sm:min-h-[340px] sm:p-9">
+      <span className="mb-3 w-fit rounded-full bg-or/90 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white">AniList spotlight</span>
+      <h2 className="font-display text-3xl font-black leading-tight sm:text-5xl">{title}</h2>
+      <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-white/65">{String(anime.description || 'Explore the full title page for artwork, metadata, episodes, and related anime.').replace(/<[^>]*>/g, '')}</p>
+      <span className="mt-5 inline-flex w-fit items-center rounded-full bg-white px-4 py-2 text-xs font-bold text-black transition-colors group-hover:bg-or group-hover:text-white">View full details →</span>
+    </div>
+  </Link>
+}
+
 export default function NewsPage() {
   const [items, setItems] = useState([])
   const [status, setStatus] = useState('loading')
@@ -53,9 +69,9 @@ export default function NewsPage() {
       <div><p className="font-display font-bold">Fresh from the catalogue</p><p className="mt-1 text-sm text-white/50">Artwork, scores, genres, status, and airing signals are sourced from AniList.</p></div>
       <button onClick={load} className="rounded-full border border-white/15 px-4 py-2 text-sm font-bold transition-colors hover:border-or hover:text-or">Refresh updates</button>
     </div>
-    {status === 'loading' && <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{Array.from({ length: 6 }, (_, i) => <Skeleton key={i} />)}</div>}
+    {status === 'loading' && <div className="space-y-8"><div className="aspect-[16/8] animate-pulse rounded-[2rem] bg-white/[0.08]" /><div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{Array.from({ length: 6 }, (_, i) => <Skeleton key={i} />)}</div></div>}
     {status === 'error' && <div className="rounded-3xl border border-red-300/20 bg-red-300/[0.06] p-8 text-center"><h2 className="font-display text-xl font-bold">The feed needs a moment</h2><p className="mx-auto mt-3 max-w-lg text-sm text-white/55">{error} You can still browse the catalogue while we reconnect.</p><button onClick={load} className="mt-6 rounded-full bg-or px-5 py-2.5 text-sm font-bold">Try again</button></div>}
     {status === 'ready' && !items.length && <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-10 text-center text-white/55">No updates are available right now. Try refreshing in a little while.</div>}
-    {status === 'ready' && items.length > 0 && <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{items.map((anime) => <UpdateCard anime={anime} key={anime.id} />)}</div>}
+    {status === 'ready' && items.length > 0 && <div className="space-y-10"><div className="grid gap-5">{items.slice(0, 3).map((anime) => <SpotlightBanner anime={anime} key={`spotlight-${anime.id}`} />)}</div><div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{items.map((anime) => <UpdateCard anime={anime} key={anime.id} />)}</div></div>}
   </PublicPageShell>
 }

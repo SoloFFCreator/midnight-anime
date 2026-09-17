@@ -142,6 +142,13 @@ function Toggle({ checked, onChange }) {
 }
 
 function AvatarPickerSheet({ current, onChoose, onClose }) {
+  const groupedChoices = AVATAR_CHOICES.reduce((groups, avatar) => {
+    const key = avatar.anime || 'Midnight originals'
+    if (!groups[key]) groups[key] = []
+    groups[key].push(avatar)
+    return groups
+  }, {})
+
   return (
     <motion.div className="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
@@ -152,19 +159,27 @@ function AvatarPickerSheet({ current, onChoose, onClose }) {
       >
         <p className="text-white font-bold text-[15px] mb-1">Choose Avatar</p>
         <p className="text-t3 text-[11px] mb-3">Character artwork from AniList</p>
-        <div className="grid grid-cols-3 gap-2.5">
-          {AVATAR_CHOICES.map((a) => (
-            <motion.button
-              key={a.id} whileTap={{ scale: 0.92 }}
-              onClick={() => onChoose(a.id)}
-              className="flex flex-col items-center gap-1.5 py-3 rounded-xl"
-              style={{ background: current === a.id ? `${a.color}22` : 'transparent', border: `2px solid ${current === a.id ? a.color : 'transparent'}` }}
-            >
-              <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center text-[22px]" style={{ background: a.color }}>
-                {a.image ? <img src={a.image} alt={`${a.name} character avatar`} className="w-full h-full object-cover" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.style.display = 'none' }} /> : a.emoji}
+        <div className="max-h-[65vh] space-y-4 overflow-y-auto pr-1">
+          {Object.entries(groupedChoices).map(([anime, choices]) => (
+            <section key={anime}>
+              <div className="mb-1.5 flex items-center gap-2"><h3 className="text-[10px] font-black uppercase tracking-wide text-t3">{anime}</h3><span className="h-px flex-1 bg-white/[0.08]" /></div>
+              <div className="grid grid-cols-3 gap-2.5">
+                {choices.map((a) => (
+                  <motion.button
+                    key={a.id} whileTap={{ scale: 0.92 }}
+                    onClick={() => onChoose(a.id)}
+                    aria-label={`Choose ${a.name} from ${anime}`}
+                    className="flex flex-col items-center gap-1.5 rounded-xl py-3"
+                    style={{ background: current === a.id ? `${a.color}22` : 'transparent', border: `2px solid ${current === a.id ? a.color : 'transparent'}` }}
+                  >
+                    <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full text-[22px]" style={{ background: a.color }}>
+                      {a.image ? <img src={a.image} alt={`${a.name} character avatar`} className="h-full w-full object-cover" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.style.display = 'none' }} /> : a.emoji}
+                    </div>
+                    <span className={`text-[10.5px] font-semibold ${current === a.id ? 'text-or' : 'text-t2'}`}>{a.name}</span>
+                  </motion.button>
+                ))}
               </div>
-              <span className={`text-[10.5px] font-semibold ${current === a.id ? 'text-or' : 'text-t2'}`}>{a.name}</span>
-            </motion.button>
+            </section>
           ))}
         </div>
       </motion.div>
