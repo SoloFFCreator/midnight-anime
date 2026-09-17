@@ -14,14 +14,16 @@ function label(value) {
 export default function NewsAnimeDetailPage() {
   const { id } = useParams()
   const [anime, setAnime] = useState(null)
+  const [advertisement, setAdvertisement] = useState(null)
   const [status, setStatus] = useState('loading')
 
   useEffect(() => {
     let active = true
     setStatus('loading')
-    AniListApi.fetchDetail(Number(id)).then((data) => {
+    Promise.all([AniListApi.fetchDetail(Number(id)), AniListApi.fetchNews()]).then(([data, updates]) => {
       if (!active) return
       setAnime(data)
+      setAdvertisement(updates.find((item) => item.id !== Number(id)) || updates[0] || null)
       setStatus(data ? 'ready' : 'error')
     }).catch(() => active && setStatus('error'))
     return () => { active = false }
@@ -36,6 +38,11 @@ export default function NewsAnimeDetailPage() {
   const airedEpisodes = totEps(anime)
 
   return <PublicPageShell eyebrow="Midnight signal / Featured title" title={title} intro="A dedicated Anime Updates feature view powered by AniList metadata. This page is for discovery context; use the catalogue detail button below for seasons, episode rows, watchlist controls, and playback actions.">
+    {advertisement && <Link to={`/news/anime/${advertisement.id}`} className="group relative mb-8 block min-h-[150px] overflow-hidden rounded-3xl border border-or/30 bg-[#17121d] shadow-xl shadow-black/20 focus:outline-none focus:ring-2 focus:ring-or/70 sm:min-h-[190px]">
+      {(advertisement.bannerImage || largeCover(advertisement)) && <img src={advertisement.bannerImage || largeCover(advertisement)} alt={`${TT(advertisement)} advertisement banner`} className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105" onError={(event) => { event.currentTarget.src = largeCover(advertisement) || '/midnight-anime-logo.svg' }} />}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#09070d] via-[#09070d]/70 to-transparent" />
+      <div className="relative flex min-h-[150px] max-w-lg flex-col justify-center p-5 sm:min-h-[190px] sm:p-7"><span className="mb-2 w-fit rounded-full bg-or px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-wider text-white">Featured anime</span><h2 className="font-display text-2xl font-black sm:text-3xl">{TT(advertisement)}</h2><p className="mt-2 text-xs text-white/60">Explore another title from AniList updates</p><span className="mt-4 w-fit text-xs font-bold text-or group-hover:underline">Open feature →</span></div>
+    </Link>}
     <article className="overflow-hidden rounded-[2rem] border border-white/[0.08] bg-white/[0.035]">
       <div className="relative aspect-[16/8] min-h-[260px] bg-[#17121d] sm:min-h-[390px]">
         {image && <img src={image} alt={`${title} banner artwork`} className="h-full w-full object-cover" onError={(event) => { event.currentTarget.src = largeCover(anime) || '/midnight-anime-logo.svg' }} />}
