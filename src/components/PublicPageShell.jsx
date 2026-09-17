@@ -18,7 +18,7 @@ export default function PublicPageShell({ eyebrow, title, intro, children }) {
       <header className="sticky top-0 z-40 border-b border-white/[0.08] bg-[#07060b]/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
           <Link to="/" className="flex items-center gap-2.5" aria-label="Midnight Anime home">
-            <img src="/midnight-anime-logo.png" alt="" className="h-8 w-8 rounded-lg" />
+            <img src="/logo.svg" alt="" className="h-8 w-8 rounded-lg" />
             <span className="font-display text-[15px] font-extrabold tracking-tight">Midnight<span className="text-or">Anime</span></span>
           </Link>
           <nav aria-label="Information pages" className="hidden items-center gap-7 text-[13px] font-medium text-white/55 md:flex">
@@ -42,7 +42,7 @@ export default function PublicPageShell({ eyebrow, title, intro, children }) {
 
       <footer className="relative border-t border-white/[0.08] px-5 py-10 sm:px-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 text-sm text-white/45 sm:flex-row sm:items-center sm:justify-between">
-          <Link to="/" className="flex items-center gap-2 font-display font-bold text-white/80"><img src="/midnight-anime-logo.png" alt="" className="h-7 w-7 rounded-lg" />Midnight<span className="text-or">Anime</span></Link>
+          <Link to="/" className="flex items-center gap-2 font-display font-bold text-white/80"><img src="/logo.svg" alt="" className="h-7 w-7 rounded-lg" />Midnight<span className="text-or">Anime</span></Link>
           <div className="flex flex-wrap gap-x-5 gap-y-2">
             <Link to="/app" className="hover:text-white">Catalogue</Link>
             <Link to="/download" className="hover:text-white">Download</Link>
