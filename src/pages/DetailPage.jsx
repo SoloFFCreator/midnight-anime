@@ -19,6 +19,7 @@ export default function DetailPage() {
   const [backdropUrl, setBackdropUrl] = useState(null)
   const [episodeImages, setEpisodeImages] = useState({})
   const [metadata, setMetadata] = useState(null)
+  const [franchiseMedia, setFranchiseMedia] = useState([])
   const [descExpanded, setDescExpanded] = useState(false)
 
   const { user } = useAuthStore()
@@ -32,13 +33,16 @@ export default function DetailPage() {
     setBackdropUrl(null)
     setEpisodeImages({})
     setMetadata(null)
+    setFranchiseMedia([])
 
-    AniListApi.fetchDetail(Number(id)).then((data) => {
+    AniListApi.fetchDetail(Number(id)).then(async (data) => {
       setAnime(data)
       MetadataApi.fetch(data).then(setMetadata)
       TmdbApi.fetchLogo(data).then((url) => url && setLogoUrl(url))
       TmdbApi.fetchBackdrop(data).then((url) => url && setBackdropUrl(url))
       TmdbApi.fetchEpisodeImages(data).then((images) => images && setEpisodeImages(images))
+      const chain = await loadSeasonChain(data)
+      setFranchiseMedia(chain)
     })
   }, [id])
 
@@ -50,7 +54,7 @@ export default function DetailPage() {
     )
   }
 
-  const seasons = buildSeasons(anime)
+  const seasons = buildSeasons(anime, franchiseMedia)
   const total = Math.min(totEps(anime), 50)
   const bgUrl = backdropUrl || anime.bannerImage || anime.coverImage?.extraLarge
   const resumeEp = progress?.ep || 1
@@ -205,17 +209,54 @@ function stripHtml(value) {
   return (value || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()
 }
 
-function buildSeasons(media) {
-  const edges = media.relations?.edges || []
+async function loadSeasonChain(start) {
+  const queue = [start]
+  const loaded = new Map([[Number(start.id), start]])
+  const visited = new Set()
+  const allowed = new Set(['PREQUEL', 'SEQUEL', 'PARENT'])
+  while (queue.length && visited.size < 12) {
+    const current = queue.shift()
+    const currentId = Number(current.id)
+    if (visited.has(currentId)) continue
+    visited.add(currentId)
+    for (const edge of current.relations?.edges || []) {
+      if (!allowed.has(edge.relationType) || edge.node?.type !== 'ANIME' || !edge.node?.id) continue
+      const nodeId = Number(edge.node.id)
+      if (loaded.has(nodeId)) continue
+      try {
+        const detail = await AniListApi.fetchDetail(nodeId)
+        if (detail) {
+          loaded.set(nodeId, detail)
+          queue.push(detail)
+        }
+      } catch {
+        // Keep the chain usable when one related AniList record is unavailable.
+      }
+    }
+  }
+  return [...loaded.values()]
+}
+
+function buildSeasons(media, franchiseMedia = []) {
+  const source = franchiseMedia.length ? franchiseMedia : [media]
   const related = []
   const seen = new Set([Number(media.id)])
-  edges.forEach((e) => {
-    if (!e.node?.id) return
-    if (['PREQUEL', 'SEQUEL', 'PARENT', 'ALTERNATIVE_VERSION', 'SIDE_STORY'].includes(e.relationType)) {
-      const id = Number(e.node.id)
-      if (seen.has(id)) return
-      seen.add(id)
-      related.push({ anime: e.node, type: e.relationType, isCurrent: false })
+  source.forEach((entry) => {
+    if (Number(entry.id) === Number(media.id)) return
+    const id = Number(entry.id)
+    if (!id || seen.has(id)) return
+    seen.add(id)
+    related.push({ anime: entry, type: 'SEQUEL', isCurrent: false })
+  })
+  ;[...source, media].forEach((entry) => {
+    for (const edge of entry.relations?.edges || []) {
+      if (!edge.node?.id) continue
+      if (['ALTERNATIVE_VERSION', 'SIDE_STORY'].includes(edge.relationType)) {
+        const id = Number(edge.node.id)
+        if (seen.has(id)) continue
+        seen.add(id)
+        related.push({ anime: edge.node, type: edge.relationType, isCurrent: false })
+      }
     }
   })
   related.push({ anime: media, type: 'CURRENT', isCurrent: true })
