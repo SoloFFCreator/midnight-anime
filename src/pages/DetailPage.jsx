@@ -283,8 +283,10 @@ function buildSeasons(media, franchiseMedia = []) {
     if (item.type === 'SIDE_STORY') label = 'Side Story'
     else if (item.type === 'ALTERNATIVE_VERSION') label = 'Alt. Version'
     else {
-      const idx = sortedMain.indexOf(item)
-      label = `Season ${idx >= 0 ? idx + 1 : sorted.indexOf(item) + 1}`
+      const title = TT(item.anime)
+      const seasonMatch = title.match(/\bseason\s+(\d+)(?:\s+(part\s+\d+))?/i)
+      if (seasonMatch) label = `Season ${seasonMatch[1]}${seasonMatch[2] ? ` ${seasonMatch[2]}` : ''}`
+      else label = 'Season 1'
     }
     return { anime: item.anime, label, isCurrent: item.isCurrent }
   })

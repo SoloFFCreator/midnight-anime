@@ -88,7 +88,10 @@ export const TmdbApi = {
     const tmdbId = await resolveTmdbId(anime)
     if (!tmdbId) { episodeImageCache.set(anime.id, null); return null }
 
-    const json = await safeFetch(`${BASE}/tv/${tmdbId}/season/1?api_key=${TMDB_API_KEY}`)
+    const title = TT(anime)
+    const explicitSeason = title.match(/\bseason\s+(\d+)/i)?.[1]
+    const seasonNumber = explicitSeason ? Number(explicitSeason) : 1
+    const json = await safeFetch(`${BASE}/tv/${tmdbId}/season/${seasonNumber}?api_key=${TMDB_API_KEY}`)
     const episodes = json?.episodes || []
     if (!episodes.length) { episodeImageCache.set(anime.id, null); return null }
 
