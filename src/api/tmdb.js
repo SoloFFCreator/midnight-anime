@@ -97,7 +97,12 @@ export const TmdbApi = {
 
     const map = {}
     episodes.forEach((ep) => {
-      if (ep.still_path) map[ep.episode_number] = IMG_W500 + ep.still_path
+      if (ep.still_path || ep.name) {
+        map[ep.episode_number] = {
+          image: ep.still_path ? IMG_W500 + ep.still_path : null,
+          title: ep.name || null,
+        }
+      }
     })
     episodeImageCache.set(anime.id, map)
     return map

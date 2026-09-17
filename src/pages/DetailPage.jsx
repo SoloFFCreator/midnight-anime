@@ -179,7 +179,8 @@ export default function DetailPage() {
 
 function EpisodeRow({ ep, anime, thumbOverride, onClick }) {
   const streamEp = anime.streamingEpisodes?.[ep - 1]
-  const thumb = thumbOverride || streamEp?.thumbnail || anime.bannerImage || anime.coverImage?.large
+  const thumb = thumbOverride?.image || (typeof thumbOverride === 'string' ? thumbOverride : null) || streamEp?.thumbnail || anime.bannerImage || anime.coverImage?.large
+  const episodeTitle = thumbOverride?.title || streamEp?.title
   const dur = anime.duration ? `${anime.duration}m` : '23m'
 
   return (
@@ -196,7 +197,7 @@ function EpisodeRow({ ep, anime, thumbOverride, onClick }) {
       <div className="flex-1 min-w-0">
         <p className="text-[9px] font-bold text-t3 uppercase truncate">{TT(anime)}</p>
         <p className="text-[13px] font-semibold text-white truncate">
-          E{ep}{streamEp?.title ? ` — ${streamEp.title}` : ''}
+          E{ep}{episodeTitle ? ` — ${episodeTitle}` : ''}
         </p>
         <p className="text-[10.5px] text-t3">Dub | Sub | Hindi</p>
       </div>
