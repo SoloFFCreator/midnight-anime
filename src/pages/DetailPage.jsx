@@ -208,25 +208,41 @@ function stripHtml(value) {
 function buildSeasons(media) {
   const edges = media.relations?.edges || []
   const related = []
+  const seen = new Set([Number(media.id)])
   edges.forEach((e) => {
     if (!e.node?.id) return
     if (['PREQUEL', 'SEQUEL', 'PARENT', 'ALTERNATIVE_VERSION', 'SIDE_STORY'].includes(e.relationType)) {
+      const id = Number(e.node.id)
+      if (seen.has(id)) return
+      seen.add(id)
       related.push({ anime: e.node, type: e.relationType, isCurrent: false })
     }
   })
   related.push({ anime: media, type: 'CURRENT', isCurrent: true })
   if (related.length <= 1) return []
 
-  const order = { PREQUEL: 0, PARENT: 1, CURRENT: 2, SEQUEL: 3, ALTERNATIVE_VERSION: 4, SIDE_STORY: 5 }
-  const sorted = [...related].sort((a, b) => (order[a.type] ?? 3) - (order[b.type] ?? 3) || (a.anime.seasonYear || 9999) - (b.anime.seasonYear || 9999))
-  const mainSeasons = sorted.filter((i) => i.type !== 'ALTERNATIVE_VERSION' && i.type !== 'SIDE_STORY')
+  const seasonOrder = { WINTER: 0, SPRING: 1, SUMMER: 2, FALL: 3 }
+  const mainSeasons = related.filter((item) => item.type !== 'ALTERNATIVE_VERSION' && item.type !== 'SIDE_STORY')
+  const extras = related.filter((item) => item.type === 'ALTERNATIVE_VERSION' || item.type === 'SIDE_STORY')
+  const chronological = (a, b) => {
+    const yearA = Number(a.anime.seasonYear) || 9999
+    const yearB = Number(b.anime.seasonYear) || 9999
+    if (yearA !== yearB) return yearA - yearB
+    const seasonA = seasonOrder[a.anime.season] ?? 9
+    const seasonB = seasonOrder[b.anime.season] ?? 9
+    if (seasonA !== seasonB) return seasonA - seasonB
+    return Number(a.anime.id) - Number(b.anime.id)
+  }
+  const sortedMain = [...mainSeasons].sort(chronological)
+  const sortedExtras = [...extras].sort(chronological)
+  const sorted = [...sortedMain, ...sortedExtras]
 
   return sorted.map((item) => {
     let label
     if (item.type === 'SIDE_STORY') label = 'Side Story'
     else if (item.type === 'ALTERNATIVE_VERSION') label = 'Alt. Version'
     else {
-      const idx = mainSeasons.indexOf(item)
+      const idx = sortedMain.indexOf(item)
       label = `Season ${idx >= 0 ? idx + 1 : sorted.indexOf(item) + 1}`
     }
     return { anime: item.anime, label, isCurrent: item.isCurrent }
