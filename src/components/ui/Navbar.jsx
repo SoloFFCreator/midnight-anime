@@ -5,7 +5,7 @@ import { AVATAR_CHOICES } from '../../utils/models'
 
 function avatarDataUri(choice) {
   if (!choice) return null
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="${choice.color}"/><text x="50" y="62" font-size="46" text-anchor="middle">${choice.emoji}</text></svg>`
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="${choice.color}"/><text x="50" y="64" font-size="42" fill="white" text-anchor="middle" font-family="Arial, sans-serif">${choice.symbol || '◇'}</text></svg>`
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
 }
 

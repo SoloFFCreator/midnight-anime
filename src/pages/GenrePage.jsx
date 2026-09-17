@@ -29,7 +29,7 @@ export default function GenrePage() {
         </button>
         <div>
           <div className="flex items-center gap-1.5">
-            {genreInfo && <span>{genreInfo.emoji}</span>}
+            {genreInfo && <span className="font-light text-or">{genreInfo.symbol}</span>}
             <h1 className="text-[18px] font-extrabold text-white">{name} Anime</h1>
           </div>
           {genreInfo && <p className="text-[11px] text-t3">{genreInfo.description}</p>}

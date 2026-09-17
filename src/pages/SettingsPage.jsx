@@ -25,7 +25,7 @@ export default function SettingsPage() {
           style={{ background: choice ? choice.color : '#222230' }}
         >
           {choice?.image ? <img src={choice.image} alt={`${choice.name} character avatar`} className="w-full h-full rounded-full object-cover" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.style.display = 'none' }} />
-            : choice ? <span className="text-2xl">{choice.emoji}</span>
+            : choice ? <span className="text-2xl font-light">{choice.symbol}</span>
             : profile?.photoURL ? <img src={profile.photoURL} className="w-full h-full rounded-full object-cover" alt="" />
             : <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-t3 fill-none" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>}
         </button>
@@ -173,7 +173,7 @@ function AvatarPickerSheet({ current, onChoose, onClose }) {
                     style={{ background: current === a.id ? `${a.color}22` : 'transparent', border: `2px solid ${current === a.id ? a.color : 'transparent'}` }}
                   >
                     <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full text-[22px]" style={{ background: a.color }}>
-                      {a.image ? <img src={a.image} alt={`${a.name} character avatar`} className="h-full w-full object-cover" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.style.display = 'none' }} /> : a.emoji}
+                      {a.image ? <img src={a.image} alt={`${a.name} character avatar`} className="h-full w-full object-cover" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.style.display = 'none' }} /> : <span className="font-light">{a.symbol}</span>}
                     </div>
                     <span className={`text-[10.5px] font-semibold ${current === a.id ? 'text-or' : 'text-t2'}`}>{a.name}</span>
                   </motion.button>

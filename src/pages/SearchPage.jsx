@@ -73,7 +73,7 @@ export default function SearchPage() {
         </div>
       ) : results.length === 0 ? (
         <div className="flex flex-col items-center py-16 gap-2 text-center px-6">
-          <p className="text-4xl">🔍</p>
+          <p className="text-4xl font-light text-or">⌕</p>
           <p className="font-bold text-white">No results</p>
           <p className="text-t3 text-[12px]">Nothing found for "{query}"</p>
         </div>
@@ -111,7 +111,7 @@ function EmptyState({ recent, onRecentClick, onRecentRemove, onGenreClick }) {
       <div className="grid grid-cols-2 gap-2.5 pb-6">
         {ALL_GENRES.map((g) => (
           <div key={g.name} onClick={() => onGenreClick(g.name)} className="flex items-center gap-2 bg-bg2 rounded-xl p-3 cursor-pointer">
-            <span className="text-lg">{g.emoji}</span>
+            <span className="text-lg font-light text-or">{g.symbol}</span>
             <div>
               <p className="text-[13px] font-bold text-white">{g.name}</p>
               <p className="text-[10px] text-t3">{g.description}</p>
