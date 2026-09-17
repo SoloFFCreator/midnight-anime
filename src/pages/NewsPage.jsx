@@ -12,7 +12,7 @@ function UpdateCard({ anime }) {
   const title = TT(anime)
   const image = anime.bannerImage || largeCover(anime)
   const description = String(anime.description || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
-  const detailPath = `/anime/${anime.id}`
+  const detailPath = `/news/anime/${anime.id}`
   return <Link to={detailPath} onClick={(event) => { event.preventDefault(); navigate(detailPath) }} className="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.035] transition-transform duration-200 hover:-translate-y-1 hover:border-or/40 focus:outline-none focus:ring-2 focus:ring-or/70">
     <div className="relative aspect-[16/9] overflow-hidden bg-[#17121d]">
       {image ? <img src={image} alt={`${title} artwork`} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" onError={(event) => { event.currentTarget.src = largeCover(anime) || '/midnight-anime-logo.svg' }} /> : <div className="flex h-full items-center justify-center"><img src="/midnight-anime-logo.svg" alt="Midnight Anime" className="h-14 w-14 rounded-2xl opacity-60" /></div>}
@@ -43,7 +43,7 @@ function SpotlightBanner({ anime }) {
   const navigate = useNavigate()
   const title = TT(anime)
   const image = anime.bannerImage || largeCover(anime)
-  const detailPath = `/anime/${anime.id}`
+  const detailPath = `/news/anime/${anime.id}`
   return <Link to={detailPath} onClick={(event) => { event.preventDefault(); navigate(detailPath) }} className="group relative block min-h-[260px] overflow-hidden rounded-[2rem] border border-white/10 bg-[#17121d] focus:outline-none focus:ring-2 focus:ring-or/70 sm:min-h-[340px]">
     {image && <img src={image} alt={`${title} banner artwork`} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" onError={(event) => { event.currentTarget.src = largeCover(anime) || '/midnight-anime-logo.svg' }} />}
     <div className="absolute inset-0 bg-gradient-to-r from-[#09070d] via-[#09070d]/75 to-transparent" />
@@ -68,7 +68,7 @@ export default function NewsPage() {
   }
   useEffect(() => { load() }, [])
 
-  return <PublicPageShell eyebrow="Midnight signal / Anime updates" title="What is moving in anime right now?" intro="A living snapshot of trending and recently released titles from AniList. This is an anime update feed—not a breaking-news publisher—and every card leads to a deeper Midnight Anime title page.">
+  return <PublicPageShell eyebrow="Midnight signal / Anime updates" title="What is moving in anime right now?" intro="A living snapshot of trending and recently released titles from AniList. This is an anime update feed—not a breaking-news publisher—and every card opens a dedicated feature page for that anime.">
     <div className="mb-10 flex flex-col gap-4 rounded-3xl border border-or/20 bg-or/[0.07] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
       <div><p className="font-display font-bold">Fresh from the catalogue</p><p className="mt-1 text-sm text-white/50">Artwork, scores, genres, status, and airing signals are sourced from AniList.</p></div>
       <button onClick={load} className="rounded-full border border-white/15 px-4 py-2 text-sm font-bold transition-colors hover:border-or hover:text-or">Refresh updates</button>
