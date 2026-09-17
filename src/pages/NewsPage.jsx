@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import PublicPageShell from '../components/PublicPageShell'
 import { AniListApi, TT, largeCover } from '../api/anilist'
 
@@ -8,10 +8,12 @@ function formatLabel(value) {
 }
 
 function UpdateCard({ anime }) {
+  const navigate = useNavigate()
   const title = TT(anime)
   const image = anime.bannerImage || largeCover(anime)
   const description = String(anime.description || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
-  return <Link to={`/anime/${anime.id}`} className="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.035] transition-transform duration-200 hover:-translate-y-1 hover:border-or/40 focus:outline-none focus:ring-2 focus:ring-or/70">
+  const detailPath = `/anime/${anime.id}`
+  return <Link to={detailPath} onClick={(event) => { event.preventDefault(); navigate(detailPath) }} className="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.035] transition-transform duration-200 hover:-translate-y-1 hover:border-or/40 focus:outline-none focus:ring-2 focus:ring-or/70">
     <div className="relative aspect-[16/9] overflow-hidden bg-[#17121d]">
       {image ? <img src={image} alt={`${title} artwork`} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" onError={(event) => { event.currentTarget.src = largeCover(anime) || '/midnight-anime-logo.svg' }} /> : <div className="flex h-full items-center justify-center"><img src="/midnight-anime-logo.svg" alt="Midnight Anime" className="h-14 w-14 rounded-2xl opacity-60" /></div>}
       <div className="absolute inset-0 bg-gradient-to-t from-[#09070d] via-transparent to-transparent" />
@@ -38,9 +40,11 @@ function Skeleton() {
 }
 
 function SpotlightBanner({ anime }) {
+  const navigate = useNavigate()
   const title = TT(anime)
   const image = anime.bannerImage || largeCover(anime)
-  return <Link to={`/anime/${anime.id}`} className="group relative block min-h-[260px] overflow-hidden rounded-[2rem] border border-white/10 bg-[#17121d] focus:outline-none focus:ring-2 focus:ring-or/70 sm:min-h-[340px]">
+  const detailPath = `/anime/${anime.id}`
+  return <Link to={detailPath} onClick={(event) => { event.preventDefault(); navigate(detailPath) }} className="group relative block min-h-[260px] overflow-hidden rounded-[2rem] border border-white/10 bg-[#17121d] focus:outline-none focus:ring-2 focus:ring-or/70 sm:min-h-[340px]">
     {image && <img src={image} alt={`${title} banner artwork`} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" onError={(event) => { event.currentTarget.src = largeCover(anime) || '/midnight-anime-logo.svg' }} />}
     <div className="absolute inset-0 bg-gradient-to-r from-[#09070d] via-[#09070d]/75 to-transparent" />
     <div className="absolute inset-0 bg-gradient-to-t from-[#09070d] via-transparent to-transparent" />
