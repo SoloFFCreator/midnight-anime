@@ -13,7 +13,7 @@ function UpdateCard({ anime }) {
   const description = String(anime.description || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
   return <Link to={`/anime/${anime.id}`} className="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.035] transition-transform duration-200 hover:-translate-y-1 hover:border-or/40 focus:outline-none focus:ring-2 focus:ring-or/70">
     <div className="relative aspect-[16/9] overflow-hidden bg-[#17121d]">
-      {image ? <img src={image} alt={`${title} artwork`} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" onError={(event) => { event.currentTarget.src = largeCover(anime) || '/midnight-anime-logo.png' }} /> : <div className="flex h-full items-center justify-center"><img src="/midnight-anime-logo.png" alt="Midnight Anime" className="h-14 w-14 rounded-2xl opacity-60" /></div>}
+      {image ? <img src={image} alt={`${title} artwork`} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" onError={(event) => { event.currentTarget.src = largeCover(anime) || '/midnight-anime-logo.svg' }} /> : <div className="flex h-full items-center justify-center"><img src="/midnight-anime-logo.svg" alt="Midnight Anime" className="h-14 w-14 rounded-2xl opacity-60" /></div>}
       <div className="absolute inset-0 bg-gradient-to-t from-[#09070d] via-transparent to-transparent" />
       <div className="absolute bottom-3 left-4 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-wider">
         {anime.format && <span className="rounded-full bg-black/60 px-2.5 py-1 text-white/75">{formatLabel(anime.format)}</span>}
