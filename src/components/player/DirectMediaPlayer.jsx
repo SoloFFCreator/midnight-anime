@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Hls from 'hls.js'
 
-const BRAND_LOGO = '/logo.svg'
+const BRAND_LOGO = '/midnight-anime-logo.png'
 
 function formatTime(value) {
   if (!Number.isFinite(value) || value < 0) return '00:00'
