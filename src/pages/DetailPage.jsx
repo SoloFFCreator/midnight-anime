@@ -186,7 +186,10 @@ function EpisodeRow({ ep, anime, thumbOverride, onClick }) {
   return (
     <motion.div whileTap={{ backgroundColor: 'rgba(255,255,255,.03)' }} onClick={onClick} className="flex items-center gap-2.5 px-4 py-2 cursor-pointer">
       <div className="relative w-[110px] aspect-video rounded-lg overflow-hidden flex-shrink-0">
-        <img src={thumb} alt="" className="w-full h-full object-cover" />
+        <img src={thumb} alt={`${TT(anime)} episode ${ep}`} className="w-full h-full object-cover" onError={(event) => {
+          const fallback = streamEp?.thumbnail || anime.bannerImage || anime.coverImage?.large
+          if (fallback && event.currentTarget.src !== fallback) event.currentTarget.src = fallback
+        }} />
         <span className="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] font-bold px-1 rounded">{dur}</span>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-7 h-7 rounded-full bg-black/45 flex items-center justify-center">

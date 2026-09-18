@@ -21,6 +21,14 @@ const episodeImageCache = new Map()
 
 const isConfigured = () => TMDB_API_KEY && TMDB_API_KEY !== 'YOUR_TMDB_API_KEY_HERE'
 
+function detectSeasonNumber(title) {
+  const value = String(title || '')
+  const numeric = value.match(/\b(?:season\s*(\d+)|(\d+)(?:st|nd|rd|th)\s+season)\b/i)
+  if (numeric) return Number(numeric[1] || numeric[2])
+  const word = value.match(/\b(second|third|fourth|fifth)\s+season\b/i)?.[1]?.toLowerCase()
+  return ({ second: 2, third: 3, fourth: 4, fifth: 5 }[word] || 1)
+}
+
 async function safeFetch(url) {
   try {
     const res = await fetch(url)
@@ -88,9 +96,7 @@ export const TmdbApi = {
     const tmdbId = await resolveTmdbId(anime)
     if (!tmdbId) { episodeImageCache.set(anime.id, null); return null }
 
-    const title = TT(anime)
-    const explicitSeason = title.match(/\bseason\s+(\d+)/i)?.[1]
-    const seasonNumber = explicitSeason ? Number(explicitSeason) : 1
+    const seasonNumber = detectSeasonNumber(TT(anime))
     const json = await safeFetch(`${BASE}/tv/${tmdbId}/season/${seasonNumber}?api_key=${TMDB_API_KEY}`)
     const episodes = json?.episodes || []
     if (!episodes.length) { episodeImageCache.set(anime.id, null); return null }
@@ -99,7 +105,7 @@ export const TmdbApi = {
     episodes.forEach((ep) => {
       if (ep.still_path || ep.name) {
         map[ep.episode_number] = {
-          image: ep.still_path ? IMG_W500 + ep.still_path : null,
+          image: ep.still_path ? `${IMG_W500}${ep.still_path}` : null,
           title: ep.name || null,
         }
       }
