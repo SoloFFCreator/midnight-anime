@@ -153,7 +153,16 @@ export default function WatchPage() {
             onEnded={handleHindiEnded}
           />
         ) : (
-          <iframe src={streamUrl} className="w-full h-full" allowFullScreen frameBorder="0" title={`${TT(anime)} ${isMovie(anime) ? 'movie' : `episode ${ep}`}`} />
+          <iframe
+            src={streamUrl}
+            className="w-full h-full"
+            allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+            allowFullScreen
+            frameBorder="0"
+            referrerPolicy="no-referrer"
+            sandbox="allow-forms allow-modals allow-presentation allow-scripts allow-same-origin"
+            title={`${TT(anime)} ${isMovie(anime) ? 'movie' : `episode ${ep}`}`}
+          />
         )}
       </div>
 
