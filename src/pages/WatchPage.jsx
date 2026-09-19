@@ -159,8 +159,6 @@ export default function WatchPage() {
             allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
             allowFullScreen
             frameBorder="0"
-            referrerPolicy="no-referrer"
-            sandbox="allow-forms allow-modals allow-presentation allow-scripts allow-same-origin"
             title={`${TT(anime)} ${isMovie(anime) ? 'movie' : `episode ${ep}`}`}
           />
         )}
