@@ -5,7 +5,6 @@ import { AniListApi, TT, totEps } from '../api/anilist'
 import { NuvioApi } from '../api/hindi'
 import { SubtitlesApi } from '../api/subtitles'
 import { MetadataApi } from '../api/metadata'
-import ExternalIds from '../components/ui/ExternalIds'
 import DirectMediaPlayer from '../components/player/DirectMediaPlayer'
 import { useWatchlistStore } from '../store/watchlistStore'
 import { usePlayerStore } from '../store/playerStore'
@@ -172,7 +171,6 @@ export default function WatchPage() {
         <p onClick={() => navigate(`/anime/${anime.id}`)} className="text-[12px] text-t3 cursor-pointer">
           {isMovie(anime) ? 'Movie' : `Episode ${ep}`}
         </p>
-        <ExternalIds metadata={metadata} anime={anime} compact />
         <div className="mt-2 flex justify-end">
           <ShareButton
             compact

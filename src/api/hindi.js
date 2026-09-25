@@ -1,5 +1,6 @@
 const STREAM_ENDPOINT = '/api/hindi-stream'
-const REQUEST_TIMEOUT_MS = 20_000
+const REQUEST_TIMEOUT_MS = 45_000
+const MAX_ATTEMPTS = 2
 
 function isPlayableUrl(value) {
   return typeof value === 'string' && /^https?:\/\//i.test(value.trim())
@@ -54,8 +55,6 @@ export const NuvioApi = {
   async fetchStreams({ malId, mediaType = 'tv', season = 1, episode = 1, audio = 'hindi' }) {
     if (!malId) return { ok: false, reason: 'MAL ID is required for Nuvio playback', streams: [] }
 
-    const controller = new AbortController()
-    const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
     const type = mediaType === 'movie' ? 'movie' : 'tv'
     const params = new URLSearchParams({
       type,
@@ -67,24 +66,35 @@ export const NuvioApi = {
       params.set('episode', String(Math.max(1, Number(episode) || 1)))
     }
 
-    try {
-      const res = await fetch(`${STREAM_ENDPOINT}?${params.toString()}`, {
-        headers: { Accept: 'application/json' },
-        signal: controller.signal,
-      })
-      let json = null
-      try { json = await res.json() } catch { /* preserve useful HTTP error below */ }
-      if (!res.ok) {
-        return { ok: false, reason: json?.error?.message || `Nuvio API returned HTTP ${res.status}`, streams: [] }
+    let lastReason = 'Nuvio API network error'
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+      const controller = new AbortController()
+      const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+      try {
+        const res = await fetch(`${STREAM_ENDPOINT}?${params.toString()}`, {
+          headers: { Accept: 'application/json' },
+          signal: controller.signal,
+        })
+        let json = null
+        try { json = await res.json() } catch { /* preserve useful HTTP error below */ }
+        if (!res.ok) {
+          lastReason = json?.error?.message || `Nuvio API returned HTTP ${res.status}`
+          if (res.status >= 500 && attempt < MAX_ATTEMPTS) continue
+          return { ok: false, reason: lastReason, streams: [] }
+        }
+        const streams = responseSources(json).map((source, index) => normalizeSource(source, index, audio)).filter(Boolean)
+        if (!streams.length) return { ok: false, reason: `No ${audio} stream was returned for this episode`, streams: [] }
+        return { ok: true, streams }
+      } catch (error) {
+        lastReason = error?.name === 'AbortError' ? 'Nuvio API request timed out' : error?.message || 'Nuvio API network error'
+        if (attempt < MAX_ATTEMPTS) {
+          await new Promise((resolve) => window.setTimeout(resolve, 1200))
+          continue
+        }
+      } finally {
+        window.clearTimeout(timeout)
       }
-      const streams = responseSources(json).map((source, index) => normalizeSource(source, index, audio)).filter(Boolean)
-      if (!streams.length) return { ok: false, reason: `No ${audio} stream was returned for this episode`, streams: [] }
-      return { ok: true, streams }
-    } catch (error) {
-      const reason = error?.name === 'AbortError' ? 'Nuvio API request timed out' : error?.message || 'Nuvio API network error'
-      return { ok: false, reason, streams: [] }
-    } finally {
-      window.clearTimeout(timeout)
     }
+    return { ok: false, reason: lastReason, streams: [] }
   },
 }
