@@ -1,4 +1,4 @@
-const STREAM_ENDPOINT = 'https://nuvio-stream-api-20260925.onrender.com/api/stream'
+const STREAM_ENDPOINT = '/api/hindi-stream'
 const REQUEST_TIMEOUT_MS = 20_000
 
 function isPlayableUrl(value) {
