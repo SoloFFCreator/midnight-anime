@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { AniListApi, TT, totEps } from '../api/anilist'
 import { NuvioApi } from '../api/hindi'
+import { SubtitlesApi } from '../api/subtitles'
 import { MetadataApi } from '../api/metadata'
 import ExternalIds from '../components/ui/ExternalIds'
 import DirectMediaPlayer from '../components/player/DirectMediaPlayer'
@@ -25,6 +26,7 @@ export default function WatchPage() {
   const [hindiSourceIndex, setHindiSourceIndex] = useState(0)
   const [streamLoading, setStreamLoading] = useState(false)
   const [streamError, setStreamError] = useState('')
+  const [subtitleTracks, setSubtitleTracks] = useState([])
 
   const { user } = useAuthStore()
   const { saveProgress, subscribeToRatings, episodeRatings, rateEpisode, userRatings, loadUserRating } = useWatchlistStore()
@@ -41,6 +43,7 @@ export default function WatchPage() {
     setMetadata(null)
     setHindiStreams([])
     setHindiSourceIndex(0)
+    setSubtitleTracks([])
     AniListApi.fetchDetail(animeId).then(async (data) => {
       if (!active) return
       setAnime(data)
@@ -81,6 +84,17 @@ export default function WatchPage() {
     if (anime && metadata) loadStream()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [audioTrack, metadata?.tmdbId, metadata?.mediaType, metadata?.seasonNumber, ep])
+
+  useEffect(() => {
+    let active = true
+    if (!anime) return undefined
+    SubtitlesApi.search({
+      title: TT(anime),
+      season: metadata?.seasonNumber || 1,
+      episode: isMovie(anime) ? 1 : ep,
+    }).then((tracks) => active && setSubtitleTracks(tracks)).catch(() => active && setSubtitleTracks([]))
+    return () => { active = false }
+  }, [anime?.id, metadata?.seasonNumber, ep])
 
   useEffect(() => {
     if (showRecommendations) navigate(`/recommend/${animeId}`)
@@ -147,7 +161,7 @@ export default function WatchPage() {
         {streamLoading ? (
           <PlayerLoading audioTrack={audioTrack} />
         ) : streamSource ? (
-          <DirectMediaPlayer source={streamSource} onRetry={loadStream} onEnded={handleHindiEnded} />
+          <DirectMediaPlayer source={streamSource} subtitleTracks={subtitleTracks} onRetry={loadStream} onEnded={handleHindiEnded} />
         ) : (
           <PlayerUnavailable audioTrack={audioTrack} error={streamError} onRetry={loadStream} onFallbackSub={() => changeAudio('SUB')} />
         )}
@@ -158,7 +172,7 @@ export default function WatchPage() {
         <p onClick={() => navigate(`/anime/${anime.id}`)} className="text-[12px] text-t3 cursor-pointer">
           {isMovie(anime) ? 'Movie' : `Episode ${ep}`}
         </p>
-        <ExternalIds metadata={metadata} compact />
+        <ExternalIds metadata={metadata} anime={anime} compact />
         <div className="mt-2 flex justify-end">
           <ShareButton
             compact
@@ -169,9 +183,9 @@ export default function WatchPage() {
         </div>
       </div>
 
-      {hindiStreams.length > 0 && (
+      {hindiStreams.length > 1 && (
         <div className="px-4 pt-3">
-          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-t3">{audioTrack} sources</p>
+          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-t3">Available qualities</p>
           <div className="flex flex-wrap gap-2">
             {hindiStreams.map((source, index) => (
               <button
@@ -180,7 +194,7 @@ export default function WatchPage() {
                 className={`rounded-lg border px-3 py-2 text-left ${index === hindiSourceIndex ? 'border-or bg-or/15 text-white' : 'border-white/10 bg-bg2 text-t2'}`}
               >
                 <span className="block text-[11px] font-black">{source.quality}</span>
-                <span className="block max-w-[170px] truncate text-[10px]">{source.name}</span>
+                <span className="block max-w-[170px] truncate text-[10px]">{source.quality || 'Auto'}</span>
               </button>
             ))}
           </div>

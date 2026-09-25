@@ -31,7 +31,7 @@ function ControlButton({ label, onClick, children, className = '' }) {
   return <button type="button" onClick={onClick} aria-label={label} title={label} className={`inline-flex h-9 w-9 items-center justify-center rounded-lg text-white/80 transition hover:bg-white/10 hover:text-white active:scale-95 ${className}`}>{children}</button>
 }
 
-export default function DirectMediaPlayer({ source, onRetry, onEnded }) {
+export default function DirectMediaPlayer({ source, subtitleTracks = [], onRetry, onEnded }) {
   const videoRef = useRef(null)
   const hlsRef = useRef(null)
   const [playing, setPlaying] = useState(false)
@@ -42,6 +42,7 @@ export default function DirectMediaPlayer({ source, onRetry, onEnded }) {
   const [buffered, setBuffered] = useState(0)
   const [volume, setVolume] = useState(1)
   const [playbackRate, setPlaybackRate] = useState(1)
+  const [subtitleTrack, setSubtitleTrack] = useState('off')
 
   useEffect(() => {
     const video = videoRef.current
@@ -54,6 +55,7 @@ export default function DirectMediaPlayer({ source, onRetry, onEnded }) {
     setCurrentTime(0)
     setDuration(0)
     setBuffered(0)
+    setSubtitleTrack('off')
 
     const onLoadedMetadata = () => {
       setDuration(video.duration || 0)
@@ -121,6 +123,14 @@ export default function DirectMediaPlayer({ source, onRetry, onEnded }) {
   }, [source, onEnded])
 
   useEffect(() => {
+    const textTracks = videoRef.current?.textTracks
+    if (!textTracks) return
+    for (let index = 0; index < textTracks.length; index += 1) {
+      textTracks[index].mode = textTracks[index].language === subtitleTrack ? 'showing' : 'disabled'
+    }
+  }, [subtitleTrack, subtitleTracks])
+
+  useEffect(() => {
     const video = videoRef.current
     if (video) {
       video.volume = volume
@@ -174,7 +184,9 @@ export default function DirectMediaPlayer({ source, onRetry, onEnded }) {
 
   return (
     <div className="group relative h-full w-full overflow-hidden bg-black text-white select-none">
-      <video ref={videoRef} className="absolute inset-0 h-full w-full cursor-pointer object-contain" playsInline crossOrigin="anonymous" onClick={togglePlay} />
+      <video ref={videoRef} className="absolute inset-0 h-full w-full cursor-pointer object-contain" playsInline crossOrigin="anonymous" onClick={togglePlay}>
+        {subtitleTracks.map((track) => <track key={track.id} kind="subtitles" label={track.label} srcLang={track.language} src={track.src} />)}
+      </video>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/95" />
 
       {buffering && !error && <div className="absolute inset-0 flex items-center justify-center"><div className="h-10 w-10 animate-spin rounded-full border-2 border-white/25 border-t-or" /></div>}
@@ -203,6 +215,7 @@ export default function DirectMediaPlayer({ source, onRetry, onEnded }) {
           <input aria-label="Volume" type="range" min="0" max="1" step="0.05" value={volume} onChange={(event) => setVolume(Number(event.target.value))} className="hidden h-1 w-16 cursor-pointer accent-or sm:block" />
           <span className="ml-1 text-[10px] font-semibold tabular-nums text-white/70 sm:text-[11px]">{formatTime(currentTime)} / {formatTime(duration)}</span>
           <div className="ml-auto flex items-center gap-1.5">
+            {subtitleTracks.length > 0 && <select aria-label="Subtitles" value={subtitleTrack} onChange={(event) => setSubtitleTrack(event.target.value)} className="max-w-[92px] rounded-md border border-white/10 bg-black/45 px-1.5 py-1 text-[10px] font-bold text-white outline-none hover:border-white/25"><option value="off">Subtitles off</option>{subtitleTracks.map((track) => <option key={track.id} value={track.language}>{track.label}</option>)}</select>}
             <select aria-label="Playback speed" value={playbackRate} onChange={(event) => setPlaybackRate(Number(event.target.value))} className="rounded-md border border-white/10 bg-black/45 px-1.5 py-1 text-[10px] font-bold text-white outline-none hover:border-white/25">{[0.75, 1, 1.25, 1.5, 2].map((rate) => <option key={rate} value={rate}>{rate}x</option>)}</select>
             <ControlButton label="Fullscreen" onClick={toggleFullscreen}><Icon name="fullscreen" className="h-4 w-4" /></ControlButton>
           </div>

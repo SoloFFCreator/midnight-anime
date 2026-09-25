@@ -1,7 +1,10 @@
 import { metadataLinks } from '../../api/metadata'
 
-export default function ExternalIds({ metadata, compact = false }) {
-  const links = metadataLinks(metadata)
+export default function ExternalIds({ metadata, anime, compact = false }) {
+  const links = [
+    anime?.idMal && { label: 'MAL', value: anime.idMal, href: `https://myanimelist.net/anime/${anime.idMal}` },
+    ...metadataLinks(metadata),
+  ].filter(Boolean)
   if (!links.length) return null
 
   return (
