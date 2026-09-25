@@ -24,7 +24,7 @@ function normalizeSource(source, index, audio) {
     name,
     title: typeof source === 'object' && source.title ? source.title : `${name} — ${audio}`,
     quality,
-    url: cleanUrl,
+    url: browserPlayableUrl(cleanUrl, isHls),
     type: isHls ? 'hls' : 'mp4',
     headers: typeof source === 'object' ? source.headers || {} : {},
   }
@@ -37,6 +37,17 @@ function responseSources(json) {
   if (Array.isArray(json?.data)) return json.data
   if (json?.url || json?.file || json?.link || json?.src) return [json]
   return []
+}
+
+function browserPlayableUrl(url, isHls) {
+  if (!isHls) return url
+  try {
+    const parsed = new URL(url)
+    if (parsed.hostname === 'megavid.buzz' || parsed.hostname === 'www.megavid.buzz') {
+      return `/api/megavid-proxy?url=${encodeURIComponent(url)}`
+    }
+  } catch { /* keep the provider URL when it cannot be parsed */ }
+  return url
 }
 
 export const NuvioApi = {
