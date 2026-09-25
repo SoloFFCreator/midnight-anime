@@ -1,11 +1,11 @@
-const UPSTREAM = 'https://nuvioapi-erbmmxkc.manus.space/api/stream'
+const UPSTREAM = 'https://nuvio-stream-api-20260925.onrender.com/api/stream'
 
 export default async function handler(req, res) {
   const query = new URLSearchParams(req.query || {})
-  const required = ['tmdbId', 'type', 'season', 'episode', 'audio']
+  const required = ['malId', 'type', 'audio']
 
   if (required.some((key) => !query.get(key))) {
-    return res.status(400).json({ error: 'tmdbId, type, season, episode, and audio are required' })
+    return res.status(400).json({ error: 'malId, type, and audio are required' })
   }
 
   try {

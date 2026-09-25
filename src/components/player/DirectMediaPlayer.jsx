@@ -65,7 +65,7 @@ export default function DirectMediaPlayer({ source, onRetry, onEnded }) {
     const onPause = () => setPlaying(false)
     const onWaiting = () => setBuffering(true)
     const onEndedInternal = () => { setPlaying(false); onEnded?.() }
-    const onVideoError = () => setError('This source could not be played. Try another Hindi source or retry.')
+    const onVideoError = () => setError('This source could not be played. Try another source or retry.')
 
     video.addEventListener('loadedmetadata', onLoadedMetadata)
     video.addEventListener('timeupdate', onTimeUpdate)
@@ -78,7 +78,15 @@ export default function DirectMediaPlayer({ source, onRetry, onEnded }) {
 
     const useNativeHls = source.type === 'hls' && video.canPlayType('application/vnd.apple.mpegurl')
     if (source.type === 'hls' && Hls.isSupported() && !useNativeHls) {
-      hls = new Hls({ enableWorker: true, lowLatencyMode: false })
+      hls = new Hls({
+        enableWorker: true,
+        lowLatencyMode: false,
+        xhrSetup: (xhr) => {
+          Object.entries(source.headers || {}).forEach(([key, value]) => {
+            if (!/^(user-agent|origin|referer|accept|host|content-length)$/i.test(key)) xhr.setRequestHeader(key, value)
+          })
+        },
+      })
       hlsRef.current = hls
       hls.loadSource(source.url)
       hls.attachMedia(video)

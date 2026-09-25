@@ -2,14 +2,14 @@ import { useCallback, useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { AniListApi, TT, totEps } from '../api/anilist'
-import { HindiApi } from '../api/hindi'
+import { NuvioApi } from '../api/hindi'
 import { MetadataApi } from '../api/metadata'
 import ExternalIds from '../components/ui/ExternalIds'
 import DirectMediaPlayer from '../components/player/DirectMediaPlayer'
 import { useWatchlistStore } from '../store/watchlistStore'
 import { usePlayerStore } from '../store/playerStore'
 import { useAuthStore } from '../store/authStore'
-import { buildStreamUrl, isMovie } from '../utils/models'
+import { isMovie } from '../utils/models'
 import ShareButton from '../components/ui/ShareButton'
 import { buildEpisodeSharePath } from '../utils/share'
 
@@ -23,12 +23,13 @@ export default function WatchPage() {
   const [metadata, setMetadata] = useState(null)
   const [hindiStreams, setHindiStreams] = useState([])
   const [hindiSourceIndex, setHindiSourceIndex] = useState(0)
-  const [hindiError, setHindiError] = useState('')
+  const [streamLoading, setStreamLoading] = useState(false)
+  const [streamError, setStreamError] = useState('')
 
   const { user } = useAuthStore()
   const { saveProgress, subscribeToRatings, episodeRatings, rateEpisode, userRatings, loadUserRating } = useWatchlistStore()
   const {
-    audioTrack, autoPlayNext, hindiLoading, hindiUnavailable,
+    audioTrack, autoPlayNext,
     seriesFinishShown, showRecommendations,
     setAudioTrack, setAutoPlayNext, setHindiState, resetForNewEpisode,
     startProgressTracking, stopProgressTracking, triggerRecommendations,
@@ -53,7 +54,6 @@ export default function WatchPage() {
     resetForNewEpisode()
     setHindiStreams([])
     setHindiSourceIndex(0)
-    setHindiError('')
     if (!anime) return undefined
 
     const ratingsUnsub = subscribeToRatings(animeId, ep)
@@ -78,7 +78,7 @@ export default function WatchPage() {
   }, [animeId, ep, anime?.id])
 
   useEffect(() => {
-    if (audioTrack === 'HIN' && anime && metadata) loadHindi()
+    if (anime && metadata) loadStream()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [audioTrack, metadata?.tmdbId, metadata?.mediaType, metadata?.seasonNumber, ep])
 
@@ -87,31 +87,34 @@ export default function WatchPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showRecommendations])
 
-  async function loadHindi() {
-    setHindiState({ hindiLoading: true, hindiUnavailable: false })
-    setHindiError('')
+  async function loadStream() {
+    const audio = audioTrack === 'DUB' ? 'dub' : audioTrack === 'SUB' ? 'sub' : 'hindi'
+    setStreamLoading(true)
+    setStreamError('')
     setHindiStreams([])
     setHindiSourceIndex(0)
 
-    const result = await HindiApi.fetchStreams({
-      tmdbId: metadata?.tmdbId,
+    const result = await NuvioApi.fetchStreams({
+      malId: anime?.idMal,
       mediaType: metadata?.mediaType || (isMovie(anime) ? 'movie' : 'tv'),
       season: metadata?.seasonNumber || 1,
       episode: isMovie(anime) ? 1 : ep,
+      audio,
     })
 
     if (result.ok) {
       setHindiStreams(result.streams)
+      setStreamLoading(false)
       setHindiState({ hindiLoading: false, hindiUnavailable: false })
     } else {
-      setHindiError(result.reason)
+      setStreamLoading(false)
+      setStreamError(result.reason)
       setHindiState({ hindiLoading: false, hindiUnavailable: true })
     }
   }
 
   function changeAudio(track) {
     setAudioTrack(track)
-    if (track === 'HIN' && metadata) loadHindi()
   }
 
   const total = anime ? totEps(anime) : 1
@@ -130,8 +133,7 @@ export default function WatchPage() {
     )
   }
 
-  const streamUrl = buildStreamUrl(anime, ep, audioTrack)
-  const hindiSource = hindiStreams[hindiSourceIndex]
+  const streamSource = hindiStreams[hindiSourceIndex]
   const rKey = `${animeId}_ep${ep}`
   const ratings = episodeRatings[rKey] || { likes: 0, dislikes: 0 }
   const userRating = userRatings[rKey]
@@ -142,25 +144,12 @@ export default function WatchPage() {
   return (
     <div className="pb-10">
       <div className="relative w-full aspect-video bg-black">
-        {audioTrack === 'HIN' ? (
-          <HindiPlayerArea
-            loading={hindiLoading}
-            unavailable={hindiUnavailable}
-            error={hindiError}
-            source={hindiSource}
-            onRetry={loadHindi}
-            onFallbackSub={() => changeAudio('SUB')}
-            onEnded={handleHindiEnded}
-          />
+        {streamLoading ? (
+          <PlayerLoading audioTrack={audioTrack} />
+        ) : streamSource ? (
+          <DirectMediaPlayer source={streamSource} onRetry={loadStream} onEnded={handleHindiEnded} />
         ) : (
-          <iframe
-            src={streamUrl}
-            className="w-full h-full"
-            allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
-            allowFullScreen
-            frameBorder="0"
-            title={`${TT(anime)} ${isMovie(anime) ? 'movie' : `episode ${ep}`}`}
-          />
+          <PlayerUnavailable audioTrack={audioTrack} error={streamError} onRetry={loadStream} onFallbackSub={() => changeAudio('SUB')} />
         )}
       </div>
 
@@ -180,9 +169,9 @@ export default function WatchPage() {
         </div>
       </div>
 
-      {audioTrack === 'HIN' && hindiStreams.length > 0 && (
+      {hindiStreams.length > 0 && (
         <div className="px-4 pt-3">
-          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-t3">Hindi sources</p>
+          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-t3">{audioTrack} sources</p>
           <div className="flex flex-wrap gap-2">
             {hindiStreams.map((source, index) => (
               <button
@@ -243,29 +232,27 @@ export default function WatchPage() {
   )
 }
 
-function HindiPlayerArea({ loading, unavailable, error, source, onRetry, onFallbackSub, onEnded }) {
-  if (loading) {
-    return (
-      <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-black">
-        <motion.div className="w-8 h-8 border-2 border-or border-t-transparent rounded-full" animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }} />
-        <p className="text-t2 text-[12px]">Resolving Hindi sources…</p>
+function PlayerLoading({ audioTrack }) {
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-black">
+      <motion.div className="w-8 h-8 border-2 border-or border-t-transparent rounded-full" animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }} />
+      <p className="text-t2 text-[12px]">Resolving {audioTrack} source…</p>
+    </div>
+  )
+}
+
+function PlayerUnavailable({ audioTrack, error, onRetry, onFallbackSub }) {
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center gap-3 px-6 text-center bg-black">
+      <p className="text-3xl font-black text-or">{audioTrack}</p>
+      <p className="text-white font-bold text-[14px]">{audioTrack} stream unavailable</p>
+      <p className="max-w-sm text-t3 text-[12px]">{error || `No direct ${audioTrack} stream was returned for this episode.`}</p>
+      <div className="flex gap-2.5 mt-1">
+        {audioTrack !== 'SUB' && <button onClick={onFallbackSub} className="bg-or text-white text-[12px] font-bold px-4 py-2 rounded-lg">Watch in SUB</button>}
+        <button onClick={onRetry} className="border border-white/20 text-white text-[12px] font-bold px-4 py-2 rounded-lg">Retry</button>
       </div>
-    )
-  }
-  if (unavailable || !source) {
-    return (
-      <div className="w-full h-full flex flex-col items-center justify-center gap-3 px-6 text-center bg-black">
-        <p className="text-3xl">HIN</p>
-        <p className="text-white font-bold text-[14px]">Hindi stream unavailable</p>
-        <p className="max-w-sm text-t3 text-[12px]">{error || 'No direct Hindi source was returned for this episode.'}</p>
-        <div className="flex gap-2.5 mt-1">
-          <button onClick={onFallbackSub} className="bg-or text-white text-[12px] font-bold px-4 py-2 rounded-lg">Watch in SUB</button>
-          <button onClick={onRetry} className="border border-white/20 text-white text-[12px] font-bold px-4 py-2 rounded-lg">Retry</button>
-        </div>
-      </div>
-    )
-  }
-  return <DirectMediaPlayer source={source} onRetry={onRetry} onEnded={onEnded} />
+    </div>
+  )
 }
 
 function RatingBtn({ active, count, color, onClick, icon }) {

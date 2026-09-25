@@ -7,7 +7,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api/hindi-stream': {
-        target: 'https://nuvioapi-erbmmxkc.manus.space',
+        target: 'https://nuvio-stream-api-20260925.onrender.com',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/hindi-stream/, '/api/stream'),
       },
