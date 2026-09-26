@@ -71,8 +71,10 @@ function browserSubtitleUrl(url) {
 }
 
 export const NuvioApi = {
-  async fetchStreams({ malId, anilistId, mediaType = 'tv', season = 1, episode = 1, audio = 'hindi' }) {
-    const identifier = malId ? ['malId', malId] : ['anilistId', anilistId]
+  async fetchStreams({ malId, tmdbId, imdbId, mediaType = 'tv', season = 1, episode = 1, audio = 'hindi' }) {
+    const identifier = audio === 'hindi'
+      ? (tmdbId ? ['tmdbId', tmdbId] : imdbId ? ['imdbId', imdbId] : ['malId', malId])
+      : ['malId', malId]
     if (!identifier[1]) return { ok: false, reason: 'A valid anime identifier is required for Nuvio playback', streams: [] }
 
     const type = mediaType === 'movie' ? 'movie' : 'tv'
