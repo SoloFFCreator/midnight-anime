@@ -2,10 +2,15 @@ const UPSTREAM = 'https://nuvio-stream-api-20260925.onrender.com/api/stream'
 
 export default async function handler(req, res) {
   const query = new URLSearchParams(req.query || {})
-  const required = ['malId', 'type', 'audio']
+  const required = ['type', 'audio']
 
   if (required.some((key) => !query.get(key))) {
-    return res.status(400).json({ error: 'malId, type, and audio are required' })
+    return res.status(400).json({ error: 'type and audio are required' })
+  }
+
+  const identifiers = ['tmdbId', 'imdbId', 'malId'].filter((key) => query.get(key))
+  if (identifiers.length !== 1) {
+    return res.status(400).json({ error: 'Provide exactly one identifier: tmdbId, imdbId, or malId' })
   }
 
   try {

@@ -82,7 +82,7 @@ export default function WatchPage() {
   useEffect(() => {
     if (anime && metadata) loadStream()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [audioTrack, metadata?.tmdbId, metadata?.mediaType, metadata?.seasonNumber, ep])
+  }, [audioTrack, metadata?.tmdbId, metadata?.imdbId, metadata?.mediaType, metadata?.seasonNumber, ep])
 
   useEffect(() => {
     let active = true
@@ -109,6 +109,8 @@ export default function WatchPage() {
 
     const result = await NuvioApi.fetchStreams({
       malId: anime?.idMal,
+      tmdbId: metadata?.tmdbId,
+      imdbId: metadata?.imdbId,
       mediaType: metadata?.mediaType || (isMovie(anime) ? 'movie' : 'tv'),
       season: metadata?.seasonNumber || 1,
       episode: isMovie(anime) ? 1 : ep,
