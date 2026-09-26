@@ -28,6 +28,14 @@ function normalizeSource(source, index, audio) {
     url: browserPlayableUrl(cleanUrl, isHls),
     type: isHls ? 'hls' : 'mp4',
     headers: typeof source === 'object' ? source.headers || {} : {},
+    subtitles: typeof source === 'object' ? (source.subtitles || []).map((track, trackIndex) => ({
+      id: `${audio}-${index}-subtitle-${trackIndex}`,
+      src: browserSubtitleUrl(track?.url),
+      label: track?.label || 'English',
+      language: track?.language || (track?.label?.toLowerCase().includes('english') ? 'en' : 'en'),
+      kind: track?.kind || 'subtitles',
+      default: Boolean(track?.default),
+    })).filter((track) => track.src) : [],
   }
 }
 
@@ -51,11 +59,20 @@ function browserPlayableUrl(url, isHls) {
   return url
 }
 
+function browserSubtitleUrl(url) {
+  if (!isPlayableUrl(url)) return null
+  try {
+    const parsed = new URL(url)
+    if (parsed.hostname === 'megavid.buzz' || parsed.hostname === 'www.megavid.buzz') {
+      return `/api/megavid-proxy?url=${encodeURIComponent(url)}`
+    }
+  } catch { /* keep the provider URL when it cannot be parsed */ }
+  return url
+}
+
 export const NuvioApi = {
-  async fetchStreams({ malId, tmdbId, imdbId, mediaType = 'tv', season = 1, episode = 1, audio = 'hindi' }) {
-    const identifier = audio === 'hindi'
-      ? (tmdbId ? ['tmdbId', tmdbId] : imdbId ? ['imdbId', imdbId] : ['malId', malId])
-      : ['malId', malId]
+  async fetchStreams({ malId, anilistId, mediaType = 'tv', season = 1, episode = 1, audio = 'hindi' }) {
+    const identifier = malId ? ['malId', malId] : ['anilistId', anilistId]
     if (!identifier[1]) return { ok: false, reason: 'A valid anime identifier is required for Nuvio playback', streams: [] }
 
     const type = mediaType === 'movie' ? 'movie' : 'tv'

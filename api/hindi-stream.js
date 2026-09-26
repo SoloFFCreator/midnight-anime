@@ -8,9 +8,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'type and audio are required' })
   }
 
-  const identifiers = ['tmdbId', 'imdbId', 'malId'].filter((key) => query.get(key))
+  const identifiers = ['tmdbId', 'imdbId', 'malId', 'anilistId'].filter((key) => query.get(key))
   if (identifiers.length !== 1) {
-    return res.status(400).json({ error: 'Provide exactly one identifier: tmdbId, imdbId, or malId' })
+    return res.status(400).json({ error: 'Provide exactly one identifier: tmdbId, imdbId, malId, or anilistId' })
   }
 
   try {

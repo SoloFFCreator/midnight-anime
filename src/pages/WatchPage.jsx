@@ -82,7 +82,7 @@ export default function WatchPage() {
   useEffect(() => {
     if (anime && metadata) loadStream()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [audioTrack, metadata?.tmdbId, metadata?.imdbId, metadata?.mediaType, metadata?.seasonNumber, ep])
+  }, [audioTrack, metadata?.mediaType, metadata?.seasonNumber, ep])
 
   useEffect(() => {
     let active = true
@@ -109,8 +109,7 @@ export default function WatchPage() {
 
     const result = await NuvioApi.fetchStreams({
       malId: anime?.idMal,
-      tmdbId: metadata?.tmdbId,
-      imdbId: metadata?.imdbId,
+      anilistId: anime?.id,
       mediaType: metadata?.mediaType || (isMovie(anime) ? 'movie' : 'tv'),
       season: metadata?.seasonNumber || 1,
       episode: isMovie(anime) ? 1 : ep,
@@ -162,7 +161,7 @@ export default function WatchPage() {
         {streamLoading ? (
           <PlayerLoading audioTrack={audioTrack} />
         ) : streamSource ? (
-          <DirectMediaPlayer source={streamSource} subtitleTracks={subtitleTracks} onRetry={loadStream} onEnded={handleHindiEnded} />
+          <DirectMediaPlayer source={streamSource} subtitleTracks={streamSource?.subtitles?.length ? streamSource.subtitles : subtitleTracks} onRetry={loadStream} onEnded={handleHindiEnded} />
         ) : (
           <PlayerUnavailable audioTrack={audioTrack} error={streamError} onRetry={loadStream} onFallbackSub={() => changeAudio('SUB')} />
         )}

@@ -123,6 +123,10 @@ export default function DirectMediaPlayer({ source, subtitleTracks = [], onRetry
   }, [source, onEnded])
 
   useEffect(() => {
+    if (subtitleTrack === 'off') {
+      const defaultTrack = subtitleTracks.find((track) => track.default)
+      if (defaultTrack?.language) setSubtitleTrack(defaultTrack.language)
+    }
     const textTracks = videoRef.current?.textTracks
     if (!textTracks) return
     for (let index = 0; index < textTracks.length; index += 1) {
