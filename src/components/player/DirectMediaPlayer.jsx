@@ -43,12 +43,15 @@ export default function DirectMediaPlayer({ source, subtitleTracks = [], onRetry
   const [volume, setVolume] = useState(1)
   const [playbackRate, setPlaybackRate] = useState(1)
   const [subtitleTrack, setSubtitleTrack] = useState('off')
+  const [controlsVisible, setControlsVisible] = useState(true)
+  const controlsTimerRef = useRef(null)
 
   useEffect(() => {
     const video = videoRef.current
     if (!video || !source?.url) return undefined
 
     let hls
+    revealControls()
     setError('')
     setBuffering(true)
     setPlaying(false)
@@ -122,6 +125,8 @@ export default function DirectMediaPlayer({ source, subtitleTracks = [], onRetry
     }
   }, [source, onEnded])
 
+  useEffect(() => () => window.clearTimeout(controlsTimerRef.current), [])
+
   useEffect(() => {
     if (subtitleTrack === 'off') {
       const defaultTrack = subtitleTracks.find((track) => track.default)
@@ -161,6 +166,12 @@ export default function DirectMediaPlayer({ source, subtitleTracks = [], onRetry
     else video.pause()
   }
 
+  function revealControls() {
+    setControlsVisible(true)
+    window.clearTimeout(controlsTimerRef.current)
+    controlsTimerRef.current = window.setTimeout(() => setControlsVisible(false), 5000)
+  }
+
   function seekTo(value) {
     const video = videoRef.current
     if (!video) return
@@ -187,7 +198,7 @@ export default function DirectMediaPlayer({ source, subtitleTracks = [], onRetry
   const bufferedPercent = duration ? Math.min(100, (buffered / duration) * 100) : 0
 
   return (
-    <div className="group relative h-full w-full overflow-hidden bg-black text-white select-none">
+    <div className="group relative h-full w-full overflow-hidden bg-black text-white select-none" onMouseMove={revealControls} onTouchStart={revealControls}>
       <video ref={videoRef} className="absolute inset-0 h-full w-full cursor-pointer object-contain" playsInline crossOrigin="anonymous" onClick={togglePlay}>
         {subtitleTracks.map((track) => <track key={track.id} id={track.id} kind="subtitles" label={track.label} srcLang={track.language} src={track.src} />)}
       </video>
@@ -205,7 +216,7 @@ export default function DirectMediaPlayer({ source, subtitleTracks = [], onRetry
 
       {!playing && !buffering && !error && <button type="button" onClick={togglePlay} aria-label="Play video" className="absolute inset-0 m-auto flex h-16 w-16 items-center justify-center rounded-full bg-or/95 text-white shadow-[0_8px_35px_rgba(244,117,33,.35)] transition hover:scale-105"><Icon name="play" className="ml-1 h-7 w-7 fill-current" /></button>}
 
-      {!error && <div className="absolute bottom-0 left-0 right-0 px-3 pb-2 pt-14 sm:px-5 sm:pb-4">
+      {!error && <div className={`absolute bottom-0 left-0 right-0 px-3 pb-2 pt-14 transition-opacity duration-300 sm:px-5 sm:pb-4 ${controlsVisible ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}`}>
         <div className="relative mb-2 h-1.5 w-full rounded-full bg-white/20">
           <div className="absolute inset-y-0 left-0 rounded-full bg-white/25" style={{ width: `${bufferedPercent}%` }} />
           <div className="absolute inset-y-0 left-0 rounded-full bg-or" style={{ width: `${progressPercent}%` }} />

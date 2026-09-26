@@ -24,6 +24,8 @@ export default function WatchPage() {
   const [hindiSourceIndex, setHindiSourceIndex] = useState(0)
   const [streamLoading, setStreamLoading] = useState(false)
   const [streamError, setStreamError] = useState('')
+  const [ratingBusy, setRatingBusy] = useState(false)
+  const [ratingMessage, setRatingMessage] = useState('')
 
   const { user } = useAuthStore()
   const { saveProgress, subscribeToRatings, episodeRatings, rateEpisode, userRatings, loadUserRating } = useWatchlistStore()
@@ -116,6 +118,16 @@ export default function WatchPage() {
 
   function changeAudio(track) {
     setAudioTrack(track)
+  }
+
+  async function handleRating(value) {
+    if (ratingBusy) return
+    setRatingMessage('')
+    setRatingBusy(true)
+    const saved = await rateEpisode(animeId, ep, value)
+    setRatingBusy(false)
+    setRatingMessage(saved ? 'Rating saved' : (user ? 'Could not save rating. Please try again.' : 'Sign in to rate episodes.'))
+    window.setTimeout(() => setRatingMessage(''), 2400)
   }
 
   const total = anime ? totEps(anime) : 1
@@ -225,8 +237,9 @@ export default function WatchPage() {
 
       <div className="flex items-center gap-2.5 px-4 py-3">
         <span className="text-[12px] text-t3">Rate this episode:</span>
-        <RatingBtn active={userRating === 1} count={ratings.likes} color="text-or" onClick={() => rateEpisode(animeId, ep, 1)} icon="up" />
-        <RatingBtn active={userRating === -1} count={ratings.dislikes} color="text-red" onClick={() => rateEpisode(animeId, ep, -1)} icon="down" />
+        <RatingBtn active={userRating === 1} count={ratings.likes} color="text-or" disabled={ratingBusy} onClick={() => handleRating(1)} icon="up" />
+        <RatingBtn active={userRating === -1} count={ratings.dislikes} color="text-red" disabled={ratingBusy} onClick={() => handleRating(-1)} icon="down" />
+        {ratingMessage && <span role="status" className="text-[11px] font-semibold text-t3">{ratingMessage}</span>}
       </div>
     </div>
   )
@@ -255,10 +268,10 @@ function PlayerUnavailable({ audioTrack, error, onRetry, onFallbackSub }) {
   )
 }
 
-function RatingBtn({ active, count, color, onClick, icon }) {
+function RatingBtn({ active, count, color, onClick, icon, disabled = false }) {
   const fmt = count > 999 ? `${(count / 1000).toFixed(1)}K` : count
   return (
-    <motion.button whileTap={{ scale: 0.92 }} onClick={onClick} className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[12px] font-bold ${active ? `${color} bg-white/5` : 'text-t2 bg-bg2'}`}>
+    <motion.button type="button" whileTap={{ scale: 0.92 }} onClick={onClick} disabled={disabled} aria-label={icon === 'up' ? 'Like episode' : 'Dislike episode'} className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[12px] font-bold transition-opacity disabled:cursor-wait disabled:opacity-50 ${active ? `${color} bg-white/5` : 'text-t2 bg-bg2'}`}>
       <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill={active ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
         {icon === 'up' ? <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" /> : <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z" />}
       </svg>
