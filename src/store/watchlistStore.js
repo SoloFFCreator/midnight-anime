@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { ref, set, get, remove, update, onValue } from 'firebase/database'
+import { ref, set, get, remove, update, onValue, runTransaction } from 'firebase/database'
 import { db } from '../api/firebase'
 import { useAuthStore } from './authStore'
 
@@ -98,14 +98,26 @@ export const useWatchlistStore = create((setState, getState) => ({
 
   async rateEpisode(animeId, episode, value) {
     const uid = useAuthStore.getState().user?.uid
-    if (!uid) return
+    if (!uid || ![1, -1].includes(value)) return false
     const stateKey = `${animeId}_ep${episode}`
     const prev = getState().userRatings[stateKey] || null
     const newRating = prev === value ? null : value
-    setState((s) => ({ userRatings: { ...s.userRatings, [stateKey]: newRating } }))
     try {
+      await runTransaction(ref(db, `ratings/${animeId}/ep${episode}`), (current) => {
+        const likes = Math.max(0, Number(current?.likes) || 0)
+        const dislikes = Math.max(0, Number(current?.dislikes) || 0)
+        const next = { likes, dislikes }
+        if (prev === 1) next.likes = Math.max(0, next.likes - 1)
+        if (prev === -1) next.dislikes = Math.max(0, next.dislikes - 1)
+        if (newRating === 1) next.likes += 1
+        if (newRating === -1) next.dislikes += 1
+        return next
+      })
       await set(ref(db, `users/${uid}/ratings/${animeId}_ep${episode}`), newRating)
+      setState((s) => ({ userRatings: { ...s.userRatings, [stateKey]: newRating } }))
+      return true
     } catch {}
+    return false
   },
 
   async loadUserRating(animeId, episode) {
