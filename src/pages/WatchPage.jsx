@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { AniListApi, TT, totEps } from '../api/anilist'
 import { NuvioApi } from '../api/hindi'
-import { SubtitlesApi } from '../api/subtitles'
 import { MetadataApi } from '../api/metadata'
 import DirectMediaPlayer from '../components/player/DirectMediaPlayer'
 import { useWatchlistStore } from '../store/watchlistStore'
@@ -25,7 +24,6 @@ export default function WatchPage() {
   const [hindiSourceIndex, setHindiSourceIndex] = useState(0)
   const [streamLoading, setStreamLoading] = useState(false)
   const [streamError, setStreamError] = useState('')
-  const [subtitleTracks, setSubtitleTracks] = useState([])
 
   const { user } = useAuthStore()
   const { saveProgress, subscribeToRatings, episodeRatings, rateEpisode, userRatings, loadUserRating } = useWatchlistStore()
@@ -42,7 +40,6 @@ export default function WatchPage() {
     setMetadata(null)
     setHindiStreams([])
     setHindiSourceIndex(0)
-    setSubtitleTracks([])
     AniListApi.fetchDetail(animeId).then(async (data) => {
       if (!active) return
       setAnime(data)
@@ -83,17 +80,6 @@ export default function WatchPage() {
     if (anime && metadata) loadStream()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [audioTrack, metadata?.tmdbId, metadata?.imdbId, metadata?.mediaType, metadata?.seasonNumber, ep])
-
-  useEffect(() => {
-    let active = true
-    if (!anime) return undefined
-    SubtitlesApi.search({
-      title: TT(anime),
-      season: metadata?.seasonNumber || 1,
-      episode: isMovie(anime) ? 1 : ep,
-    }).then((tracks) => active && setSubtitleTracks(tracks)).catch(() => active && setSubtitleTracks([]))
-    return () => { active = false }
-  }, [anime?.id, metadata?.seasonNumber, ep])
 
   useEffect(() => {
     if (showRecommendations) navigate(`/recommend/${animeId}`)
@@ -162,7 +148,7 @@ export default function WatchPage() {
         {streamLoading ? (
           <PlayerLoading audioTrack={audioTrack} />
         ) : streamSource ? (
-          <DirectMediaPlayer source={streamSource} subtitleTracks={streamSource?.subtitles?.length ? streamSource.subtitles : subtitleTracks} onRetry={loadStream} onEnded={handleHindiEnded} />
+          <DirectMediaPlayer source={streamSource} subtitleTracks={streamSource?.subtitles || []} onRetry={loadStream} onEnded={handleHindiEnded} />
         ) : (
           <PlayerUnavailable audioTrack={audioTrack} error={streamError} onRetry={loadStream} onFallbackSub={() => changeAudio('SUB')} />
         )}

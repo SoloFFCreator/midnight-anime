@@ -32,7 +32,7 @@ function normalizeSource(source, index, audio) {
       id: `${audio}-${index}-subtitle-${trackIndex}`,
       src: browserSubtitleUrl(track?.url),
       label: track?.label || 'English',
-      language: track?.language || (track?.label?.toLowerCase().includes('english') ? 'en' : 'en'),
+      language: track?.language || track?.label || 'en',
       kind: track?.kind || 'subtitles',
       default: Boolean(track?.default),
     })).filter((track) => track.src) : [],
