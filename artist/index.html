@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>MONTYX — Official Artist</title>
+
+  <meta
+    name="description"
+    content="MONTYX — Official artist profile. Brazilian Funk, Funk and Phonk music."
+  />
+
+  <meta
+    name="keywords"
+    content="MONTYX, MONTAGEM DA SEDUÇÃO, Brazilian Funk, Funk, Phonk, music"
+  />
+
+  <meta name="author" content="MONTYX" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="MONTYX — Official Artist" />
+  <meta
+    property="og:description"
+    content="Official website of MONTYX — Funk • Brazilian Funk • Phonk"
+  />
+  <meta
+    property="og:image"
+    content="https://i.ibb.co/B5V9wJVS/imresizer-resize-file-00000000a0f08211ad1a5e71f15d22bc.jpg"
+  />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://dipamalla.com.np/artist" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="MONTYX — Official Artist" />
+  <meta
+    name="twitter:description"
+    content="Official website of MONTYX"
+  />
+  <meta
+    name="twitter:image"
+    content="https://i.ibb.co/B5V9wJVS/imresizer-resize-file-00000000a0f08211ad1a5e71f15d22bc.jpg"
+  />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+      background: #050505;
+      color: #ffffff;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    /* NAVIGATION */
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      background: rgba(5, 5, 5, 0.82);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: auto;
+      height: 70px;
+      padding: 0 22px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 3px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #bdbdbd;
+      font-size: 14px;
+      font-weight: 600;
+      transition: 0.25s;
+    }
+
+    .nav-links a:hover {
+      color: #ffffff;
+    }
+
+    /* HERO */
+
+    .hero {
+      min-height: 100vh;
+      padding: 130px 20px 80px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      text-align: center;
+
+      background:
+        radial-gradient(
+          circle at 50% 20%,
+          rgba(255, 255, 255, 0.08),
+          transparent 35%
+        ),
+        #050505;
+    }
+
+    .hero-content {
+      max-width: 850px;
+    }
+
+    .profile-image {
+      width: 145px;
+      height: 145px;
+      margin: 0 auto 25px;
+
+      object-fit: cover;
+
+      border-radius: 50%;
+
+      border: 3px solid rgba(255, 255, 255, 0.9);
+
+      box-shadow:
+        0 0 0 8px rgba(255, 255, 255, 0.04),
+        0 20px 70px rgba(0, 0, 0, 0.8);
+    }
+
+    .verified-label {
+      display: inline-block;
+
+      padding: 7px 14px;
+      margin-bottom: 18px;
+
+      border-radius: 50px;
+
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+
+      color: #d7d7d7;
+
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(55px, 12vw, 110px);
+      line-height: 0.95;
+      letter-spacing: -5px;
+      font-weight: 950;
+
+      margin-bottom: 22px;
+    }
+
+    .hero-subtitle {
+      color: #a7a7a7;
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 34px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      min-height: 48px;
+      padding: 0 23px;
+
+      border-radius: 10px;
+
+      font-size: 14px;
+      font-weight: 750;
+
+      transition:
+        transform 0.2s,
+        background 0.2s,
+        border 0.2s;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+    }
+
+    .button-primary {
+      background: #ffffff;
+      color: #000000;
+    }
+
+    .button-primary:hover {
+      background: #dddddd;
+    }
+
+    .button-secondary {
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.04);
+      color: #ffffff;
+    }
+
+    .button-secondary:hover {
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    /* SECTIONS */
+
+    section {
+      max-width: 1000px;
+      margin: auto;
+      padding: 100px 22px;
+    }
+
+    .section-label {
+      color: #777777;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: clamp(32px, 6vw, 50px);
+      letter-spacing: -2px;
+      margin-bottom: 35px;
+    }
+
+    /* MUSIC */
+
+    .music-card {
+      padding: 30px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 18px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.055),
+          rgba(255, 255, 255, 0.015)
+        );
+
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    }
+
+    .music-info h3 {
+      font-size: 25px;
+      margin-bottom: 7px;
+    }
+
+    .music-info p {
+      color: #888888;
+      font-size: 14px;
+    }
+
+    .music-badge {
+      display: inline-block;
+
+      margin-top: 13px;
+      padding: 5px 10px;
+
+      border-radius: 6px;
+
+      background: rgba(255, 255, 255, 0.07);
+
+      color: #bdbdbd;
+
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    /* ABOUT */
+
+    .about-text {
+      max-width: 750px;
+
+      color: #a5a5a5;
+
+      font-size: 17px;
+      line-height: 1.9;
+    }
+
+    /* LINKS */
+
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .link-card {
+      padding: 25px;
+
+      border-radius: 15px;
+
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      background: rgba(255, 255, 255, 0.035);
+
+      transition:
+        transform 0.2s,
+        background 0.2s;
+    }
+
+    .link-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .link-card strong {
+      display: block;
+
+      margin-bottom: 6px;
+
+      font-size: 17px;
+    }
+
+    .link-card span {
+      color: #777777;
+      font-size: 13px;
+    }
+
+    /* CONTACT */
+
+    .contact-box {
+      padding: 35px;
+
+      text-align: center;
+
+      border-radius: 18px;
+
+      border: 1px solid rgba(255, 255, 255, 0.09);
+
+      background:
+        radial-gradient(
+          circle at center,
+          rgba(255, 255, 255, 0.06),
+          transparent 70%
+        );
+    }
+
+    .contact-box p {
+      color: #999999;
+      margin-bottom: 22px;
+    }
+
+    /* FOOTER */
+
+    footer {
+      padding: 40px 20px 50px;
+
+      text-align: center;
+
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+
+      color: #666666;
+
+      font-size: 13px;
+    }
+
+    footer strong {
+      color: #aaaaaa;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 700px) {
+      .nav-container {
+        height: 62px;
+      }
+
+      .logo {
+        font-size: 19px;
+      }
+
+      .nav-links {
+        gap: 14px;
+      }
+
+      .nav-links a {
+        font-size: 12px;
+      }
+
+      .hero {
+        padding-top: 110px;
+      }
+
+      .profile-image {
+        width: 125px;
+        height: 125px;
+      }
+
+      .hero h1 {
+        letter-spacing: -3px;
+      }
+
+      .hero-subtitle {
+        font-size: 15px;
+      }
+
+      section {
+        padding: 75px 20px;
+      }
+
+      .music-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .links-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .button {
+        width: 100%;
+      }
+
+      .buttons {
+        width: 100%;
+        max-width: 340px;
+        margin: auto;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .nav-links {
+        gap: 10px;
+      }
+
+      .nav-links a {
+        font-size: 11px;
+      }
+
+      .logo {
+        letter-spacing: 2px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVIGATION -->
+
+  <nav>
+    <div class="nav-container">
+
+      <a href="#home" class="logo">MONTYX</a>
+
+      <ul class="nav-links">
+        <li>
+          <a href="#music">Music</a>
+        </li>
+
+        <li>
+          <a href="#about">About</a>
+        </li>
+
+        <li>
+          <a href="#links">Links</a>
+        </li>
+      </ul>
+
+    </div>
+  </nav>
+
+
+  <!-- HERO -->
+
+  <main id="home">
+
+    <section class="hero">
+
+      <div class="hero-content">
+
+        <img
+          class="profile-image"
+          src="https://i.ibb.co/B5V9wJVS/imresizer-resize-file-00000000a0f08211ad1a5e71f15d22bc.jpg"
+          alt="MONTYX artist profile"
+        />
+
+        <div class="verified-label">
+          Official Artist Profile
+        </div>
+
+        <h1>MONTYX</h1>
+
+        <p class="hero-subtitle">
+          Funk • Brazilian Funk • Phonk
+        </p>
+
+        <div class="buttons">
+
+          <a
+            class="button button-primary"
+            href="https://open.spotify.com/album/6SDVnSpfdOZJnE2PeR0sog?si=zOOrTcdDQ8mtUAkqF6D93A"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Listen on Spotify
+          </a>
+
+          <a
+            class="button button-secondary"
+            href="https://www.youtube.com/@MontyxMusic7"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            YouTube
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- MUSIC -->
+
+    <section id="music">
+
+      <div class="section-label">
+        Latest Release
+      </div>
+
+      <h2 class="section-title">
+        Music
+      </h2>
+
+      <div class="music-card">
+
+        <div class="music-info">
+
+          <h3>
+            MONTAGEM DA SEDUÇÃO
+          </h3>
+
+          <p>
+            Released by MONTYX
+          </p>
+
+          <span class="music-badge">
+            Distributed by Jumpstr.io
+          </span>
+
+        </div>
+
+        <a
+          class="button button-primary"
+          href="https://open.spotify.com/album/6SDVnSpfdOZJnE2PeR0sog?si=zOOrTcdDQ8mtUAkqF6D93A"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Spotify
+        </a>
+
+      </div>
+
+    </section>
+
+
+    <!-- ABOUT -->
+
+    <section id="about">
+
+      <div class="section-label">
+        About
+      </div>
+
+      <h2 class="section-title">
+        MONTYX
+      </h2>
+
+      <p class="about-text">
+        MONTYX is an independent music artist focused on Funk,
+        Brazilian Funk and Phonk-inspired music. The artist creates
+        and releases music independently for digital streaming
+        platforms.
+        <br /><br />
+        MONTYX's music is distributed digitally through Jumpstr.io
+        and is available on streaming platforms including Spotify.
+      </p>
+
+    </section>
+
+
+    <!-- OFFICIAL LINKS -->
+
+    <section id="links">
+
+      <div class="section-label">
+        Official Links
+      </div>
+
+      <h2 class="section-title">
+        Find MONTYX
+      </h2>
+
+      <div class="links-grid">
+
+        <!-- Spotify -->
+
+        <a
+          class="link-card"
+          href="https://open.spotify.com/album/6SDVnSpfdOZJnE2PeR0sog?si=zOOrTcdDQ8mtUAkqF6D93A"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <strong>Spotify</strong>
+
+          <span>
+            Listen to MONTYX on Spotify
+          </span>
+
+        </a>
+
+
+        <!-- YouTube -->
+
+        <a
+          class="link-card"
+          href="https://www.youtube.com/@MontyxMusic7"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <strong>YouTube</strong>
+
+          <span>
+            Official MONTYX YouTube channel
+          </span>
+
+        </a>
+
+
+        <!-- Website -->
+
+        <a
+          class="link-card"
+          href="https://dipamalla.com.np/artist"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <strong>Official Website</strong>
+
+          <span>
+            dipamalla.com.np/artist
+          </span>
+
+        </a>
+
+      </div>
+
+    </section>
+
+
+    <!-- CONTACT -->
+
+    <section>
+
+      <div class="contact-box">
+
+        <div class="section-label">
+          Contact
+        </div>
+
+        <h2 class="section-title">
+          Get in Touch
+        </h2>
+
+        <p>
+          For music, artist or business inquiries, contact MONTYX.
+        </p>
+
+        <a
+          class="button button-primary"
+          href="mailto:support@dipamalla.com.np"
+        >
+          Contact MONTYX
+        </a>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+
+  <footer>
+
+    <p>
+      © 2026 <strong>MONTYX</strong>. All rights reserved.
+    </p>
+
+    <p style="margin-top: 7px;">
+      Official Artist Website:
+      <a
+        href="https://dipamalla.com.np/artist"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        dipamalla.com.np/artist
+      </a>
+    </p>
+
+  </footer>
+
+</body>
+</html>
