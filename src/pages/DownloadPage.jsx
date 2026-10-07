@@ -12,7 +12,16 @@ const mobileFeatures = [
   { label: 'Take your watchlist with you', detail: 'Pick up from the same episode across the web and Android app.', icon: 'bookmark' },
   { label: 'Download episodes for later', detail: 'Save supported anime episodes for offline viewing when you are away from a connection.', icon: 'download' },
   { label: 'Sub, Dub & Hindi', detail: 'Switch between available audio tracks without leaving the episode.', icon: 'captions' },
-  { label: 'Built for small screens', detail: 'Fast discovery, continue watching, and player controls designed for one-hand use.', icon: 'phone' },
+  { label: 'Phone, TV & Android TV', detail: 'Use the free Midnight Anime experience on mobile, television, and Android TV where the device supports the APK.', icon: 'tv' },
+]
+
+const screenshots = [
+  ['img-1788361819829-s5qzr.jpg', 'Midnight Anime home screen'],
+  ['img-1788361819852-jldqs.jpg', 'Anime discovery screen'],
+  ['img-1788361819756-ic2py.jpg', 'Anime details screen'],
+  ['img-1788361819801-sbxt6.jpg', 'Episode browsing screen'],
+  ['img-1788361819864-x9aht.jpg', 'Watchlist screen'],
+  ['img-1788361819887-o8t0d.jpg', 'Video player screen'],
 ]
 
 export default function DownloadPage() {
@@ -80,6 +89,11 @@ export default function DownloadPage() {
           {mobileFeatures.map((feature, index) => <motion.article key={feature.label} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-50px' }} transition={{ duration: 0.35, delay: index * 0.06 }} className="rounded-3xl border border-white/10 bg-white/[0.055] p-5 backdrop-blur-xl transition duration-200 hover:-translate-y-1 hover:border-or/30 hover:bg-white/[0.08]"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-or/12 text-or"><Icon name={feature.icon} className="h-5 w-5" /></div><h2 className="mt-5 font-display text-[15px] font-bold">{feature.label}</h2><p className="mt-2 text-[12px] leading-relaxed text-white/48">{feature.detail}</p></motion.article>)}
         </section>
 
+        <section className="mt-24 rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 backdrop-blur-xl sm:p-8">
+          <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-or">Inside the app</p><h2 className="mt-3 font-display text-3xl font-black tracking-tight sm:text-4xl">A closer look at Midnight Anime.</h2><p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/50">These screens show the free Android experience across discovery, details, watchlists, and playback. The same app can be used on compatible TV and Android TV devices.</p></div><span className="rounded-full border border-green/20 bg-green/10 px-3 py-1.5 text-[10px] font-bold text-green">Free to use</span></div>
+          <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">{screenshots.map(([file, alt], index) => <motion.figure key={file} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.3, delay: index * 0.05 }} className="group overflow-hidden rounded-2xl border border-white/10 bg-black/25"><img src={`/download/screenshots/${file}`} alt={alt} loading="lazy" className="aspect-[460/1024] w-full object-cover transition duration-500 group-hover:scale-105" /><figcaption className="px-2.5 py-2 text-[10px] font-semibold text-white/45">{index + 1}. {alt}</figcaption></motion.figure>)}</div>
+        </section>
+
         <section className="mt-24 grid gap-6 lg:grid-cols-[.8fr_1.2fr]">
           <div className="rounded-[2rem] border border-or/20 bg-gradient-to-br from-or/15 via-white/[0.045] to-fuchsia-500/10 p-7 sm:p-9"><p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-or">One clean install</p><h2 className="mt-4 font-display text-3xl font-black tracking-tight sm:text-4xl">No store detour. Just the app.</h2><p className="mt-4 text-sm leading-relaxed text-white/55">Download the official release package directly from the Midnight Anime GitHub release. Android may ask for one permission before the first install.</p><a href={APK_DOWNLOAD_URL} className="mt-7 inline-flex items-center gap-2 text-sm font-bold text-white transition hover:text-or">Get the latest APK <Icon name="arrow" className="h-4 w-4" /></a></div>
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-7 backdrop-blur-xl sm:p-9"><div className="flex items-end justify-between gap-4"><div><p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Install guide</p><h2 className="mt-3 font-display text-2xl font-black">From download to first episode.</h2></div><span className="hidden rounded-full border border-white/10 px-3 py-1.5 text-[10px] font-bold text-white/40 sm:block">About 2 minutes</span></div><div className="mt-8 grid gap-4 sm:grid-cols-3">{installSteps.map(([number, title, detail]) => <div key={number} className="relative"><span className="font-mono text-[11px] font-bold text-or">{number}</span><h3 className="mt-3 text-[13px] font-bold">{title}</h3><p className="mt-2 text-[12px] leading-relaxed text-white/45">{detail}</p></div>)}</div></div>
@@ -99,6 +113,7 @@ function Icon({ name, className = '' }) {
     bookmark: <path d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18l-6-3-6 3z" />,
     captions: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M7 10h3M14 10h3M7 14h2M12 14h5" /></>,
     phone: <><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" /></>,
+    tv: <><rect x="3" y="5" width="18" height="12" rx="2" /><path d="M8 21h8M12 17v4M8 2l4 3 4-3" /></>,
     arrow: <><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></>,
   }
   return <svg {...common}>{paths[name]}</svg>

@@ -19,8 +19,10 @@ export function openMidnightAnimeApp(navigate) {
   let fallbackTimer
   let secondaryIntentTimer
   const fallbackUrl = new URL('/download', window.location.origin).toString()
-  const primaryIntent = `intent://launch/#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=${ANDROID_PACKAGE};S.browser_fallback_url=${encodeURIComponent(fallbackUrl)};end`
-  const packageIntent = `android-app://${ANDROID_PACKAGE}`
+  // Use an explicit launcher intent. The APK exposes IntroActivity as the
+  // exported MAIN/LAUNCHER activity; the old `intent://launch/` URI could be
+  // treated as an arbitrary deep link by some Android browsers and fail to resolve.
+  const primaryIntent = `intent://${ANDROID_PACKAGE}/#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=${ANDROID_PACKAGE};S.browser_fallback_url=${encodeURIComponent(fallbackUrl)};end`
 
   const cleanup = () => {
     window.clearTimeout(fallbackTimer)
@@ -52,10 +54,10 @@ export function openMidnightAnimeApp(navigate) {
 
   window.location.href = primaryIntent
 
-  // Some Android browsers ignore launcher intents but understand android-app://.
+  // Give Android a short window to hand the intent to the installed package.
   secondaryIntentTimer = window.setTimeout(() => {
-    if (!appOpened && !document.hidden) window.location.href = packageIntent
-  }, 650)
+    if (!appOpened && !document.hidden) window.location.assign(primaryIntent)
+  }, 900)
 
   fallbackTimer = window.setTimeout(() => {
     if (!appOpened && !document.hidden) {
