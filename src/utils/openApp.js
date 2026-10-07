@@ -1,5 +1,5 @@
 export const ANDROID_PACKAGE = 'com.midnight.anime'
-export const APK_DOWNLOAD_URL = 'https://github.com/SoloFFCreator/midnight-anime/releases/download/Midnight-Anime/MidnightAnime-v5.apk'
+export const APK_DOWNLOAD_URL = 'https://github.com/SoloFFCreator/midnight-anime/releases/download/Midnight-Anime/Midnight.Anime.apk'
 
 function isAndroidBrowser() {
   return typeof navigator !== 'undefined' && /Android/i.test(navigator.userAgent)
