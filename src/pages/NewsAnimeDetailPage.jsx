@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import PublicPageShell from '../components/PublicPageShell'
 import { AniListApi, TT, largeCover, totEps } from '../api/anilist'
+import { TmdbApi } from '../api/tmdb'
 
 function cleanText(value) {
   return String(value || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
@@ -15,15 +16,17 @@ export default function NewsAnimeDetailPage() {
   const { id } = useParams()
   const [anime, setAnime] = useState(null)
   const [advertisement, setAdvertisement] = useState(null)
+  const [editorial, setEditorial] = useState(null)
   const [status, setStatus] = useState('loading')
 
   useEffect(() => {
     let active = true
     setStatus('loading')
-    Promise.all([AniListApi.fetchDetail(Number(id)), AniListApi.fetchNews()]).then(([data, updates]) => {
+    Promise.all([AniListApi.fetchDetail(Number(id)), AniListApi.fetchNews()]).then(async ([data, updates]) => {
       if (!active) return
       setAnime(data)
       setAdvertisement(updates.find((item) => item.id !== Number(id)) || updates[0] || null)
+      setEditorial(data ? await TmdbApi.fetchEditorial(data) : null)
       setStatus(data ? 'ready' : 'error')
     }).catch(() => active && setStatus('error'))
     return () => { active = false }
@@ -33,7 +36,7 @@ export default function NewsAnimeDetailPage() {
   if (status === 'error' || !anime) return <PublicPageShell eyebrow="Anime update" title="This feature is unavailable." intro="The selected title could not be loaded right now. Return to Anime Updates and choose another title."><Link to="/news" className="inline-flex rounded-full bg-or px-5 py-3 text-sm font-bold">Back to Anime Updates</Link></PublicPageShell>
 
   const title = TT(anime)
-  const image = anime.bannerImage || largeCover(anime)
+  const image = editorial?.backdrop || anime.bannerImage || largeCover(anime) || editorial?.poster
   const synopsis = cleanText(anime.description) || 'AniList has not provided a synopsis for this title.'
   const airedEpisodes = totEps(anime)
 
@@ -51,11 +54,17 @@ export default function NewsAnimeDetailPage() {
       </div>
       <div className="p-6 sm:p-9">
         <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-white/50">{anime.format && <span>{label(anime.format)}</span>}{anime.season && anime.seasonYear && <span>{label(anime.season)} {anime.seasonYear}</span>}{anime.averageScore > 0 && <span>Score {anime.averageScore}%</span>}<span>{airedEpisodes} aired episode{airedEpisodes === 1 ? '' : 's'} tracked</span></div>
+        <div className="mt-6 grid gap-3 sm:grid-cols-3"><InfoStat label="Episode status" value={anime.nextAiringEpisode?.episode ? `Next: EP ${anime.nextAiringEpisode.episode}` : label(anime.status || 'Tracking')} /><InfoStat label="TMDB seasons" value={editorial?.numberOfSeasons ? String(editorial.numberOfSeasons) : 'Unavailable'} /><InfoStat label="TMDB episodes" value={editorial?.numberOfEpisodes ? String(editorial.numberOfEpisodes) : 'Unavailable'} /></div>
         {anime.genres?.length > 0 && <div className="mt-4 flex flex-wrap gap-2">{anime.genres.map((genre) => <span key={genre} className="rounded-full bg-white/[0.07] px-3 py-1 text-xs text-white/60">{genre}</span>)}</div>}
         <h2 className="mt-8 font-display text-2xl font-bold">Why it is in Updates</h2>
         <p className="mt-3 max-w-3xl text-sm leading-relaxed text-white/60">{synopsis}</p>
+        <div className="mt-8 rounded-2xl border border-white/[0.08] bg-black/20 p-5"><p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-or">Episode desk</p><p className="mt-2 text-sm leading-relaxed text-white/60">{anime.nextAiringEpisode?.episode ? `Episode ${anime.nextAiringEpisode.episode} is the next tracked release for this title.` : anime.status === 'FINISHED' ? 'This title is marked finished, so its available episode run can be explored from the catalogue page.' : 'Episode timing and availability can change by season and language track. Open the catalogue page to browse the current episode list.'}</p>{editorial?.networks?.length > 0 && <p className="mt-3 text-xs text-white/35">TMDB network signal: {editorial.networks.join(', ')}</p>}</div>
         <div className="mt-8 flex flex-wrap gap-3"><Link to={`/anime/${anime.id}`} className="rounded-full bg-or px-5 py-3 text-sm font-bold text-white">Open full anime details</Link><Link to="/news" className="rounded-full border border-white/15 px-5 py-3 text-sm font-bold text-white/75 hover:border-or hover:text-or">Back to Updates</Link></div>
       </div>
     </article>
   </PublicPageShell>
+}
+
+function InfoStat({ label: title, value }) {
+  return <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4"><p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/35">{title}</p><p className="mt-2 text-sm font-bold text-white/80">{value}</p></div>
 }

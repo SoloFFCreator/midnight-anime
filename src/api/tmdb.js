@@ -18,6 +18,7 @@ const IMG_W500 = 'https://image.tmdb.org/t/p/w500'
 const logoCache = new Map()
 const backdropCache = new Map()
 const episodeImageCache = new Map()
+const editorialCache = new Map()
 
 const isConfigured = () => TMDB_API_KEY && TMDB_API_KEY !== 'YOUR_TMDB_API_KEY_HERE'
 
@@ -55,6 +56,33 @@ async function resolveTmdbId(anime) {
 }
 
 export const TmdbApi = {
+  async fetchEditorial(anime) {
+    if (!isConfigured()) return null
+    if (editorialCache.has(anime.id)) return editorialCache.get(anime.id)
+
+    const tmdbId = await resolveTmdbId(anime)
+    if (!tmdbId) { editorialCache.set(anime.id, null); return null }
+
+    const json = await safeFetch(`${BASE}/tv/${tmdbId}?api_key=${TMDB_API_KEY}&language=en-US&append_to_response=images&include_image_language=en,null`)
+    if (!json) { editorialCache.set(anime.id, null); return null }
+
+    const backdrops = json.images?.backdrops || []
+    const bestBackdrop = backdrops.find((item) => !item.iso_639_1) || backdrops[0]
+    const metadata = {
+      tmdbId,
+      backdrop: json.backdrop_path ? `${IMG_ORIGINAL}${json.backdrop_path}` : bestBackdrop?.file_path ? `${IMG_ORIGINAL}${bestBackdrop.file_path}` : null,
+      poster: json.poster_path ? `${IMG_W500}${json.poster_path}` : null,
+      firstAirDate: json.first_air_date || null,
+      lastAirDate: json.last_air_date || null,
+      numberOfSeasons: json.number_of_seasons || 0,
+      numberOfEpisodes: json.number_of_episodes || 0,
+      voteAverage: json.vote_average || 0,
+      tagline: json.tagline || '',
+      networks: (json.networks || []).map((network) => network.name).filter(Boolean),
+    }
+    editorialCache.set(anime.id, metadata)
+    return metadata
+  },
   async fetchLogo(anime) {
     if (!isConfigured()) return null
     if (logoCache.has(anime.id)) return logoCache.get(anime.id)

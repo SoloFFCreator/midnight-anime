@@ -1,84 +1,54 @@
-import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import PublicPageShell from '../components/PublicPageShell'
 import { AniListApi, TT, largeCover } from '../api/anilist'
+import { TmdbApi } from '../api/tmdb'
 
-function formatLabel(value) {
-  return String(value || '').replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())
+function cleanText(value) { return String(value || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() }
+function label(value) { return String(value || '').replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()) }
+function visualFor(anime, editorial) { return editorial?.backdrop || anime.bannerImage || largeCover(anime) || editorial?.poster || '/midnight-anime-logo.svg' }
+function episodeCopy(anime) {
+  const episode = anime.nextAiringEpisode?.episode
+  if (episode) return `Episode ${episode} is next on the schedule.`
+  if (anime.status === 'FINISHED') return 'The full season run is available to explore.'
+  if (anime.status === 'RELEASING') return 'New episodes are being tracked as they air.'
+  return 'Episode availability can vary by title and language track.'
 }
+function MetaPill({ children, accent = false }) { return <span className={`rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] ${accent ? 'border-or/35 bg-or/15 text-[#ffc18e]' : 'border-white/10 bg-black/25 text-white/60'}`}>{children}</span> }
 
-function UpdateCard({ anime }) {
-  const navigate = useNavigate()
+function UpdateCard({ anime, editorial }) {
   const title = TT(anime)
-  const image = anime.bannerImage || largeCover(anime)
-  const description = String(anime.description || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
-  const detailPath = `/news/anime/${anime.id}`
-  return <Link to={detailPath} onClick={(event) => { event.preventDefault(); navigate(detailPath) }} className="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.035] transition-transform duration-200 hover:-translate-y-1 hover:border-or/40 focus:outline-none focus:ring-2 focus:ring-or/70">
-    <div className="relative aspect-[16/9] overflow-hidden bg-[#17121d]">
-      {image ? <img src={image} alt={`${title} artwork`} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" onError={(event) => { event.currentTarget.src = largeCover(anime) || '/midnight-anime-logo.svg' }} /> : <div className="flex h-full items-center justify-center"><img src="/midnight-anime-logo.svg" alt="Midnight Anime" className="h-14 w-14 rounded-2xl opacity-60" /></div>}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#09070d] via-transparent to-transparent" />
-      <div className="absolute bottom-3 left-4 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-wider">
-        {anime.format && <span className="rounded-full bg-black/60 px-2.5 py-1 text-white/75">{formatLabel(anime.format)}</span>}
-        {anime.status && <span className="rounded-full bg-or/85 px-2.5 py-1 text-white">{formatLabel(anime.status)}</span>}
-      </div>
-    </div>
-    <div className="flex flex-1 flex-col p-5">
-      <h2 className="font-display text-lg font-bold leading-tight group-hover:text-or">{title}</h2>
-      <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-white/45">
-        {anime.season && anime.seasonYear && <span>{formatLabel(anime.season)} {anime.seasonYear}</span>}
-        {anime.averageScore > 0 && <span>• Score {anime.averageScore}%</span>}
-        {anime.nextAiringEpisode?.episode && <span>• Next episode {anime.nextAiringEpisode.episode}</span>}
-      </div>
-      <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-white/50">{description || 'Explore title details, available episodes, and related viewing information.'}</p>
-      <span className="mt-5 text-xs font-bold uppercase tracking-wider text-or">Open title →</span>
-    </div>
+  const image = visualFor(anime, editorial)
+  const description = cleanText(anime.description) || 'Open the feature for title context, season information, and the latest episode signals.'
+  return <Link to={`/news/anime/${anime.id}`} className="group flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-white/[0.09] bg-white/[0.035] transition duration-200 hover:-translate-y-1 hover:border-or/40 hover:bg-white/[0.055] focus:outline-none focus:ring-2 focus:ring-or/70">
+    <div className="relative aspect-[16/9] overflow-hidden bg-[#17121d]"><img src={image} alt={`${title} TMDB banner artwork`} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" onError={(event) => { event.currentTarget.src = largeCover(anime) || '/midnight-anime-logo.svg' }} /><div className="absolute inset-0 bg-gradient-to-t from-[#09070d] via-transparent to-transparent" /><div className="absolute left-3 top-3 flex flex-wrap gap-1.5"><MetaPill accent>{label(anime.status || 'Update')}</MetaPill>{anime.format && <MetaPill>{label(anime.format)}</MetaPill>}</div><div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-3"><span className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-white/65">TMDB visual</span>{editorial?.voteAverage > 0 && <span className="rounded-full bg-black/55 px-2 py-1 text-[10px] font-bold text-[#ffd39d]">★ {editorial.voteAverage.toFixed(1)}</span>}</div></div>
+    <div className="flex flex-1 flex-col p-5"><h2 className="font-display text-lg font-bold leading-tight transition-colors group-hover:text-or">{title}</h2><p className="mt-2 text-xs font-semibold text-white/40">{episodeCopy(anime)}</p><p className="mt-3 line-clamp-3 text-sm leading-relaxed text-white/50">{description}</p><div className="mt-5 flex items-center justify-between border-t border-white/[0.07] pt-4 text-[11px] text-white/40"><span>{editorial?.numberOfSeasons ? `${editorial.numberOfSeasons} season${editorial.numberOfSeasons === 1 ? '' : 's'}` : label(anime.season || 'Series')}</span><span className="font-bold text-or">Read update <span aria-hidden="true">→</span></span></div></div>
   </Link>
 }
 
-function Skeleton() {
-  return <div className="overflow-hidden rounded-3xl border border-white/[0.06] bg-white/[0.03]"><div className="aspect-[16/9] animate-pulse bg-white/[0.08]" /><div className="space-y-3 p-5"><div className="h-5 w-3/4 animate-pulse rounded bg-white/[0.08]" /><div className="h-3 w-full animate-pulse rounded bg-white/[0.06]" /><div className="h-3 w-2/3 animate-pulse rounded bg-white/[0.06]" /></div></div>
+function Spotlight({ anime, editorial }) {
+  const title = TT(anime)
+  const image = visualFor(anime, editorial)
+  const synopsis = cleanText(anime.description) || 'A title worth a closer look, with the latest catalogue context and episode signals gathered in one place.'
+  return <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#15111c] shadow-2xl shadow-black/30"><img src={image} alt={`${title} TMDB spotlight banner`} className="absolute inset-0 h-full w-full object-cover opacity-75 transition duration-700" onError={(event) => { event.currentTarget.src = largeCover(anime) || '/midnight-anime-logo.svg' }} /><div className="absolute inset-0 bg-gradient-to-r from-[#08070c] via-[#08070c]/80 to-[#08070c]/15" /><div className="absolute inset-0 bg-gradient-to-t from-[#08070c] via-transparent to-transparent" /><div className="relative grid min-h-[410px] items-end gap-8 p-6 sm:min-h-[480px] sm:p-10 lg:grid-cols-[minmax(0,1fr)_260px] lg:items-center"><div className="max-w-2xl"><div className="mb-5 flex flex-wrap gap-2"><MetaPill accent>Spotlight update</MetaPill><MetaPill>TMDB banner</MetaPill>{anime.season && anime.seasonYear && <MetaPill>{label(anime.season)} {anime.seasonYear}</MetaPill>}</div><h2 className="font-display text-4xl font-black leading-[0.95] tracking-tight sm:text-6xl">{title}</h2><p className="mt-5 max-w-xl text-sm leading-relaxed text-white/65 sm:text-base">{synopsis}</p><div className="mt-6 flex flex-wrap gap-3"><Link to={`/news/anime/${anime.id}`} className="rounded-full bg-or px-5 py-3 text-sm font-bold text-white shadow-lg shadow-or/20 transition hover:bg-[#ff8126]">Read the title update</Link><Link to={`/anime/${anime.id}`} className="rounded-full border border-white/20 bg-black/20 px-5 py-3 text-sm font-bold text-white/80 transition hover:border-or hover:text-or">Open catalogue page</Link></div></div><aside className="hidden rounded-2xl border border-white/10 bg-black/35 p-5 backdrop-blur-md lg:block"><p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-or">Episode desk</p><p className="mt-4 font-display text-2xl font-black">{anime.nextAiringEpisode?.episode ? `Episode ${anime.nextAiringEpisode.episode}` : 'Season watch'}</p><p className="mt-2 text-xs leading-relaxed text-white/50">{episodeCopy(anime)}</p>{editorial?.numberOfEpisodes > 0 && <p className="mt-5 border-t border-white/10 pt-4 text-xs text-white/55">TMDB tracks {editorial.numberOfEpisodes} episode{editorial.numberOfEpisodes === 1 ? '' : 's'} across {editorial.numberOfSeasons || 1} season{editorial.numberOfSeasons === 1 ? '' : 's'}.</p>}</aside></div></section>
 }
 
-function SpotlightBanner({ anime, index, total, onPrevious, onNext }) {
-  const navigate = useNavigate()
-  const title = TT(anime)
-  const image = anime.bannerImage || largeCover(anime)
-  const detailPath = `/news/anime/${anime.id}`
-  return <div className="relative min-h-[280px] overflow-hidden rounded-[2rem] border border-white/10 bg-[#17121d] shadow-2xl shadow-black/20 sm:min-h-[390px]">
-    {image && <img src={image} alt={`${title} banner artwork`} className="absolute inset-0 h-full w-full object-cover transition duration-700" onError={(event) => { event.currentTarget.src = largeCover(anime) || '/midnight-anime-logo.svg' }} />}
-    <div className="absolute inset-0 bg-gradient-to-r from-[#09070d] via-[#09070d]/75 to-transparent" />
-    <div className="absolute inset-0 bg-gradient-to-t from-[#09070d] via-transparent to-transparent" />
-    <div className="relative flex min-h-[260px] max-w-xl flex-col justify-end p-6 sm:min-h-[340px] sm:p-9">
-      <span className="mb-3 w-fit rounded-full bg-or/90 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white">AniList spotlight</span>
-      <h2 className="font-display text-3xl font-black leading-tight sm:text-5xl">{title}</h2>
-      <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-white/65">{String(anime.description || 'Explore the full title page for artwork, metadata, episodes, and related anime.').replace(/<[^>]*>/g, '')}</p>
-      <Link to={detailPath} onClick={(event) => { event.preventDefault(); navigate(detailPath) }} className="group mt-5 inline-flex w-fit items-center rounded-full bg-white px-4 py-2 text-xs font-bold text-black transition-colors hover:bg-or hover:text-white focus:outline-none focus:ring-2 focus:ring-white">View full details →</Link>
-    </div>
-    {total > 1 && <div className="absolute bottom-6 right-6 flex items-center gap-2"><button onClick={onPrevious} aria-label="Previous featured anime" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white transition hover:border-or hover:text-or">‹</button><span className="min-w-10 text-center font-mono text-[11px] text-white/70">{index + 1} / {total}</span><button onClick={onNext} aria-label="Next featured anime" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white transition hover:border-or hover:text-or">›</button></div>}
-  </div>
-}
+function LoadingState() { return <div className="space-y-8"><div className="h-[410px] animate-pulse rounded-[2rem] bg-white/[0.08] sm:h-[480px]" /><div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{Array.from({ length: 6 }, (_, index) => <div key={index} className="overflow-hidden rounded-[1.5rem] border border-white/[0.06] bg-white/[0.03]"><div className="aspect-[16/9] animate-pulse bg-white/[0.08]" /><div className="space-y-3 p-5"><div className="h-5 w-3/4 animate-pulse rounded bg-white/[0.08]" /><div className="h-3 w-full animate-pulse rounded bg-white/[0.06]" /><div className="h-3 w-2/3 animate-pulse rounded bg-white/[0.06]" /></div></div>)}</div></div> }
 
 export default function NewsPage() {
   const [items, setItems] = useState([])
+  const [editorials, setEditorials] = useState({})
   const [status, setStatus] = useState('loading')
   const [error, setError] = useState('')
-  const [spotlightIndex, setSpotlightIndex] = useState(0)
-
-  const load = async () => {
-    setStatus('loading'); setError('')
-    try { setItems(await AniListApi.fetchNews()); setSpotlightIndex(0); setStatus('ready') } catch (err) { setError(err.message || 'The update feed is temporarily unavailable.'); setStatus('error') }
-  }
+  const [activeView, setActiveView] = useState('all')
+  const load = async () => { setStatus('loading'); setError(''); try { const updates = await AniListApi.fetchNews(); setItems(updates); const pairs = await Promise.all(updates.slice(0, 12).map(async (anime) => [anime.id, await TmdbApi.fetchEditorial(anime)])); setEditorials(Object.fromEntries(pairs.filter(([, value]) => value))); setStatus('ready') } catch (err) { setError(err.message || 'The update feed is temporarily unavailable.'); setStatus('error') } }
   useEffect(() => { load() }, [])
-
-  return <PublicPageShell eyebrow="Midnight signal / Anime updates" title="What is moving in anime right now?" intro="A living snapshot of trending and recently released titles from AniList. This is an anime update feed—not a breaking-news publisher—and every card opens a dedicated feature page for that anime.">
-    {status === 'ready' && items.length > 0 && <div className="mb-8"><SpotlightBanner anime={items[spotlightIndex % Math.min(items.length, 6)]} index={spotlightIndex % Math.min(items.length, 6)} total={Math.min(items.length, 6)} onPrevious={() => setSpotlightIndex((current) => (current - 1 + Math.min(items.length, 6)) % Math.min(items.length, 6))} onNext={() => setSpotlightIndex((current) => (current + 1) % Math.min(items.length, 6))} /></div>}
-    <div className="mb-10 flex flex-col gap-4 rounded-3xl border border-or/20 bg-or/[0.07] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
-      <div><p className="font-display font-bold">Fresh from the catalogue</p><p className="mt-1 text-sm text-white/50">Artwork, scores, genres, status, and airing signals are sourced from AniList.</p></div>
-      <button onClick={load} className="rounded-full border border-white/15 px-4 py-2 text-sm font-bold transition-colors hover:border-or hover:text-or">Refresh updates</button>
-    </div>
-    {status === 'loading' && <div className="space-y-8"><div className="aspect-[16/8] animate-pulse rounded-[2rem] bg-white/[0.08]" /><div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{Array.from({ length: 6 }, (_, i) => <Skeleton key={i} />)}</div></div>}
-    {status === 'error' && <div className="rounded-3xl border border-red-300/20 bg-red-300/[0.06] p-8 text-center"><h2 className="font-display text-xl font-bold">The feed needs a moment</h2><p className="mx-auto mt-3 max-w-lg text-sm text-white/55">{error} You can still browse the catalogue while we reconnect.</p><button onClick={load} className="mt-6 rounded-full bg-or px-5 py-2.5 text-sm font-bold">Try again</button></div>}
+  const filteredItems = useMemo(() => { if (activeView === 'airing') return items.filter((anime) => anime.status === 'RELEASING' || anime.nextAiringEpisode?.episode); if (activeView === 'finished') return items.filter((anime) => anime.status === 'FINISHED'); return items }, [activeView, items])
+  const spotlight = filteredItems[0] || items[0]
+  return <PublicPageShell eyebrow="Midnight signal / Editorial updates" title="Anime updates, with more to explore" intro="A richer reading room for the titles moving through the Midnight Anime catalogue. Start with the spotlight, scan the latest signals, then open a full title feature for synopsis, season context, and episode information.">
+    {status === 'loading' && <LoadingState />}
+    {status === 'error' && <div className="rounded-3xl border border-red-300/20 bg-red-300/[0.06] p-8 text-center"><h2 className="font-display text-xl font-bold">The update feed needs a moment</h2><p className="mx-auto mt-3 max-w-lg text-sm text-white/55">{error} You can still browse the catalogue while we reconnect.</p><button onClick={load} className="mt-6 rounded-full bg-or px-5 py-2.5 text-sm font-bold">Try again</button></div>}
     {status === 'ready' && !items.length && <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-10 text-center text-white/55">No updates are available right now. Try refreshing in a little while.</div>}
-    {status === 'ready' && items.length > 0 && <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{items.map((anime) => <UpdateCard anime={anime} key={anime.id} />)}</div>}
+    {status === 'ready' && items.length > 0 && <><div className="mb-8 flex flex-col gap-4 rounded-[1.5rem] border border-or/20 bg-or/[0.07] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6"><div><p className="font-display font-bold">A living anime desk</p><p className="mt-1 max-w-2xl text-sm leading-relaxed text-white/50">AniList supplies the release and catalogue signals. TMDB supplies the editorial backdrop, poster, rating, season count, and episode total where available.</p></div><button onClick={load} className="shrink-0 rounded-full border border-white/15 px-4 py-2 text-sm font-bold transition-colors hover:border-or hover:text-or">Refresh feed</button></div><Spotlight anime={spotlight} editorial={editorials[spotlight.id]} /><section className="mt-14 grid gap-5 border-y border-white/[0.08] py-8 sm:grid-cols-3"><div><p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-or">01 / Spotlight</p><p className="mt-2 text-sm leading-relaxed text-white/55">One featured title gets the full-width treatment, with a TMDB backdrop and an episode-first snapshot.</p></div><div><p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-or">02 / Latest signals</p><p className="mt-2 text-sm leading-relaxed text-white/55">Cards turn catalogue changes into readable updates instead of a wall of posters.</p></div><div><p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-or">03 / Full context</p><p className="mt-2 text-sm leading-relaxed text-white/55">Open any title to see the longer explanation, genres, seasons, and episode path.</p></div></section><div className="mt-14 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><div><p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-or">The latest signals</p><h2 className="mt-2 font-display text-3xl font-black tracking-tight sm:text-4xl">What is moving now</h2><p className="mt-2 max-w-xl text-sm leading-relaxed text-white/50">Browse by the kind of update you want to follow. Every story remains connected to its anime detail page.</p></div><div className="flex flex-wrap gap-2" role="tablist" aria-label="Update filters">{[['all','All updates'],['airing','Airing now'],['finished','Finished']].map(([value, text]) => <button key={value} onClick={() => setActiveView(value)} role="tab" aria-selected={activeView === value} className={`rounded-full border px-3.5 py-2 text-xs font-bold transition ${activeView === value ? 'border-or bg-or text-white' : 'border-white/15 text-white/55 hover:border-or hover:text-or'}`}>{text}</button>)}</div></div>{filteredItems.length > 0 ? <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{filteredItems.map((anime) => <UpdateCard anime={anime} editorial={editorials[anime.id]} key={anime.id} />)}</div> : <div className="mt-7 rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-center text-sm text-white/50">No titles match this update view yet.</div>}<div className="mt-14 rounded-[1.5rem] border border-white/[0.08] bg-white/[0.03] p-6 sm:p-8"><div className="grid gap-8 lg:grid-cols-[1fr_auto]"><div><p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-or">Read beyond the headline</p><h2 className="mt-3 font-display text-2xl font-black">A title update should answer the useful questions.</h2><p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/55">What is the show about? Is it still airing? Which season is in focus? How many episodes are tracked? The feature page brings those answers together before you jump into the full catalogue experience.</p></div><Link to="/app" className="h-fit rounded-full bg-white px-5 py-3 text-center text-sm font-bold text-black transition hover:bg-or hover:text-white">Browse the catalogue</Link></div></div></>}
   </PublicPageShell>
 }
