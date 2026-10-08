@@ -51,7 +51,7 @@ export default function LandingPage() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ffb870] opacity-75" />
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#ffb870]" />
             </span>
-            Always free · No sign-up required to browse
+            Midnight Anime is now officially available for everyone
           </div>
 
           <h1 className="font-display font-black text-[13vw] leading-[0.95] sm:text-7xl md:text-8xl tracking-tight mb-6">
@@ -202,7 +202,7 @@ export default function LandingPage() {
             <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
             <button onClick={openApp} className="hover:text-white transition-colors">Open App</button>
           </div>
-          <p className="text-[12px] text-white/30">© 2026 Midnight Anime</p>
+          <p className="text-[12px] text-white/30">© Midnight Anime, LLC</p>
         </div>
       </footer>
     </div>

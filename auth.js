@@ -15,7 +15,7 @@ import {
 // Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyClcy2YXqryJAkg_wy1W4RLqkYMIsEg2Rk",
-  authDomain: "dipamalla.com.np",
+  authDomain: "midnightanime.bond",
   databaseURL: "https://mid-night-anime-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "mid-night-anime",
   storageBucket: "mid-night-anime.firebasestorage.app",
@@ -46,7 +46,7 @@ export const subscribeToAuth = (callback) => onAuthStateChanged(auth, callback);
 // Password Reset Email Trigger
 export const sendResetEmail = (email) => {
   return sendPasswordResetEmail(auth, email, {
-    url: 'https://dipamalla.com.np/auth/handler'
+    url: 'https://midnightanime.bond/auth/handler'
   });
 };
 

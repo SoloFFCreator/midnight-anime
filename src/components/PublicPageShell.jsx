@@ -49,7 +49,7 @@ export default function PublicPageShell({ eyebrow, title, intro, children }) {
             <Link to="/privacy" className="hover:text-white">Privacy</Link>
             <Link to="/terms" className="hover:text-white">Terms</Link>
           </div>
-          <span>© 2026 Midnight Anime</span>
+          <span>© Midnight Anime, LLC</span>
         </div>
       </footer>
     </div>

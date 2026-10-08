@@ -100,7 +100,7 @@ export default function DownloadPage() {
         </section>
       </main>
 
-      <footer className="relative z-10 border-t border-white/[0.08] px-5 py-8 sm:px-8"><div className="mx-auto flex max-w-7xl flex-col gap-4 text-[12px] text-white/40 sm:flex-row sm:items-center sm:justify-between"><Link to="/" className="flex items-center gap-2 font-display font-bold text-white/75"><img src="/midnight-anime-logo.svg" alt="" className="h-7 w-7 rounded-lg" />Midnight<span className="text-or">Anime</span></Link><div className="flex gap-5"><Link to="/news" className="transition hover:text-white">Updates</Link><Link to="/about" className="transition hover:text-white">About</Link><Link to="/privacy" className="transition hover:text-white">Privacy</Link></div><span>© 2026 Midnight Anime</span></div></footer>
+      <footer className="relative z-10 border-t border-white/[0.08] px-5 py-8 sm:px-8"><div className="mx-auto flex max-w-7xl flex-col gap-4 text-[12px] text-white/40 sm:flex-row sm:items-center sm:justify-between"><Link to="/" className="flex items-center gap-2 font-display font-bold text-white/75"><img src="/midnight-anime-logo.svg" alt="" className="h-7 w-7 rounded-lg" />Midnight<span className="text-or">Anime</span></Link><div className="flex gap-5"><Link to="/news" className="transition hover:text-white">Updates</Link><Link to="/about" className="transition hover:text-white">About</Link><Link to="/privacy" className="transition hover:text-white">Privacy</Link></div><span>© Midnight Anime, LLC</span></div></footer>
     </div>
   )
 }
