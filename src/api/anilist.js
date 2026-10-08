@@ -81,14 +81,6 @@ const Q_NEWS = `
   }
 `
 
-const Q_AVATAR_GROUPS = `
-  query {
-    Page(page:1,perPage:8){media(type:ANIME,sort:POPULARITY_DESC,isAdult:false){
-      id title{romaji english} characters(sort:ROLE,perPage:6){edges{node{id name{full} image{large}}}}
-    }}
-  }
-`
-
 async function query(queryStr, variables = {}) {
   const res = await fetch(ANILIST_URL, {
     method: 'POST',
@@ -146,14 +138,6 @@ export const AniListApi = {
     })
   },
 
-  async fetchAvatarGroups() {
-    const data = await query(Q_AVATAR_GROUPS)
-    return (data.Page?.media || []).map((anime) => ({
-      animeId: anime.id,
-      animeTitle: anime.title?.english || anime.title?.romaji || 'Anime characters',
-      characters: (anime.characters?.edges || []).map(({ node }) => node).filter((character) => character?.image?.large),
-    })).filter((group) => group.characters.length)
-  },
 }
 
 /** Title helper used across the app: prefers English, falls back to romaji. */

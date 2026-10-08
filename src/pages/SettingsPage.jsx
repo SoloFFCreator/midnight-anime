@@ -158,7 +158,7 @@ function AvatarPickerSheet({ current, onChoose, onClose }) {
         className="relative w-full sm:w-[380px] bg-[#16161e] rounded-t-2xl sm:rounded-2xl p-4 pb-8"
       >
         <p className="text-white font-bold text-[15px] mb-1">Choose Avatar</p>
-        <p className="text-t3 text-[11px] mb-3">Character artwork from AniList</p>
+        <p className="text-t3 text-[11px] mb-3">Profile portraits from TMDB</p>
         <div className="max-h-[65vh] space-y-4 overflow-y-auto pr-1">
           {Object.entries(groupedChoices).map(([anime, choices]) => (
             <section key={anime}>
