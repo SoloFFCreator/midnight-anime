@@ -1,5 +1,48 @@
-// Character portraits are sourced from AniList's public character image CDN.
+// Existing character portraits use AniList's public character image CDN.
 // IDs are stable so existing saved avatar selections continue to work.
+// Supplied character avatar collection.
+const SUPPLIED_AVATAR_CHOICES = [
+  { id: 'p01', anime: 'Demon Slayer', name: 'Tanjiro', color: '#254b48', symbol: '✦', image: '/profilepics/01_tanjiro_avatar.png' },
+  { id: 'p02', anime: 'Featured avatars', name: 'Yuru', color: '#4c465e', symbol: '○', image: '/profilepics/01_yuru_avatar.png' },
+  { id: 'p03', anime: 'Chainsaw Man', name: 'Asa', color: '#62483f', symbol: '◇', image: '/profilepics/02_asa_avatar.png' },
+  { id: 'p04', anime: 'Demon Slayer', name: 'Nezuko', color: '#744052', symbol: '✧', image: '/profilepics/02_nezuko_avatar.png' },
+  { id: 'p05', anime: 'Featured avatars', name: 'Dera', color: '#4d536b', symbol: '◈', image: '/profilepics/03_dera_avatar.png' },
+  { id: 'p06', anime: 'Demon Slayer', name: 'Zenitsu', color: '#776332', symbol: '╳', image: '/profilepics/03_zenitsu_avatar.png' },
+  { id: 'p07', anime: 'Attack on Titan', name: 'Gabi', color: '#6c4932', symbol: '△', image: '/profilepics/04_gabby_avatar.png' },
+  { id: 'p08', anime: 'Demon Slayer', name: 'Inosuke', color: '#355a67', symbol: '◇', image: '/profilepics/04_inosuke_avatar.png' },
+  { id: 'p09', anime: 'Demon Slayer', name: 'Kanao', color: '#5f4563', symbol: '♡', image: '/profilepics/05_kanao_avatar.png' },
+  { id: 'p10', anime: 'Featured avatars', name: 'Avatar 07', color: '#3f4e61', symbol: '◎', image: '/profilepics/07_right_avatar.png' },
+  { id: 'p11', anime: 'Featured avatars', name: 'Avatar 08', color: '#4b4158', symbol: '◎', image: '/profilepics/08_left_avatar.png' },
+  { id: 'p12', anime: 'Featured avatars', name: 'Yuru 02', color: '#4c465e', symbol: '○', image: '/profilepics/09_yuru_avatar.png' },
+  { id: 'p13', anime: 'Black Clover', name: 'Asta', color: '#5a3e35', symbol: '◆', image: '/profilepics/1056-black-clover-asta.png' },
+  { id: 'p14', anime: 'Black Clover', name: 'Yuno', color: '#3e5366', symbol: '◇', image: '/profilepics/1057-black-clover-yuno.png' },
+  { id: 'p15', anime: 'Black Clover', name: 'Noelle', color: '#3f5670', symbol: '✧', image: '/profilepics/1058-black-clover-noelle.png' },
+  { id: 'p16', anime: 'Black Clover', name: 'Yami', color: '#3d414e', symbol: '◈', image: '/profilepics/1059-black-clover-yami.png' },
+  { id: 'p17', anime: 'Chainsaw Man', name: 'Asa 02', color: '#62483f', symbol: '◇', image: '/profilepics/10_asa_avatar.png' },
+  { id: 'p18', anime: 'Demon Slayer', name: 'Mitsuri', color: '#744052', symbol: '♡', image: '/profilepics/11_mitsuri_avatar.png' },
+  { id: 'p19', anime: 'Attack on Titan', name: 'Armin 02', color: '#34495e', symbol: '✦', image: '/profilepics/aot_fc_armin-avatar.png' },
+  { id: 'p20', anime: 'Attack on Titan', name: 'Eren 02', color: '#3c4c39', symbol: '◆', image: '/profilepics/aot_fc_eren-avatar.png' },
+  { id: 'p21', anime: 'Attack on Titan', name: 'Mikasa 02', color: '#4f3144', symbol: '◇', image: '/profilepics/aot_fc_mikasa-avatar.png' },
+  { id: 'p22', anime: 'Attack on Titan', name: 'Reiner', color: '#5a5542', symbol: '△', image: '/profilepics/aot_fc_reiner-avatar.png' },
+  { id: 'p23', anime: 'Blue Lock', name: 'Bachira', color: '#5b3c42', symbol: '✦', image: '/profilepics/bluelock_bachira_teaser_avatar.png' },
+  { id: 'p24', anime: 'Blue Lock', name: 'Ego', color: '#3d4b60', symbol: '◈', image: '/profilepics/bluelock_ego_avatar.png' },
+  { id: 'p25', anime: 'Blue Lock', name: 'Isagi', color: '#3f5875', symbol: '◆', image: '/profilepics/bluelock_isagi_kv1_avatar.png' },
+  { id: 'p26', anime: 'Blue Lock', name: 'Isagi 02', color: '#3f5875', symbol: '◆', image: '/profilepics/bluelock_isagi_teaser_avatar.png' },
+  { id: 'p27', anime: 'Blue Lock', name: 'Nagi', color: '#4b5870', symbol: '○', image: '/profilepics/bluelock_nagi_teaser_avatar.png' },
+  { id: 'p28', anime: 'Blue Lock', name: 'Oliver', color: '#4c5a62', symbol: '◇', image: '/profilepics/bluelock_oliver_kv1_avatar.png' },
+  { id: 'p29', anime: 'Blue Lock', name: 'Rin', color: '#3d4a70', symbol: '◈', image: '/profilepics/bluelock_rin_kv1_avatar.png' },
+  { id: 'p30', anime: 'Blue Lock', name: 'Rin 02', color: '#3d4a70', symbol: '◈', image: '/profilepics/bluelock_rin_teaser_avatar.png' },
+  { id: 'p31', anime: 'Blue Lock', name: 'Sae', color: '#5c4c5c', symbol: '✧', image: '/profilepics/bluelock_sae_kv1_avatar.png' },
+  { id: 'p32', anime: 'Blue Lock', name: 'Sae 02', color: '#5c4c5c', symbol: '✧', image: '/profilepics/bluelock_sae_teaser_avatar.png' },
+  { id: 'p33', anime: 'Chainsaw Man', name: 'Aki', color: '#3f5160', symbol: '◇', image: '/profilepics/chainsawman-aki.jpeg' },
+  { id: 'p34', anime: 'Chainsaw Man', name: 'Chainsaw Man', color: '#573f3c', symbol: '◆', image: '/profilepics/chainsawman-chainsawman.jpeg' },
+  { id: 'p35', anime: 'Chainsaw Man', name: 'Denji', color: '#754532', symbol: '✦', image: '/profilepics/chainsawman-denji.jpeg' },
+  { id: 'p36', anime: 'Chainsaw Man', name: 'Makima', color: '#704653', symbol: '◎', image: '/profilepics/chainsawman-makima.jpeg' },
+  { id: 'p37', anime: 'Chainsaw Man', name: 'Power', color: '#6a423f', symbol: '╳', image: '/profilepics/chainsawman-power.jpeg' },
+  { id: 'p38', anime: 'Featured avatars', name: 'Avatar 03', color: '#4e4b60', symbol: '○', image: '/profilepics/dbdiama_avatarbackground2025_avatar_3.jpeg' },
+  { id: 'p39', anime: 'Featured avatars', name: 'Avatar 04', color: '#4e4b60', symbol: '○', image: '/profilepics/dbdiama_avatarbackground2025_avatar_4.jpeg' },
+]
+
 export const AVATAR_CHOICES = [
   { id: 'a1', anime: 'Attack on Titan', name: 'Mikasa', color: '#4f3144', symbol: '◇', image: 'https://s4.anilist.co/file/anilistcdn/character/large/b40881-F3gr1PkreDvj.png' },
   { id: 'a2', anime: 'Attack on Titan', name: 'Eren', color: '#3c4c39', symbol: '◆', image: 'https://s4.anilist.co/file/anilistcdn/character/large/b40882-dsj7IP943WFF.jpg' },
@@ -19,6 +62,7 @@ export const AVATAR_CHOICES = [
   { id: 'a16', anime: 'Hunter x Hunter', name: 'Gon', color: '#56703b', symbol: '✦', image: 'https://s4.anilist.co/file/anilistcdn/character/large/b30-lyFExKyDhefc.jpg' },
   { id: 'a17', anime: 'One Piece', name: 'Luffy', color: '#9b4531', symbol: '○', image: 'https://s4.anilist.co/file/anilistcdn/character/large/b40-MNypXsxSRb1R.png' },
   { id: 'a18', anime: 'One Piece', name: 'Zoro', color: '#3e604b', symbol: '◇', image: 'https://s4.anilist.co/file/anilistcdn/character/large/b62-S7oAeA9WInjV.png' },
+  ...SUPPLIED_AVATAR_CHOICES,
 ]
 
 export const ALL_GENRES = [
