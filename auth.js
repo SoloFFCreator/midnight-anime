@@ -33,7 +33,7 @@ googleProvider.addScope("profile");
 googleProvider.addScope("email");
 
 googleProvider.setCustomParameters({
-  client_id: "655330045563-3jtu25b6fq1hiof0nknode8av2mpej5f.apps.googleusercontent.com",
+  client_id: "655330045563-u7dfu8g3cdask48hhdkpr32kiq644adf.apps.googleusercontent.com",
   prompt: "select_account"
 });
 
