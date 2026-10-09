@@ -3,7 +3,6 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
-  signInWithRedirect,
   signOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
@@ -39,7 +38,6 @@ googleProvider.setCustomParameters({
 
 // Auth Export Helpers
 export const signInWithGoogle = () => signInWithPopup(auth, googleProvider);
-export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider);
 export const logoutUser = () => signOut(auth);
 export const subscribeToAuth = (callback) => onAuthStateChanged(auth, callback);
 

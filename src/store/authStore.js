@@ -2,14 +2,37 @@ import { create } from 'zustand'
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithRedirect,
+  signInWithCredential,
+  GoogleAuthProvider,
   signOut as fbSignOut,
   sendPasswordResetEmail,
   sendEmailVerification,
   onAuthStateChanged,
 } from 'firebase/auth'
 import { ref, set, get } from 'firebase/database'
-import { auth, db, googleProvider } from '../api/firebase'
+import { auth, db } from '../api/firebase'
+
+const GOOGLE_CLIENT_ID = '655330045563-u7dfu8g3cdask48hhdkpr32kiq644adf.apps.googleusercontent.com'
+
+function loadGoogleIdentityServices() {
+  if (window.google?.accounts?.oauth2) return Promise.resolve()
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[data-google-identity-services]')
+    if (existing) {
+      existing.addEventListener('load', resolve, { once: true })
+      existing.addEventListener('error', () => reject(new Error('Google Sign-In could not be loaded.')), { once: true })
+      return
+    }
+    const script = document.createElement('script')
+    script.src = 'https://accounts.google.com/gsi/client'
+    script.async = true
+    script.defer = true
+    script.dataset.googleIdentityServices = 'true'
+    script.onload = resolve
+    script.onerror = () => reject(new Error('Google Sign-In could not be loaded.'))
+    document.head.appendChild(script)
+  })
+}
 
 const cleanError = (msg) =>
   (msg || 'Something went wrong')
@@ -78,9 +101,22 @@ export const useAuthStore = create((setState, getState) => ({
   async signInWithGoogle() {
     setState({ error: null, isLoading: true })
     try {
-      const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`
-      window.sessionStorage.setItem('midnightAuthReturnTo', returnTo.startsWith('/__/') ? '/app' : returnTo)
-      await signInWithRedirect(auth, googleProvider)
+      await loadGoogleIdentityServices()
+      const accessToken = await new Promise((resolve, reject) => {
+        const tokenClient = window.google.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_CLIENT_ID,
+          scope: 'openid email profile',
+          callback: (response) => {
+            if (response.error) reject(new Error(response.error_description || 'Google Sign-In was cancelled.'))
+            else resolve(response.access_token)
+          },
+          error_callback: (error) => reject(new Error(error?.type === 'popup_closed' ? 'Google Sign-In was cancelled.' : 'Google Sign-In could not be completed.')),
+        })
+        tokenClient.requestAccessToken({ prompt: 'select_account' })
+      })
+      const credential = GoogleAuthProvider.credential(null, accessToken)
+      await signInWithCredential(auth, credential)
+      setState({ isLoading: false, infoMessage: 'Signed in with Google!' })
     } catch (e) {
       setState({ isLoading: false, error: cleanError(e.message) })
     }
@@ -95,7 +131,10 @@ export const useAuthStore = create((setState, getState) => ({
     }
     setState({ error: null, isLoading: true })
     try {
-      await sendPasswordResetEmail(auth, email || profile?.email)
+      await sendPasswordResetEmail(auth, email || profile?.email, {
+        url: 'https://midnightanime.bond/__/auth/handler',
+        handleCodeInApp: true,
+      })
       setState({ isLoading: false, infoMessage: 'Password reset email sent! Check your inbox (and spam folder).' })
     } catch (e) {
       setState({ isLoading: false, error: cleanError(e.message) })
@@ -108,7 +147,10 @@ export const useAuthStore = create((setState, getState) => ({
     if (user.emailVerified) { setState({ infoMessage: 'Your email is already verified' }); return }
     setState({ error: null, isLoading: true })
     try {
-      await sendEmailVerification(user)
+      await sendEmailVerification(user, {
+        url: 'https://midnightanime.bond/__/auth/handler',
+        handleCodeInApp: true,
+      })
       setState({ isLoading: false, infoMessage: `Verification email sent to ${user.email}` })
     } catch (e) {
       setState({ isLoading: false, error: cleanError(e.message) })
