@@ -29,6 +29,12 @@
     <p id="message">Please wait while Midnight Anime verifies your session.</p>
     <a id="fallback" class="button hidden" href="/">Continue to Midnight Anime</a>
   </main>
+  <script>
+    const oauthParams = new URLSearchParams(window.location.search)
+    if (oauthParams.get('authType') === 'signInViaRedirect') {
+      window.location.replace(`https://mid-night-anime.firebaseapp.com/__/auth/handler${window.location.search}`)
+    }
+  </script>
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js'
     import { applyActionCode, confirmPasswordReset, getAuth, getRedirectResult, verifyPasswordResetCode } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js'
