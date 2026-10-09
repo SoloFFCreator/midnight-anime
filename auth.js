@@ -46,7 +46,7 @@ export const subscribeToAuth = (callback) => onAuthStateChanged(auth, callback);
 // Password Reset Email Trigger
 export const sendResetEmail = (email) => {
   return sendPasswordResetEmail(auth, email, {
-    url: 'https://midnightanime.bond/auth/handler'
+    url: 'https://midnightanime.bond/__/auth/handler'
   });
 };
 

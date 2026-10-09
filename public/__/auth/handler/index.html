@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Signing you in | Midnight Anime</title>
+  <style>
+    :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; color: #fff; background: radial-gradient(circle at 20% 0%, #312047 0, transparent 48%), radial-gradient(circle at 100% 100%, #3d1c23 0, transparent 42%), #09070d; }
+    .card { width: min(100%, 440px); padding: 36px 30px; text-align: center; border: 1px solid rgba(255,255,255,.12); border-radius: 26px; background: rgba(255,255,255,.055); box-shadow: 0 24px 80px rgba(0,0,0,.42); backdrop-filter: blur(18px); }
+    .mark { width: 64px; height: 64px; margin: 0 auto 22px; border-radius: 19px; object-fit: contain; background: rgba(255,255,255,.08); }
+    .spinner { width: 34px; height: 34px; margin: 0 auto 22px; border: 3px solid rgba(255,255,255,.18); border-top-color: #ff8a3d; border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    h1 { margin: 0; font-size: 24px; letter-spacing: -.03em; }
+    p { margin: 12px 0 0; color: rgba(255,255,255,.58); font-size: 14px; line-height: 1.6; }
+    .error { color: #ffaaa5; }
+    .button { display: inline-flex; margin-top: 24px; padding: 12px 18px; border-radius: 999px; color: #fff; background: #f47b32; font-weight: 800; text-decoration: none; }
+    .button:hover { background: #ff914f; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <main class="card" aria-live="polite">
+    <img class="mark" src="/midnight-anime-logo.svg" alt="Midnight Anime" />
+    <div id="spinner" class="spinner" aria-hidden="true"></div>
+    <h1 id="title">Completing sign-in</h1>
+    <p id="message">Please wait while Midnight Anime verifies your session.</p>
+    <a id="fallback" class="button hidden" href="/">Continue to Midnight Anime</a>
+  </main>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js'
+    import { applyActionCode, confirmPasswordReset, getAuth, getRedirectResult, verifyPasswordResetCode } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js'
+
+    const firebaseConfig = {
+      apiKey: 'AIzaSyClcy2YXqryJAkg_wy1W4RLqkYMIsEg2Rk',
+      authDomain: 'midnightanime.bond',
+      databaseURL: 'https://mid-night-anime-default-rtdb.asia-southeast1.firebasedatabase.app',
+      projectId: 'mid-night-anime',
+      storageBucket: 'mid-night-anime.firebasestorage.app',
+      messagingSenderId: '655330045563',
+      appId: '1:655330045563:web:3d99e3be8ad7cb2734bcde'
+    }
+
+    const auth = getAuth(initializeApp(firebaseConfig))
+    const params = new URLSearchParams(window.location.search)
+    const mode = params.get('mode')
+    const oobCode = params.get('oobCode')
+    const title = document.getElementById('title')
+    const message = document.getElementById('message')
+    const spinner = document.getElementById('spinner')
+    const fallback = document.getElementById('fallback')
+    const stop = () => { spinner.classList.add('hidden') }
+    const showError = (error) => { stop(); title.textContent = 'Authentication could not be completed'; message.textContent = error?.message || 'This link has expired or is no longer valid.'; message.className = 'error'; fallback.classList.remove('hidden') }
+    const getReturnTo = () => {
+      const saved = window.sessionStorage.getItem('midnightAuthReturnTo')
+      window.sessionStorage.removeItem('midnightAuthReturnTo')
+      if (!saved || !saved.startsWith('/') || saved.startsWith('//') || saved.startsWith('/__/')) return '/app'
+      return saved
+    }
+
+    async function run() {
+      try {
+        const result = await getRedirectResult(auth)
+        if (result?.user) {
+          stop(); title.textContent = 'Signed in'; message.textContent = `Welcome back, ${result.user.displayName || result.user.email || 'anime fan'}.`; setTimeout(() => { window.location.replace(getReturnTo()) }, 650); return
+        }
+        if (mode === 'verifyEmail' && oobCode) {
+          await applyActionCode(auth, oobCode); stop(); title.textContent = 'Email verified'; message.textContent = 'Your email address has been confirmed.'; setTimeout(() => { window.location.replace('/app') }, 1200); return
+        }
+        if (mode === 'resetPassword' && oobCode) {
+          const email = await verifyPasswordResetCode(auth, oobCode)
+          const password = window.prompt(`Enter a new password for ${email}`)
+          if (!password || password.length < 6) throw new Error('Password must be at least 6 characters.')
+          await confirmPasswordReset(auth, oobCode, password); stop(); title.textContent = 'Password updated'; message.textContent = 'Your password has been changed. You can now sign in again.'; setTimeout(() => { window.location.replace('/auth') }, 1200); return
+        }
+        throw new Error('No active authentication action was found.')
+      } catch (error) { showError(error) }
+    }
+    run()
+  </script>
+</body>
+</html>

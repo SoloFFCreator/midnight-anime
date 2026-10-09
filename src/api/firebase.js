@@ -5,7 +5,7 @@ import { getDatabase } from 'firebase/database'
 // Same Firebase project used across the web/Android builds
 const firebaseConfig = {
   apiKey: 'AIzaSyClcy2YXqryJAkg_wy1W4RLqkYMIsEg2Rk',
-  authDomain: 'mid-night-anime.firebaseapp.com',
+  authDomain: 'midnightanime.bond',
   databaseURL: 'https://mid-night-anime-default-rtdb.asia-southeast1.firebasedatabase.app',
   projectId: 'mid-night-anime',
   storageBucket: 'mid-night-anime.firebasestorage.app',

@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPopup,
+  signInWithRedirect,
   signOut as fbSignOut,
   sendPasswordResetEmail,
   sendEmailVerification,
@@ -78,8 +78,9 @@ export const useAuthStore = create((setState, getState) => ({
   async signInWithGoogle() {
     setState({ error: null, isLoading: true })
     try {
-      await signInWithPopup(auth, googleProvider)
-      setState({ isLoading: false })
+      const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`
+      window.sessionStorage.setItem('midnightAuthReturnTo', returnTo.startsWith('/__/') ? '/app' : returnTo)
+      await signInWithRedirect(auth, googleProvider)
     } catch (e) {
       setState({ isLoading: false, error: cleanError(e.message) })
     }
