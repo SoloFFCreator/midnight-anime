@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /__/auth/
+Disallow: /api/share-preview
+
+# Machine-readable site profile for AI agents and crawlers
+Sitemap: https://midnightanime.bond/sitemap.xml
+
+# AI-readable description
+LLMs: https://midnightanime.bond/llms.txt
+AI-Agent: https://midnightanime.bond/ai-agent.json
