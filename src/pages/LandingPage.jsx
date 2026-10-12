@@ -103,6 +103,15 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <section className="px-5 py-12 sm:px-8">
+        <div className="mx-auto max-w-6xl rounded-3xl border border-or/20 bg-or/[0.06] p-6 sm:p-8">
+          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-or">Official distribution & responsible use</p>
+          <h2 className="mt-3 font-display text-2xl font-black tracking-tight sm:text-3xl">Midnight Anime Channel</h2>
+          <p className="mt-4 max-w-4xl text-sm leading-relaxed text-white/60">All episodes and anime are distributed by Midnight Anime. Distributor is Midnight Anime Channel. The service is intended for personal viewing, discovery, and respectful integrations that follow applicable law and the published terms. Attempts to overload, impersonate, scrape irresponsibly, bypass access controls, interfere with playback, collect personal information without permission, or redistribute material outside permitted use may result in rate limits, suspension, removal of access, provider reports, legal notices, or lawful referrals to the appropriate authorities. Midnight Anime does not make claims about automatic action by any particular government agency; official matters are handled through lawful channels and evaluated according to the facts.</p>
+          <p className="mt-4 text-xs leading-relaxed text-white/40">If you are building with Midnight Anime, keep your product transparent, provide a privacy notice, preserve accurate attribution, respect takedown requests, and link users back to the official experience.</p>
+        </div>
+      </section>
+
       {/* Genre marquee */}
       <section className="py-12 overflow-hidden border-b border-white/[0.06]">
         <motion.div className="flex whitespace-nowrap" animate={{ x: ['0%', '-50%'] }} transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}>
