@@ -8,7 +8,7 @@ async function tmdb(path, params = {}) {
   const url = new URL(`${TMDB_BASE}${path}`)
   url.searchParams.set('api_key', TMDB_API_KEY)
   Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, String(value)))
-  const response = await fetch(url)
+  const response = await fetch(url.toString(), { headers: { Accept: 'application/json' } })
   if (!response.ok) throw new Error(`TMDB returned HTTP ${response.status}`)
   return response.json()
 }
