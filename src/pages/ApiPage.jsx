@@ -12,7 +12,7 @@ const endpointGroups = [
     endpoints: [
       { method: 'GET', path: '/catalogue?view=trending&limit=20', title: 'Trending and catalogue views', detail: 'Use trending, popular, seasonal, or movies as the view value. Responses include AniList IDs, MAL IDs, title data, artwork, score, status, genres, format, season, and airing signals.' },
       { method: 'GET', path: '/search?q=Frieren&page=1', title: 'Search anime', detail: 'Search the catalogue by title. Pagination is supported with page and limit parameters.' },
-      { method: 'GET', path: '/anime/:anilistId', title: 'Anime detail', detail: 'Fetch expanded title context including descriptions, studios, relations, recommendations, streaming episode thumbnails, artwork, and external IDs.' },
+      { method: 'GET', path: '/anime?id=21', title: 'Anime detail', detail: 'Fetch expanded title context including descriptions, studios, relations, recommendations, streaming episode thumbnails, artwork, and external IDs.' },
     ],
   },
   {
