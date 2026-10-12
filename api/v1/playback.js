@@ -1,5 +1,7 @@
 import { apiError, handleOptions, sendJson } from '../../lib/midnightApi.js'
 
+export const config = { runtime: 'nodejs20.x' }
+
 const UPSTREAM = 'https://nuvio-stream-api-20260925.onrender.com/api/stream'
 const IDENTIFIERS = ['malId', 'tmdbId', 'imdbId', 'anilistId']
 

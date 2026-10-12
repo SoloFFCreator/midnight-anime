@@ -1,5 +1,7 @@
 import { aniList, apiError, handleOptions, sendJson } from '../../lib/midnightApi.js'
 
+export const config = { runtime: 'nodejs20.x' }
+
 const TMDB_BASE = 'https://api.themoviedb.org/3'
 const TMDB_IMAGE = 'https://image.tmdb.org/t/p/'
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '6de011d3fa665efbd0e924e6bb9fd381'
