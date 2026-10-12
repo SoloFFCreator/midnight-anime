@@ -32,6 +32,7 @@ Midnight Anime is an anime discovery and streaming service operated under the Mi
 - [SDK source and package](https://github.com/SoloFFCreator/midnight-anime/tree/main/packages/midnight-anime-sdk): JavaScript and TypeScript client package.
 - [SDK package name](https://www.npmjs.com/package/midnight-anime-sdk): `midnight-anime-sdk`.
 - [CLI source](https://github.com/SoloFFCreator/midnight-anime/tree/main/packages/midnight-anime-cli): Terminal client with dedicated browser authorization.
+- [CLI package name](https://www.npmjs.com/package/midnight-anime-cli): `midnight-anime-cli`.
 
 The API supports catalogue browsing, title search, title detail, artwork metadata, and supported episode playback requests. The SDK includes typed declarations, request timeouts, cancellation, custom fetch support, and normalized errors.
 

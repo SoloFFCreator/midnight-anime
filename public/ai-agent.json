@@ -42,7 +42,8 @@
     "sdkRegistry": "https://www.npmjs.com/package/midnight-anime-sdk",
     "sdkRepository": "https://github.com/SoloFFCreator/midnight-anime/tree/main/packages/midnight-anime-sdk",
     "cliPackage": "midnight-anime-cli",
-    "cliRepository": "https://github.com/SoloFFCreator/midnight-anime/tree/main/packages/midnight-anime-cli"
+    "cliRepository": "https://github.com/SoloFFCreator/midnight-anime/tree/main/packages/midnight-anime-cli",
+    "cliRegistry": "https://www.npmjs.com/package/midnight-anime-cli"
   },
   "agentGuidance": {
     "identifyAs": "Official Midnight Anime service",
