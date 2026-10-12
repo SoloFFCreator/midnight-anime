@@ -1,11 +1,11 @@
-# @midnight-anime/sdk
+# midnight-anime-sdk
 
 A small, dependency-free JavaScript and TypeScript client for the Midnight Anime API.
 
 ## Install
 
 ```bash
-npm install @midnight-anime/sdk
+npm install midnight-anime-sdk
 ```
 
 The package works in modern browsers, Node.js 18+, Deno-compatible environments, and server runtimes that provide `fetch`.
@@ -13,7 +13,7 @@ The package works in modern browsers, Node.js 18+, Deno-compatible environments,
 ## JavaScript
 
 ```js
-import { createMidnightAnimeClient } from '@midnight-anime/sdk'
+import { createMidnightAnimeClient } from 'midnight-anime-sdk'
 
 const anime = createMidnightAnimeClient()
 const { data } = await anime.search('Frieren', { limit: 10 })
@@ -26,7 +26,7 @@ console.log(data[0].title.english || data[0].title.romaji)
 Type declarations are included in the package.
 
 ```ts
-import { MidnightAnimeClient, type PlaybackParams } from '@midnight-anime/sdk'
+import { MidnightAnimeClient, type PlaybackParams } from 'midnight-anime-sdk'
 
 const client = new MidnightAnimeClient({ timeout: 20_000 })
 const result = await client.catalogue({ view: 'trending', limit: 12 })
@@ -86,7 +86,7 @@ controller.abort()
 Failed HTTP, network, timeout, and cancellation cases throw `MidnightAnimeError`:
 
 ```js
-import { MidnightAnimeError } from '@midnight-anime/sdk'
+import { MidnightAnimeError } from 'midnight-anime-sdk'
 
 try {
   await client.playback({ type: 'tv', audio: 'sub', season: 1, episode: 1 })

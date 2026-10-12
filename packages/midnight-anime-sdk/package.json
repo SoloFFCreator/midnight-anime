@@ -1,5 +1,5 @@
 {
-  "name": "@midnight-anime/sdk",
+  "name": "midnight-anime-sdk",
   "version": "1.0.0",
   "description": "Official JavaScript and TypeScript client for the Midnight Anime API.",
   "license": "MIT",

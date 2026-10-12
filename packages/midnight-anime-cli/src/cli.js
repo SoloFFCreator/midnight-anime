@@ -5,7 +5,7 @@ import { chmod, mkdir, readFile, unlink, writeFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import { spawn } from 'node:child_process'
-import { createMidnightAnimeClient, MidnightAnimeError } from '@midnight-anime/sdk'
+import { createMidnightAnimeClient, MidnightAnimeError } from 'midnight-anime-sdk'
 
 const CONFIG_DIR = join(homedir(), '.config', 'midnight-anime')
 const TOKEN_FILE = join(CONFIG_DIR, 'credentials.json')

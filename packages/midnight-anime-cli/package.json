@@ -1,5 +1,5 @@
 {
-  "name": "@midnight-anime/cli",
+  "name": "midnight-anime-cli",
   "version": "1.0.0",
   "description": "Official Midnight Anime terminal client for authenticated API and playback testing.",
   "license": "MIT",
@@ -7,7 +7,7 @@
   "bin": { "midnight-anime": "src/cli.js" },
   "files": ["src", "README.md", "LICENSE"],
   "engines": { "node": ">=18" },
-  "dependencies": { "@midnight-anime/sdk": "^1.0.0" },
+  "dependencies": { "midnight-anime-sdk": "^1.0.0" },
   "repository": { "type": "git", "url": "https://github.com/SoloFFCreator/midnight-anime.git", "directory": "packages/midnight-anime-cli" },
   "publishConfig": { "access": "public" }
 }

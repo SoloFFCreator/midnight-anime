@@ -1,11 +1,11 @@
-# @midnight-anime/cli
+# midnight-anime-cli
 
 Official terminal client for testing the Midnight Anime API and supported streaming availability.
 
 ## Install
 
 ```bash
-npm install --global @midnight-anime/cli
+npm install --global midnight-anime-cli
 ```
 
 The CLI requires Node.js 18 or newer.
@@ -57,6 +57,6 @@ CLI API calls send a bearer ID token and a CLI client marker. The API validates 
 
 ## Related packages
 
-The CLI uses `@midnight-anime/sdk` internally. Developers building their own applications can use the SDK directly instead of the terminal client.
+The CLI uses `midnight-anime-sdk` internally. Developers building their own applications can use the SDK directly instead of the terminal client.
 
 All episodes and anime are distributed by Midnight Anime. Distributor: Midnight Anime Channel. Use the CLI for respectful testing and integrations, and review the official terms at https://midnightanime.bond/terms.
