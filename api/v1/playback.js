@@ -1,9 +1,11 @@
+import { requireCliAuth } from '../../lib/cliAuth.js'
 const UPSTREAM = 'https://nuvio-stream-api-20260925.onrender.com/api/stream'
 const IDENTIFIERS = ['malId', 'tmdbId', 'imdbId', 'anilistId']
 
 function json(res, status, body) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Midnight-Client')
   res.setHeader('Cache-Control', 'public, s-maxage=30, stale-while-revalidate=120')
   return res.status(status).json(body)
 }
@@ -11,6 +13,7 @@ function json(res, status, body) {
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'GET') return json(res, 405, { error: { code: 'METHOD_NOT_ALLOWED', message: 'Use GET for this endpoint.' } })
+  if (!(await requireCliAuth(req, res))) return
 
   const query = new URLSearchParams(req.query || {})
   const supplied = IDENTIFIERS.filter((key) => query.get(key))

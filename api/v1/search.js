@@ -1,8 +1,10 @@
 import { aniList, apiError, handleOptions, mediaFields, positiveInt, sendJson } from '../../lib/midnightApi.js'
+import { requireCliAuth } from '../../lib/cliAuth.js'
 
 export default async function handler(req, res) {
   if (handleOptions(req, res)) return
   if (req.method !== 'GET') return sendJson(res, 405, { error: { code: 'METHOD_NOT_ALLOWED', message: 'Use GET for this endpoint.' } })
+  if (!(await requireCliAuth(req, res))) return
 
   const queryText = String(req.query?.q || '').trim()
   if (!queryText) return sendJson(res, 400, { error: { code: 'MISSING_QUERY', message: 'Add a q query parameter, for example q=Frieren.' } })

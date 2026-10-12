@@ -64,11 +64,14 @@ await client.media.artwork({ tmdbId: 94605 })
 ```js
 const client = createMidnightAnimeClient({
   baseUrl: 'https://midnightanime.bond/api/v1',
+  token: process.env.MIDNIGHT_ANIME_TOKEN,
   timeout: 10_000,
   headers: { 'X-My-App': 'nightly-dashboard' },
   fetch: fetch,
 })
 ```
+
+For authenticated developer tooling, pass a Firebase ID token as `token` or `accessToken`. Never commit tokens or expose them in browser source. The official terminal client handles account login and secure local storage for you.
 
 Every request also accepts an `AbortSignal` and a per-request timeout:
 

@@ -22,6 +22,7 @@ Midnight Anime is an anime discovery and streaming service operated under the Mi
 - [About](https://midnightanime.bond/about): Service and organization information.
 - [Download](https://midnightanime.bond/download): Official mobile-app information and download page.
 - [API documentation](https://midnightanime.bond/api): Developer documentation, examples, and interactive request playground.
+- [CLI documentation](https://midnightanime.bond/api#cli): Official terminal client installation and device-login instructions.
 - [Terms of Service](https://midnightanime.bond/terms): Service terms.
 - [Privacy Policy](https://midnightanime.bond/privacy): Privacy information.
 
@@ -30,6 +31,7 @@ Midnight Anime is an anime discovery and streaming service operated under the Mi
 - [API base](https://midnightanime.bond/api/v1): Version 1 JSON API.
 - [SDK source and package](https://github.com/SoloFFCreator/midnight-anime/tree/main/packages/midnight-anime-sdk): JavaScript and TypeScript client package.
 - [SDK package name](https://www.npmjs.com/package/@midnight-anime/sdk): `@midnight-anime/sdk`.
+- [CLI source](https://github.com/SoloFFCreator/midnight-anime/tree/main/packages/midnight-anime-cli): Terminal client with dedicated browser authorization.
 
 The API supports catalogue browsing, title search, title detail, artwork metadata, and supported episode playback requests. The SDK includes typed declarations, request timeouts, cancellation, custom fetch support, and normalized errors.
 

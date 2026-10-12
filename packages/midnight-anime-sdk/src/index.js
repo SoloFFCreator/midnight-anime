@@ -23,6 +23,8 @@ export class MidnightAnimeClient {
     this.baseUrl = String(options.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, '')
     this.fetch = options.fetch || globalThis.fetch
     this.headers = { Accept: 'application/json', ...(options.headers || {}) }
+    this.token = options.token || options.accessToken || null
+    this.clientHeader = options.clientHeader || 'javascript-sdk/1.0.0'
     this.timeout = options.timeout ?? 15000
     if (typeof this.fetch !== 'function') throw new MidnightAnimeError('This environment does not provide fetch. Pass a fetch implementation in the constructor.', { code: 'FETCH_UNAVAILABLE' })
   }
@@ -36,7 +38,8 @@ export class MidnightAnimeClient {
     const onAbort = () => controller.abort()
     signal?.addEventListener?.('abort', onAbort, { once: true })
     try {
-      const response = await this.fetch(url.toString(), { ...init, signal: controller.signal, headers: { ...this.headers, ...headers, 'X-Midnight-Client': 'javascript-sdk/1.0.0' } })
+      const authorization = this.token ? { Authorization: `Bearer ${this.token}` } : {}
+      const response = await this.fetch(url.toString(), { ...init, signal: controller.signal, headers: { ...this.headers, ...authorization, ...headers, 'X-Midnight-Client': this.clientHeader } })
       const body = await response.json().catch(() => null)
       if (!response.ok) {
         throw new MidnightAnimeError(body?.error?.message || `Midnight Anime API returned HTTP ${response.status}.`, { code: body?.error?.code || 'HTTP_ERROR', status: response.status, details: body?.error || body })

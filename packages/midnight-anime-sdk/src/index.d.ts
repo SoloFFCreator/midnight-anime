@@ -1,5 +1,8 @@
 export interface ClientOptions {
   baseUrl?: string
+  token?: string
+  accessToken?: string
+  clientHeader?: string
   fetch?: typeof globalThis.fetch
   headers?: Record<string, string>
   timeout?: number

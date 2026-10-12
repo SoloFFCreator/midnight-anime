@@ -1,3 +1,4 @@
+import { requireCliAuth } from '../../lib/cliAuth.js'
 const TMDB_BASE = 'https://api.themoviedb.org/3'
 const TMDB_IMAGE = 'https://image.tmdb.org/t/p/'
 const TMDB_API_KEY = '6de011d3fa665efbd0e924e6bb9fd381'
@@ -5,6 +6,7 @@ const TMDB_API_KEY = '6de011d3fa665efbd0e924e6bb9fd381'
 function json(res, status, body) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Midnight-Client')
   res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=900')
   return res.status(status).json(body)
 }
@@ -21,6 +23,7 @@ async function request(path, params = {}) {
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'GET') return json(res, 405, { error: { code: 'METHOD_NOT_ALLOWED', message: 'Use GET for this endpoint.' } })
+  if (!(await requireCliAuth(req, res))) return
 
   const tmdbId = String(req.query?.tmdbId || '').trim()
   if (!tmdbId) return json(res, 400, { error: { code: 'IDENTIFIER_REQUIRED', message: 'Provide a tmdbId.' } })

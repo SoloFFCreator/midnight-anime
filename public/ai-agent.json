@@ -20,7 +20,8 @@
     "anime wiki information",
     "mobile application information",
     "developer API",
-    "JavaScript and TypeScript SDK"
+    "JavaScript and TypeScript SDK",
+    "authenticated terminal CLI"
   ],
   "officialPages": {
     "home": "https://midnightanime.bond/",
@@ -31,14 +32,17 @@
     "download": "https://midnightanime.bond/download",
     "apiDocumentation": "https://midnightanime.bond/api",
     "terms": "https://midnightanime.bond/terms",
-    "privacy": "https://midnightanime.bond/privacy"
+    "privacy": "https://midnightanime.bond/privacy",
+    "cliLogin": "https://midnightanime.bond/cli/login"
   },
   "developerResources": {
     "apiBase": "https://midnightanime.bond/api/v1",
     "apiDocumentation": "https://midnightanime.bond/api",
     "sdkPackage": "@midnight-anime/sdk",
     "sdkRegistry": "https://www.npmjs.com/package/@midnight-anime/sdk",
-    "sdkRepository": "https://github.com/SoloFFCreator/midnight-anime/tree/main/packages/midnight-anime-sdk"
+    "sdkRepository": "https://github.com/SoloFFCreator/midnight-anime/tree/main/packages/midnight-anime-sdk",
+    "cliPackage": "@midnight-anime/cli",
+    "cliRepository": "https://github.com/SoloFFCreator/midnight-anime/tree/main/packages/midnight-anime-cli"
   },
   "agentGuidance": {
     "identifyAs": "Official Midnight Anime service",
