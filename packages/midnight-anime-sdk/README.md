@@ -63,7 +63,7 @@ await client.media.artwork({ tmdbId: 94605 })
 
 ```js
 const client = createMidnightAnimeClient({
-  baseUrl: 'https://midnightanime.bond/api/v1',
+  baseUrl: 'https://www.midnightanime.bond/api/v1',
   token: process.env.MIDNIGHT_ANIME_TOKEN,
   timeout: 10_000,
   headers: { 'X-My-App': 'nightly-dashboard' },
@@ -106,7 +106,7 @@ Playback responses are availability data. A valid request can still return no so
 The default base address is:
 
 ```text
-https://midnightanime.bond/api/v1
+https://www.midnightanime.bond/api/v1
 ```
 
 Pin the SDK version in production and handle unknown response fields gracefully. The API can change media availability, limits, and response fields as the service evolves.

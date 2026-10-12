@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import Hls from 'hls.js'
 import PublicPageShell from '../components/PublicPageShell'
 
-const BASE_URL = 'https://midnightanime.bond/api/v1'
+const BASE_URL = 'https://www.midnightanime.bond/api/v1'
 
 const endpointGroups = [
   {
@@ -41,7 +41,7 @@ const playgroundEndpoints = [
 ]
 
 const example = [
-  "const API = 'https://midnightanime.bond/api/v1'",
+  "const API = 'https://www.midnightanime.bond/api/v1'",
   '',
   'const response = await fetch(`${API}/search?q=Frieren&limit=10`)',
   'const { data } = await response.json()',

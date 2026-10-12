@@ -1,4 +1,4 @@
-const DEFAULT_BASE_URL = 'https://midnightanime.bond/api/v1'
+const DEFAULT_BASE_URL = 'https://www.midnightanime.bond/api/v1'
 
 export class MidnightAnimeError extends Error {
   constructor(message, details = {}) {
