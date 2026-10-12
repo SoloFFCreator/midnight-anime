@@ -26,7 +26,7 @@ const endpointGroups = [
     label: 'Artwork & metadata',
     description: 'Resolve TMDB artwork and editorial metadata for richer title pages and cards.',
     endpoints: [
-      { method: 'GET', path: '/tmdb?anilistId=21&type=tv', title: 'TMDB metadata', detail: 'Resolve a TMDB record from a TMDB ID or AniList ID. Returns poster and backdrop URLs, ratings, seasons, episode totals, dates, and IMDb/TVDB identifiers.' },
+      { method: 'GET', path: '/tmdb?tmdbId=94605&type=tv', title: 'TMDB metadata', detail: 'Resolve a TMDB record from a TMDB ID. Returns poster and backdrop URLs, ratings, seasons, episode totals, dates, and IMDb/TVDB identifiers.' },
     ],
   },
 ]
