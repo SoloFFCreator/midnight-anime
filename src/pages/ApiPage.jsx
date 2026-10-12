@@ -55,6 +55,21 @@ const example = [
   'const { data: sources } = await episode.json()',
 ].join('\n')
 
+const sdkExample = [
+  "import { createMidnightAnimeClient } from '@midnight-anime/sdk'",
+  '',
+  'const client = createMidnightAnimeClient({ timeout: 20_000 })',
+  "const { data } = await client.search('Frieren', { limit: 10 })",
+  '',
+  'const episode = await client.playback({',
+  '  malId: 21, type: \'tv\', audio: \'sub\', season: 1, episode: 1,',
+  '})',
+  '',
+  'try { await client.anime(21) } catch (error) {',
+  '  console.log(error.code, error.status)',
+  '}',
+].join('\n')
+
 export default function ApiPage() {
   return <PublicPageShell eyebrow="Developer documentation / v1" title="A calm, capable foundation for anime products." intro="Build discovery, title pages, artwork-led interfaces, and supported playback experiences with one consistent public API. This portal is designed to be read, tested, and implemented—not merely browsed.">
     <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_220px]">
@@ -69,9 +84,11 @@ export default function ApiPage() {
 
         <section id="quickstart" className="mt-20 scroll-mt-24 grid gap-5 lg:grid-cols-[1.1fr_.9fr]"><div className="rounded-3xl border border-white/[0.08] bg-[#0d0b12] p-5 sm:p-7"><SectionHeading eyebrow="Quick start" title="Fetch, render, continue" text="The first integration can be as small as a search request and an image card. Keep the response object intact so you can add richer title context later." /><pre className="mt-6 max-h-[460px] overflow-auto rounded-2xl border border-white/[0.06] bg-black/40 p-4 font-mono text-[11px] leading-[1.8] text-white/65"><code>{example}</code></pre></div><div className="space-y-5"><InfoBlock title="Visual media first" text="Use image fields to render artwork in an image component. The request lab intentionally turns image values into visual previews so developers can evaluate the result without copying dead-looking URLs." /><InfoBlock title="Playback is conditional" text="A request can be valid while an episode has no available source. Treat an empty data array as a normal product state and show a clear retry or availability message." /><InfoBlock title="Cache thoughtfully" text="Cache catalogue and artwork responses at your edge, avoid aggressive polling, and refresh episode availability only when the user asks or when your product needs it." /></div></section>
 
+        <section id="sdk" className="mt-20 scroll-mt-24"><SectionHeading eyebrow="Official SDK" title="Install once. Ship faster." text="The dependency-free client wraps the documented resources with typed declarations, normalized errors, timeouts, cancellation, and browser-safe defaults." /><div className="mt-8 grid gap-5 lg:grid-cols-[.85fr_1.15fr]"><div className="rounded-3xl border border-or/25 bg-or/[0.07] p-5 sm:p-7"><p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-or">Package</p><code className="mt-4 block rounded-xl border border-white/10 bg-black/30 px-4 py-3 font-mono text-sm text-white">npm install @midnight-anime/sdk</code><p className="mt-5 text-sm leading-relaxed text-white/55">One small package for modern browsers, Node.js 18+, and server runtimes with fetch. TypeScript declarations are included—no second types package required.</p><a href="https://github.com/SoloFFCreator/midnight-anime/tree/main/packages/midnight-anime-sdk" className="mt-5 inline-flex rounded-full border border-white/15 px-4 py-2.5 text-xs font-bold text-white/70 transition hover:border-or hover:text-or">View SDK source</a></div><div className="overflow-hidden rounded-3xl border border-white/[0.08] bg-[#0d0b12]"><div className="flex border-b border-white/[0.06] px-4 pt-4"><span className="rounded-t-lg bg-white/[0.07] px-3 py-2 font-mono text-[10px] font-bold text-or">JavaScript / TypeScript</span></div><pre className="overflow-x-auto p-5 font-mono text-[11px] leading-[1.8] text-white/70"><code>{sdkExample}</code></pre></div></div><div className="mt-5 grid gap-5 md:grid-cols-3"><InfoBlock title="Typed by default" text="Use autocomplete for title, artwork, playback parameters, response envelopes, and normalized errors." /><InfoBlock title="Own your player" text="The SDK returns availability data so your product can keep its own player, loading state, and visual identity." /><InfoBlock title="Safe requests" text="Use AbortSignal, timeouts, custom headers, and a custom fetch implementation without adding dependencies." /></div></section>
+
         <DocumentationSections />
       </main>
-      <aside className="hidden xl:block"><div className="sticky top-24 rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4"><p className="px-3 pb-3 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-or">On this page</p>{[['playground', 'Request lab'], ['endpoints', 'Reference'], ['quickstart', 'Quick start'], ['implementation', 'Implementation'], ['policy', 'Responsible use']].map(([id, label]) => <a key={id} href={`#${id}`} className="block rounded-lg px-3 py-2 text-sm text-white/50 transition hover:bg-white/[0.05] hover:text-white">{label}</a>)}</div></aside>
+      <aside className="hidden xl:block"><div className="sticky top-24 rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4"><p className="px-3 pb-3 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-or">On this page</p>{[['playground', 'Request lab'], ['endpoints', 'Reference'], ['quickstart', 'Quick start'], ['sdk', 'SDK client'], ['implementation', 'Implementation'], ['policy', 'Responsible use']].map(([id, label]) => <a key={id} href={`#${id}`} className="block rounded-lg px-3 py-2 text-sm text-white/50 transition hover:bg-white/[0.05] hover:text-white">{label}</a>)}</div></aside>
     </div>
   </PublicPageShell>
 }

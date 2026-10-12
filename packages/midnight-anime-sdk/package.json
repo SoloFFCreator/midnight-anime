@@ -1,0 +1,23 @@
+{
+  "name": "@midnight-anime/sdk",
+  "version": "1.0.0",
+  "description": "Official JavaScript and TypeScript client for the Midnight Anime API.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "default": "./src/index.js"
+    }
+  },
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "files": ["src", "README.md", "LICENSE"],
+  "engines": { "node": ">=18" },
+  "keywords": ["anime", "midnight-anime", "sdk", "typescript", "javascript", "streaming-api"],
+  "repository": { "type": "git", "url": "https://github.com/SoloFFCreator/midnight-anime.git", "directory": "packages/midnight-anime-sdk" },
+  "bugs": { "url": "https://github.com/SoloFFCreator/midnight-anime/issues" },
+  "publishConfig": { "access": "public" }
+}
