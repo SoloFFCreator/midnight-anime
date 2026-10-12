@@ -19,14 +19,14 @@ const endpointGroups = [
     label: 'Playback',
     description: 'Resolve a supported episode into the available language tracks returned by the stream service.',
     endpoints: [
-      { method: 'GET', path: '/stream?malId=21&type=tv&audio=sub&season=1&episode=1', title: 'Episode streams', detail: 'Provide exactly one identifier: malId, tmdbId, imdbId, or anilistId. TV requests require season and episode. Audio supports sub, dub, and hindi.' },
+      { method: 'GET', path: '/playback?malId=21&type=tv&audio=sub&season=1&episode=1', title: 'Episode streams', detail: 'Provide exactly one identifier: malId, tmdbId, imdbId, or anilistId. TV requests require season and episode. Audio supports sub, dub, and hindi.' },
     ],
   },
   {
     label: 'Artwork & metadata',
     description: 'Resolve TMDB artwork and editorial metadata for richer title pages and cards.',
     endpoints: [
-      { method: 'GET', path: '/metadata?anilistId=21&type=tv', title: 'TMDB metadata', detail: 'Resolve a TMDB record from a TMDB ID or AniList ID. Returns poster and backdrop URLs, ratings, seasons, episode totals, dates, and IMDb/TVDB identifiers.' },
+      { method: 'GET', path: '/tmdb?anilistId=21&type=tv', title: 'TMDB metadata', detail: 'Resolve a TMDB record from a TMDB ID or AniList ID. Returns poster and backdrop URLs, ratings, seasons, episode totals, dates, and IMDb/TVDB identifiers.' },
     ],
   },
 ]
@@ -38,7 +38,7 @@ const example = [
   'const { data, meta } = await response.json()',
   'console.log(data[0].title.english || data[0].title.romaji)',
   '',
-  'const stream = await fetch(`${BASE}/stream?malId=21&type=tv&audio=sub&season=1&episode=1`)',
+  'const stream = await fetch(`${BASE}/playback?malId=21&type=tv&audio=sub&season=1&episode=1`)',
   'const { data: sources } = await stream.json()',
   '',
   'function Poster({ anime }) {',
@@ -49,9 +49,9 @@ const example = [
 const playgroundEndpoints = [
   { id: 'search', label: 'Search anime', path: '/search', params: [{ key: 'q', label: 'Query', value: 'Frieren' }, { key: 'page', label: 'Page', value: '1' }, { key: 'limit', label: 'Limit', value: '3' }] },
   { id: 'catalogue', label: 'Trending catalogue', path: '/catalogue', params: [{ key: 'view', label: 'View', value: 'trending' }, { key: 'limit', label: 'Limit', value: '3' }] },
-  { id: 'metadata', label: 'TMDB metadata', path: '/metadata', params: [{ key: 'tmdbId', label: 'TMDB ID', value: '94605' }, { key: 'type', label: 'Type', value: 'tv' }] },
+  { id: 'metadata', label: 'TMDB metadata', path: '/tmdb', params: [{ key: 'tmdbId', label: 'TMDB ID', value: '94605' }, { key: 'type', label: 'Type', value: 'tv' }] },
   { id: 'anime', label: 'Anime detail', path: '/anime/21', params: [] },
-  { id: 'stream', label: 'Episode stream', path: '/stream', params: [{ key: 'malId', label: 'MAL ID', value: '21' }, { key: 'type', label: 'Type', value: 'tv' }, { key: 'audio', label: 'Audio', value: 'sub' }, { key: 'season', label: 'Season', value: '1' }, { key: 'episode', label: 'Episode', value: '1' }] },
+  { id: 'stream', label: 'Episode stream', path: '/playback', params: [{ key: 'malId', label: 'MAL ID', value: '21' }, { key: 'type', label: 'Type', value: 'tv' }, { key: 'audio', label: 'Audio', value: 'sub' }, { key: 'season', label: 'Season', value: '1' }, { key: 'episode', label: 'Episode', value: '1' }] },
 ]
 
 function EndpointCard({ endpoint, index }) {
