@@ -4,6 +4,7 @@ const links = [
   { to: '/news', label: 'Anime Updates' },
   { to: '/wiki', label: 'Wiki' },
   { to: '/about', label: 'About' },
+  { to: '/api', label: 'API' },
 ]
 
 export default function PublicPageShell({ eyebrow, title, intro, children }) {
@@ -46,6 +47,7 @@ export default function PublicPageShell({ eyebrow, title, intro, children }) {
           <div className="flex flex-wrap gap-x-5 gap-y-2">
             <Link to="/app" className="hover:text-white">Catalogue</Link>
             <Link to="/download" className="hover:text-white">Download</Link>
+            <Link to="/api" className="hover:text-white">API</Link>
             <Link to="/privacy" className="hover:text-white">Privacy</Link>
             <Link to="/terms" className="hover:text-white">Terms</Link>
           </div>

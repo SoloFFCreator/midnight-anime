@@ -23,6 +23,7 @@ import NewsPage from './pages/NewsPage'
 import WikiPage from './pages/WikiPage'
 import AboutPage from './pages/AboutPage'
 import NewsAnimeDetailPage from './pages/NewsAnimeDetailPage'
+import ApiPage from './pages/ApiPage'
 
 import { useAuthStore } from './store/authStore'
 import { useWatchlistStore } from './store/watchlistStore'
@@ -61,7 +62,7 @@ export default function App() {
   }, [user])
 
   const isFullScreenRoute = location.pathname.startsWith('/recommend/')
-  const isPublicRoute = ['/', '/download', '/privacy', '/terms', '/news', '/wiki', '/about'].includes(location.pathname) || location.pathname.startsWith('/news/anime/')
+  const isPublicRoute = ['/', '/download', '/privacy', '/terms', '/news', '/wiki', '/about', '/api'].includes(location.pathname) || location.pathname.startsWith('/news/anime/')
   const showAppChrome = !isPublicRoute && !isFullScreenRoute
 
   return (
@@ -81,6 +82,7 @@ export default function App() {
           <Route path="/news/anime/:id" element={<NewsAnimeDetailPage />} />
           <Route path="/wiki" element={<WikiPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/api" element={<ApiPage />} />
           <Route path="/share/series/:id" element={<ShareRedirectPage kind="series" />} />
           <Route path="/share/episode/:id/:episode" element={<ShareRedirectPage kind="episode" />} />
           <Route path="/anime/:id" element={<AnimatedPage><DetailPage /></AnimatedPage>} />
