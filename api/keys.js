@@ -1,7 +1,7 @@
 import { getApiKey, getBearerToken, issueApiKey, verifyFirebaseIdToken } from '../lib/apiKeyAuth.js'
 
-function json(res, status, body) {
-  const requestOrigin = String(req.headers?.origin || '')
+function json(res, status, body, requestOrigin = '') {
+  requestOrigin = String(requestOrigin || '')
   const allowedOrigin = ['https://midnightanime.bond', 'https://www.midnightanime.bond'].includes(requestOrigin) ? requestOrigin : 'https://www.midnightanime.bond'
   res.setHeader('Access-Control-Allow-Origin', allowedOrigin)
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
@@ -12,8 +12,8 @@ function json(res, status, body) {
 
 async function account(req, res) {
   const token = getBearerToken(req)
-  if (!token) { json(res, 401, { error: { code: 'AUTH_REQUIRED', message: 'Sign in to manage your API key.' } }); return null }
-  try { return await verifyFirebaseIdToken(token) } catch { json(res, 401, { error: { code: 'AUTH_INVALID', message: 'Your sign-in session expired. Sign in again.' } }); return null }
+  if (!token) { json(res, 401, { error: { code: 'AUTH_REQUIRED', message: 'Sign in to manage your API key.' } }, req.headers?.origin); return null }
+  try { return await verifyFirebaseIdToken(token) } catch { json(res, 401, { error: { code: 'AUTH_INVALID', message: 'Your sign-in session expired. Sign in again.' } }, req.headers?.origin); return null }
 }
 
 export default async function handler(req, res) {
