@@ -5,6 +5,7 @@ const links = [
   { to: '/wiki', label: 'Wiki' },
   { to: '/about', label: 'About' },
   { to: '/api', label: 'API' },
+  { to: '/api/keys', label: 'Get API key' },
 ]
 
 export default function PublicPageShell({ eyebrow, title, intro, children }) {
@@ -48,6 +49,7 @@ export default function PublicPageShell({ eyebrow, title, intro, children }) {
             <Link to="/app" className="hover:text-white">Catalogue</Link>
             <Link to="/download" className="hover:text-white">Download</Link>
             <Link to="/api" className="hover:text-white">API</Link>
+            <Link to="/api/keys" className="hover:text-white">Get API key</Link>
             <Link to="/privacy" className="hover:text-white">Privacy</Link>
             <Link to="/terms" className="hover:text-white">Terms</Link>
           </div>

@@ -24,6 +24,7 @@ import WikiPage from './pages/WikiPage'
 import AboutPage from './pages/AboutPage'
 import NewsAnimeDetailPage from './pages/NewsAnimeDetailPage'
 import ApiPage from './pages/ApiPage'
+import ApiKeyPage from './pages/ApiKeyPage'
 import CliLoginPage from './pages/CliLoginPage'
 
 import { useAuthStore } from './store/authStore'
@@ -63,7 +64,7 @@ export default function App() {
   }, [user])
 
   const isFullScreenRoute = location.pathname.startsWith('/recommend/')
-  const isPublicRoute = ['/', '/download', '/privacy', '/terms', '/news', '/wiki', '/about', '/api', '/cli/login'].includes(location.pathname) || location.pathname.startsWith('/news/anime/')
+  const isPublicRoute = ['/', '/download', '/privacy', '/terms', '/news', '/wiki', '/about', '/api', '/api/keys', '/cli/login'].includes(location.pathname) || location.pathname.startsWith('/news/anime/')
   const showAppChrome = !isPublicRoute && !isFullScreenRoute
 
   return (
@@ -84,6 +85,7 @@ export default function App() {
           <Route path="/wiki" element={<WikiPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/api" element={<ApiPage />} />
+          <Route path="/api/keys" element={<ApiKeyPage />} />
           <Route path="/cli/login" element={<CliLoginPage />} />
           <Route path="/share/series/:id" element={<ShareRedirectPage kind="series" />} />
           <Route path="/share/episode/:id/:episode" element={<ShareRedirectPage kind="episode" />} />

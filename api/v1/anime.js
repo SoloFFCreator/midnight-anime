@@ -1,10 +1,10 @@
-import { requireCliAuth } from '../../lib/cliAuth.js'
+import { requireApiKey } from '../../lib/apiKeyAuth.js'
 const DETAIL_QUERY = `query($id:Int){ Media(id:$id,type:ANIME){ id idMal title{romaji english native} coverImage{large extraLarge color} bannerImage episodes status averageScore genres format season seasonYear duration description(asHtml:false) nextAiringEpisode{episode airingAt} streamingEpisodes{title thumbnail} studios{nodes{name}} externalLinks{url site} } }`
 
 function json(res, status, body) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Midnight-Client')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-API-Key, X-Midnight-Client')
   res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
   return res.status(status).json(body)
 }
@@ -12,7 +12,7 @@ function json(res, status, body) {
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'GET') return json(res, 405, { error: { code: 'METHOD_NOT_ALLOWED', message: 'Use GET for this endpoint.' } })
-  if (!(await requireCliAuth(req, res))) return
+  if (!(await requireApiKey(req, res))) return
   const id = Number.parseInt(req.query?.id, 10)
   if (!Number.isInteger(id) || id < 1) return json(res, 400, { error: { code: 'INVALID_ID', message: 'id must be a positive AniList ID.' } })
   try {

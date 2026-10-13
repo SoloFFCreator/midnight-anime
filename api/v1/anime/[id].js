@@ -1,5 +1,5 @@
 import { aniList, apiError, handleOptions, sendJson } from '../../../lib/midnightApi.js'
-import { requireCliAuth } from '../../../lib/cliAuth.js'
+import { requireApiKey } from '../../../lib/apiKeyAuth.js'
 
 const DETAIL_QUERY = `query($id:Int){ Media(id:$id,type:ANIME){
   id idMal title{romaji english native} coverImage{large extraLarge color} bannerImage
@@ -14,7 +14,7 @@ const DETAIL_QUERY = `query($id:Int){ Media(id:$id,type:ANIME){
 export default async function handler(req, res) {
   if (handleOptions(req)) return
   if (req.method !== 'GET') return sendJson(res, 405, { error: { code: 'METHOD_NOT_ALLOWED', message: 'Use GET for this endpoint.' } })
-  if (!(await requireCliAuth(req, res))) return
+  if (!(await requireApiKey(req, res))) return
   const id = Number.parseInt(req.query?.id, 10)
   if (!Number.isInteger(id) || id < 1) return sendJson(res, 400, { error: { code: 'INVALID_ID', message: 'id must be a positive AniList ID.' } })
   try {

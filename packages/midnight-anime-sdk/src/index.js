@@ -38,8 +38,8 @@ export class MidnightAnimeClient {
     const onAbort = () => controller.abort()
     signal?.addEventListener?.('abort', onAbort, { once: true })
     try {
-      const authorization = this.token ? { Authorization: `Bearer ${this.token}` } : {}
-      const response = await this.fetch(url.toString(), { ...init, signal: controller.signal, headers: { ...this.headers, ...authorization, ...headers, 'X-Midnight-Client': this.clientHeader } })
+      const apiKey = this.token ? { 'X-API-Key': this.token } : {}
+      const response = await this.fetch(url.toString(), { ...init, signal: controller.signal, headers: { ...this.headers, ...apiKey, ...headers, 'X-Midnight-Client': this.clientHeader } })
       const body = await response.json().catch(() => null)
       if (!response.ok) {
         throw new MidnightAnimeError(body?.error?.message || `Midnight Anime API returned HTTP ${response.status}.`, { code: body?.error?.code || 'HTTP_ERROR', status: response.status, details: body?.error || body })

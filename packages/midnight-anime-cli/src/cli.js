@@ -12,7 +12,7 @@ const TOKEN_FILE = join(CONFIG_DIR, 'credentials.json')
 const LOGIN_PAGE = 'https://midnightanime.bond/cli/login'
 
 function printHelp() {
-  console.log(`Midnight Anime CLI\n\nUsage:\n  midnight-anime login                 Sign in through the official browser page\n  midnight-anime logout                Remove the local CLI session\n  midnight-anime whoami                Check the current session\n  midnight-anime search <query>        Search anime titles\n  midnight-anime catalogue [view]      Browse trending, popular, seasonal, or movies\n  midnight-anime anime <id>            Fetch one title record\n  midnight-anime playback <id> <s> <e> Request an episode playback response\n\nOptions:\n  --json                                Print machine-readable JSON\n  --timeout <ms>                       Override request timeout\n\nThe CLI requires an authenticated Midnight Anime account before API commands can run.`)
+  console.log(`Midnight Anime CLI\n\nUsage:\n  midnight-anime login                 Sign in through the official browser page\n  midnight-anime logout                Remove the local CLI session\n  midnight-anime whoami                Check the current session\n  midnight-anime search <query>        Search anime titles\n  midnight-anime catalogue [view]      Browse trending, popular, seasonal, or movies\n  midnight-anime anime <id>            Fetch one title record\n  midnight-anime playback <id> <s> <e> Request an episode playback response\n\nOptions:\n  --json                                Print machine-readable JSON\n  --timeout <ms>                       Override request timeout\n\nAPI commands require both a browser login and MIDNIGHT_ANIME_API_KEY.\nSet MIDNIGHT_ANIME_ORIGIN to the website origin registered for that key.`)
 }
 
 function hasFlag(args, flag) { return args.includes(flag) }
@@ -75,11 +75,17 @@ async function requireCredentials() {
     process.exitCode = 1
     return null
   }
+  if (!process.env.MIDNIGHT_ANIME_API_KEY) {
+    console.error('This command requires an API key. Create one at https://midnightanime.bond/api/keys and set MIDNIGHT_ANIME_API_KEY.')
+    process.exitCode = 1
+    return null
+  }
   return credentials
 }
 
 function clientFor(credentials, timeout) {
-  return createMidnightAnimeClient({ token: credentials.idToken, timeout: Number(timeout) || 15000, clientHeader: 'cli/1.0.0' })
+  const headers = process.env.MIDNIGHT_ANIME_ORIGIN ? { Origin: process.env.MIDNIGHT_ANIME_ORIGIN } : {}
+  return createMidnightAnimeClient({ token: process.env.MIDNIGHT_ANIME_API_KEY, headers, timeout: Number(timeout) || 15000, clientHeader: 'cli/1.1.0' })
 }
 
 function output(value, json) {

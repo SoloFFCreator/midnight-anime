@@ -1,6 +1,6 @@
 {
   "name": "midnight-anime-sdk",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Official JavaScript and TypeScript client for the Midnight Anime API.",
   "license": "MIT",
   "type": "module",

@@ -30,6 +30,13 @@ The CLI does not ask users to paste passwords or tokens into the terminal. The d
 https://midnightanime.bond/cli/login
 ```
 
+API commands also require one Midnight Anime API key. Create it at `https://midnightanime.bond/api/keys`, then set the key and its registered website origin before making requests:
+
+```bash
+export MIDNIGHT_ANIME_API_KEY="ma_live_…"
+export MIDNIGHT_ANIME_ORIGIN="https://yourwebsite.com"
+```
+
 ## Commands
 
 ```bash
@@ -53,7 +60,7 @@ midnight-anime search "One Piece" --timeout 30000
 
 ## Authentication behavior
 
-CLI API calls send a bearer ID token and a CLI client marker. The API validates the token before serving CLI-identified requests. Browser and public documentation requests remain available through their normal public paths. If the session expires, run `midnight-anime login` again.
+CLI API calls send `X-API-Key` and the registered `Origin` header. The API requires the key for every versioned resource and rejects a different website origin. The browser login remains a separate account verification step; if the session expires, run `midnight-anime login` again.
 
 ## Related packages
 

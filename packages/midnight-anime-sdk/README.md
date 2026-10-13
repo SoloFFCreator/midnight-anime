@@ -15,7 +15,7 @@ The package works in modern browsers, Node.js 18+, Deno-compatible environments,
 ```js
 import { createMidnightAnimeClient } from 'midnight-anime-sdk'
 
-const anime = createMidnightAnimeClient()
+const anime = createMidnightAnimeClient({ token: process.env.MIDNIGHT_ANIME_API_KEY })
 const { data } = await anime.search('Frieren', { limit: 10 })
 
 console.log(data[0].title.english || data[0].title.romaji)
@@ -64,14 +64,14 @@ await client.media.artwork({ tmdbId: 94605 })
 ```js
 const client = createMidnightAnimeClient({
   baseUrl: 'https://www.midnightanime.bond/api/v1',
-  token: process.env.MIDNIGHT_ANIME_TOKEN,
+  token: process.env.MIDNIGHT_ANIME_API_KEY,
   timeout: 10_000,
-  headers: { 'X-My-App': 'nightly-dashboard' },
+  headers: { Origin: 'https://yourwebsite.com' },
   fetch: fetch,
 })
 ```
 
-For authenticated developer tooling, pass a Firebase ID token as `token` or `accessToken`. Never commit tokens or expose them in browser source. The official terminal client handles account login and secure local storage for you.
+Pass your Midnight Anime API key as `token`. The SDK sends it as `X-API-Key`; requests must also use the website origin registered for that key. Never commit keys or expose them in shipped browser source.
 
 Every request also accepts an `AbortSignal` and a per-request timeout:
 
