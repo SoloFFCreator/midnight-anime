@@ -26,6 +26,9 @@ import NewsAnimeDetailPage from './pages/NewsAnimeDetailPage'
 import ApiPage from './pages/ApiPage'
 import ApiKeyPage from './pages/ApiKeyPage'
 import CliLoginPage from './pages/CliLoginPage'
+import OAuthPage from './pages/OAuthPage'
+import OAuthAppsPage from './pages/OAuthAppsPage'
+import OAuthAuthorizePage from './pages/OAuthAuthorizePage'
 
 import { useAuthStore } from './store/authStore'
 import { useWatchlistStore } from './store/watchlistStore'
@@ -64,7 +67,7 @@ export default function App() {
   }, [user])
 
   const isFullScreenRoute = location.pathname.startsWith('/recommend/')
-  const isPublicRoute = ['/', '/download', '/privacy', '/terms', '/news', '/wiki', '/about', '/api', '/api/keys', '/cli/login'].includes(location.pathname) || location.pathname.startsWith('/news/anime/')
+  const isPublicRoute = ['/', '/download', '/privacy', '/terms', '/news', '/wiki', '/about', '/api', '/api/keys', '/oauth', '/oauth/apps', '/oauth/authorize', '/cli/login'].includes(location.pathname) || location.pathname.startsWith('/news/anime/')
   const showAppChrome = !isPublicRoute && !isFullScreenRoute
 
   return (
@@ -86,6 +89,9 @@ export default function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/api" element={<ApiPage />} />
           <Route path="/api/keys" element={<ApiKeyPage />} />
+          <Route path="/oauth" element={<OAuthPage />} />
+          <Route path="/oauth/apps" element={<OAuthAppsPage />} />
+          <Route path="/oauth/authorize" element={<OAuthAuthorizePage />} />
           <Route path="/cli/login" element={<CliLoginPage />} />
           <Route path="/share/series/:id" element={<ShareRedirectPage kind="series" />} />
           <Route path="/share/episode/:id/:episode" element={<ShareRedirectPage kind="episode" />} />
